@@ -93,15 +93,18 @@
 
 <div class="container">
     <h1>Calcio Amatoriale</h1>
+    <p th:if="${messaggioSuccesso}" th:text="${messaggioSuccesso}" style="color: #2ecc71; font-weight: bold; font-size: 1.2rem; margin-top:-30px;"></p>
     <p>La gestione dei tuoi tornei, con lo stile che meriti.</p>
     
-    <div class="button-group">
-        <a href="/login" class="btn btn-primary">Accedi</a>
-        <a href="/register" class="btn btn-outline">Registrazione</a>
+   <div class="button-group" style="margin-bottom: 15px;">
+        <a href="/admin/torneo/new" class="btn btn-primary">Crea Torneo</a>
+        <a href="/tornei" class="btn btn-outline">Esplora Tornei</a>
     </div>
-    
-    <a href="/esplora" class="btn btn-guest">Entra come Guest ›</a>
-</div>
+
+    <div class="button-group">
+        <a href="/admin/squadra/new" class="btn btn-primary" style="background-color: #0066cc;">Aggiungi Squadra</a>
+        <a href="/squadre" class="btn btn-outline" style="border-color: #0066cc; color: #0066cc;">Lista Squadre</a>
+    </div>
 
 </body>
 </html>

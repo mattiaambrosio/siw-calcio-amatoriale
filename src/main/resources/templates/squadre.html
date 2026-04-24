@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Squadre Iscritte</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #1d1d1f; color: white; padding: 40px; text-align: center; }
+        .squadra-card { background-color: #2d2d2f; padding: 20px; border-radius: 10px; margin: 15px auto; max-width: 500px; text-align: left; border-left: 5px solid #0066cc; }
+        h2 { color: #0066cc; margin-top: 0; }
+        .back-link { display: inline-block; margin-top: 30px; color: #86868b; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>Squadre Attualmente Iscritte</h1>
+    
+    <div th:each="squadra : ${squadre}" class="squadra-card">
+        <h2 th:text="${squadra.nome}">Nome Squadra</h2>
+        <p><strong>Città:</strong> <span th:text="${squadra.citta}">Città</span></p>
+        <p><strong>Anno Fondazione:</strong> <span th:text="${squadra.annoDiFondazione}">1900</span></p>
+    </div>
+
+    <div th:if="${squadre.empty}">
+        <p>Non c'è ancora nessuna squadra registrata.</p>
+    </div>
+
+    <a href="/" class="back-link">‹ Torna alla Home</a>
+</body>
+</html>
