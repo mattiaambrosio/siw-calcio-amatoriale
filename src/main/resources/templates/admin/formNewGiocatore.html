@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuovo Giocatore</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #1d1d1f; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .form-container { background-color: #2d2d2f; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 350px; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0 20px 0; border-radius: 8px; border: 1px solid #555; background-color: #1d1d1f; color: white; box-sizing: border-box; }
+        .btn-submit { background-color: #e67e22; color: white; padding: 12px 20px; border: none; border-radius: 25px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; }
+        .btn-submit:hover { background-color: #d35400; }
+        .error-msg { color: #ff4757; margin-bottom: 15px; }
+        .back-link { display: block; margin-top: 20px; color: #86868b; text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2>Aggiungi Giocatore</h2>
+    <p class="error-msg" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></p>
+
+    <form th:action="@{/admin/giocatore}" th:object="${giocatore}" method="POST">
+        
+        <label>Nome</label>
+        <input type="text" th:field="*{nome}" required />
+        
+        <label>Cognome</label>
+        <input type="text" th:field="*{cognome}" required />
+
+        <label>Data di Nascita</label>
+        <input type="date" th:field="*{dataDiNascita}" required />
+
+        <label>Ruolo</label>
+        <select th:field="*{ruolo}" required>
+            <option value="Portiere">Portiere</option>
+            <option value="Difensore">Difensore</option>
+            <option value="Centrocampista">Centrocampista</option>
+            <option value="Attaccante">Attaccante</option>
+        </select>
+
+        <label>Altezza (cm)</label>
+        <input type="number" th:field="*{altezza}" required />
+
+        <label>Squadra di appartenenza</label>
+        <select th:field="*{squadra}" required>
+            <option th:each="squadraOption : ${squadre}" 
+                    th:value="${squadraOption.id}" 
+                    th:text="${squadraOption.nome}"></option>
+        </select>
+        
+        <button type="submit" class="btn-submit">Salva Giocatore</button>
+    </form>
+    <a href="/" class="back-link">Torna alla Home</a>
+</div>
+</body>
+</html>

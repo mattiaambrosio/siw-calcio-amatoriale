@@ -17,6 +17,20 @@
         <h2 th:text="${squadra.nome}">Nome Squadra</h2>
         <p><strong>Città:</strong> <span th:text="${squadra.citta}">Città</span></p>
         <p><strong>Anno Fondazione:</strong> <span th:text="${squadra.annoDiFondazione}">1900</span></p>
+        
+        <hr style="border-color: #555; margin-top: 15px;">
+        <p style="color: #0066cc; font-weight: bold;">Rosa Giocatori:</p>
+        
+        <ul th:if="${!squadra.giocatori.empty}" style="list-style-type: square; color: #ddd;">
+            <li th:each="giocatore : ${squadra.giocatori}">
+                <span th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</span> 
+                <span style="color: #888; font-size: 0.9em;" th:text="' - ' + ${giocatore.ruolo}"> - Ruolo</span>
+            </li>
+        </ul>
+        
+        <p th:if="${squadra.giocatori.empty}" style="color: #888; font-style: italic; font-size: 0.9em;">
+            Nessun giocatore attualmente in rosa.
+        </p>
     </div>
 
     <div th:if="${squadre.empty}">

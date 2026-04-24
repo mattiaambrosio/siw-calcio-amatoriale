@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista Giocatori</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #1d1d1f; color: white; padding: 40px; text-align: center; }
+        .giocatore-card { background-color: #2d2d2f; padding: 20px; border-radius: 10px; margin: 15px auto; max-width: 500px; text-align: left; border-left: 5px solid #e67e22; }
+        h2 { color: #e67e22; margin-top: 0; }
+        .back-link { display: inline-block; margin-top: 30px; color: #86868b; text-decoration: none; }
+        .badge-squadra { background: #0066cc; padding: 4px 8px; border-radius: 5px; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <h1>Giocatori Registrati</h1>
+    
+    <div th:each="giocatore : ${giocatori}" class="giocatore-card">
+        <h2>
+            <span th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</span>
+        </h2>
+        <p><strong>Ruolo:</strong> <span th:text="${giocatore.ruolo}">Ruolo</span></p>
+        <p><strong>Data di nascita:</strong> <span th:text="${giocatore.dataDiNascita}">01/01/2000</span></p>
+        <p><strong>Altezza:</strong> <span th:text="${giocatore.altezza}">180</span> cm</p>
+        <p><strong>Squadra:</strong> 
+            <span th:if="${giocatore.squadra != null}" class="badge-squadra" th:text="${giocatore.squadra.nome}">Squadra</span>
+        </p>
+    </div>
+
+    <div th:if="${giocatori.empty}">
+        <p>Nessun giocatore registrato.</p>
+    </div>
+
+    <a href="/" class="back-link">‹ Torna alla Home</a>
+</body>
+</html>
