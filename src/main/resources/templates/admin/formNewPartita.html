@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuova Partita</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #1d1d1f; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px;}
+        .form-container { background-color: #2d2d2f; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; width: 400px; }
+        input, select { width: 100%; padding: 10px; margin: 10px 0 20px 0; border-radius: 8px; border: 1px solid #555; background-color: #1d1d1f; color: white; box-sizing: border-box; }
+        .btn-submit { background-color: #e74c3c; color: white; padding: 12px 20px; border: none; border-radius: 25px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.3s; }
+        .btn-submit:hover { background-color: #c0392b; }
+        .error-msg { color: #ff4757; margin-bottom: 15px; font-weight: bold; }
+        .back-link { display: block; margin-top: 20px; color: #86868b; text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h2>Programma Partita</h2>
+    <p class="error-msg" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></p>
+
+    <form th:action="@{/admin/partita}" th:object="${partita}" method="POST">
+        
+        <label>Torneo</label>
+        <select th:field="*{torneo}" required>
+            <option th:each="t : ${tornei}" th:value="${t.id}" th:text="${t.nome}"></option>
+        </select>
+
+        <label>Squadra in Casa</label>
+        <select th:field="*{squadraCasa}" required>
+            <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
+        </select>
+
+        <label>Squadra in Trasferta</label>
+        <select th:field="*{squadraOspite}" required>
+            <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
+        </select>
+
+        <label>Arbitro</label>
+        <select th:field="*{arbitro}" required>
+            <option th:each="a : ${arbitri}" th:value="${a.id}" th:text="${a.nome} + ' ' + ${a.cognome}"></option>
+        </select>
+
+        <label>Data e Ora</label>
+        <input type="datetime-local" th:field="*{dataEOra}" required />
+        
+        <label>Luogo (Stadio/Campo)</label>
+        <input type="text" th:field="*{luogo}" required placeholder="es. Stadio Olimpico" />
+        
+        <input type="hidden" th:field="*{goalsHome}" value="0" />
+        <input type="hidden" th:field="*{goalsAway}" value="0" />
+        
+        <button type="submit" class="btn-submit">Salva Partita</button>
+    </form>
+    <a href="/" class="back-link">Torna alla Home</a>
+</div>
+</body>
+</html>

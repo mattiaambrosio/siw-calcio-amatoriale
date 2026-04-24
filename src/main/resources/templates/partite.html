@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Calendario Partite</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background-color: #1d1d1f; color: white; padding: 40px; text-align: center; }
+        .partita-card { background-color: #2d2d2f; padding: 25px; border-radius: 10px; margin: 20px auto; max-width: 600px; border-left: 5px solid #e74c3c; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .match-title { font-size: 1.5em; color: white; font-weight: bold; margin-bottom: 10px; }
+        .vs { color: #e74c3c; margin: 0 10px; }
+        .details { color: #aaa; font-size: 0.9em; margin-top: 15px; border-top: 1px solid #444; padding-top: 15px; }
+        .badge-torneo { background: #f1c40f; color: #000; padding: 3px 8px; border-radius: 5px; font-size: 0.8em; font-weight: bold; float: right; }
+        .back-link { display: inline-block; margin-top: 30px; color: #86868b; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1 style="color: #e74c3c;">Calendario Partite</h1>
+    
+    <div th:each="partita : ${partite}" class="partita-card">
+        <span class="badge-torneo" th:text="${partita.torneo.nome}">Torneo</span>
+        
+        <div class="match-title">
+            <span th:text="${partita.squadraCasa.nome}">Casa</span>
+            <span class="vs">VS</span>
+            <span th:text="${partita.squadraOspite.nome}">Ospite</span>
+        </div>
+        
+        <h3 th:if="${partita.stato == 'GIOCATA'}" style="color: #2ecc71;">
+            Risultato: <span th:text="${partita.goalsHome}">0</span> - <span th:text="${partita.goalsAway}">0</span>
+        </h3>
+        <h3 th:if="${partita.stato == 'PROGRAMMATA'}" style="color: #e67e22;">
+            Stato: Da giocare
+        </h3>
+
+        <div class="details">
+            <p><strong>🕒 Data e Ora:</strong> <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span></p>
+            <p><strong>🏟️ Luogo:</strong> <span th:text="${partita.luogo}">Stadio</span></p>
+            <p><strong>⚽ Arbitro:</strong> <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Arbitro</span></p>
+        </div>
+    </div>
+
+    <div th:if="${partite.empty}">
+        <p>Nessuna partita programmata al momento.</p>
+    </div>
+
+    <a href="/" class="back-link">‹ Torna alla Home</a>
+</body>
+</html>

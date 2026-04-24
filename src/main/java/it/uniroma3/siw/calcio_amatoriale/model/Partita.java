@@ -60,6 +60,9 @@ public class Partita {
     public Squadra getSquadraOspite() { return squadraOspite; }
     public void setSquadraOspite(Squadra squadraOspite) { this.squadraOspite = squadraOspite; }
 
+    public Arbitro getArbitro() { return arbitro; }
+    public void setArbitro(Arbitro arbitro) { this.arbitro = arbitro; }
+    
     // Equals e HashCode (basati su Torneo, Squadre e Data)
     @Override
     public boolean equals(Object o) {
@@ -76,4 +79,5 @@ public class Partita {
     public int hashCode() {
         return Objects.hash(dataEOra, squadraCasa, squadraOspite, torneo);
     }
+
 }
