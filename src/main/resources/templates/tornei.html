@@ -34,10 +34,20 @@
     <h1>Tornei Disponibili</h1>
     <p>Ecco la lista dei tornei attualmente attivi.</p>
 
-    <div th:each="torneo : ${tornei}" class="torneo-card">
+   <div th:each="torneo : ${tornei}" class="torneo-card">
         <h2 th:text="${torneo.nome}">Nome Torneo</h2>
         <p><strong>Anno:</strong> <span th:text="${torneo.anno}">2026</span></p>
         <p><strong>Descrizione:</strong> <span th:text="${torneo.descrizione}">Descrizione</span></p>
+
+        <hr style="border-color: #555; margin-top: 15px;">
+        <p style="color: #2ecc71; font-weight: bold;">Squadre Iscritte:</p>
+        
+        <ul th:if="${!torneo.squadre.empty}" style="list-style-type: square; color: #ddd;">
+            <li th:each="squadra : ${torneo.squadre}" th:text="${squadra.nome} + ' (' + ${squadra.citta} + ')'">Squadra</li>
+        </ul>
+        <p th:if="${torneo.squadre.empty}" style="color: #888; font-style: italic; font-size: 0.9em;">
+            Ancora nessuna squadra iscritta.
+        </p>
     </div>
 
     <div th:if="${tornei.empty}">

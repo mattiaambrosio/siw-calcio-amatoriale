@@ -18,9 +18,13 @@ public class Squadra {
     @OneToMany(mappedBy = "squadra")
     private List<Giocatore> giocatori;
 
-    @ManyToMany
-    private List<Torneo> tornei;     // Relazione: una squadra partecipa a più tornei
-
+   @ManyToMany
+    @JoinTable(
+        name = "iscrizione_squadra_torneo", // Costringe il database a creare una tabella nuova e funzionante
+        joinColumns = @JoinColumn(name = "squadra_id"),
+        inverseJoinColumns = @JoinColumn(name = "torneo_id")
+    )
+    private java.util.List<Torneo> tornei = new java.util.ArrayList<>();
     // Costruttore vuoto richiesto da JPA
     public Squadra() {}
 

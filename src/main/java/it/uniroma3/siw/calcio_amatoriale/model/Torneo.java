@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
+
 import java.util.Objects;
 
 @Entity
@@ -15,7 +17,10 @@ public class Torneo {
 
     private String nome;        
     private Integer anno;       
-    private String descrizione; 
+    private String descrizione;
+
+    @ManyToMany(mappedBy = "tornei")
+    private java.util.List<Squadra> squadre;
 
     // Getter e Setter
     public Long getId() { return id; }
@@ -29,6 +34,9 @@ public class Torneo {
 
     public String getDescrizione() { return descrizione; }
     public void setDescrizione(String descrizione) { this.descrizione = descrizione; }
+
+    public java.util.List<Squadra> getSquadre() { return squadre; }
+    public void setSquadre(java.util.List<Squadra> squadre) { this.squadre = squadre; }
 
     // Equals e HashCode (fondamentali per JPA)
     @Override
