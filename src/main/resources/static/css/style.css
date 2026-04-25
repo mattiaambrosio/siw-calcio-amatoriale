@@ -1,0 +1,155 @@
+/* =========================================
+   TEMA CALCIO AMATORIALE - NIGHT MATCH
+========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+
+:root {
+    --green-pitch: #2ecc71;       /* Verde prato brillante */
+    --green-dark: #1e8449;        /* Verde scuro */
+    --bg-main: #0d1117;           /* Sfondo stile "notte" */
+    --bg-card: #161b22;           /* Sfondo schede/form */
+    --text-main: #f0f6fc;         /* Testo bianco/grigio */
+    --accent-red: #e74c3c;        /* Per errori e partite */
+    --accent-blue: #3498db;       /* Per squadre */
+    --accent-orange: #e67e22;     /* Per giocatori */
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-main);
+    background-image: radial-gradient(circle at top, #1a2a20 0%, #0d1117 40%);
+    color: var(--text-main);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+h1, h2, h3 {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+h1 {
+    font-weight: 800;
+    color: var(--text-main);
+    text-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* ===== SCHEDE (Card) ===== */
+.card {
+    background-color: var(--bg-card);
+    padding: 25px;
+    border-radius: 12px;
+    margin: 15px auto;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    border-top: 4px solid var(--green-pitch);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(46, 204, 113, 0.2);
+}
+
+.card h2 {
+    color: var(--green-pitch);
+    margin-top: 0;
+}
+
+/* ===== BOTTONI ===== */
+.btn {
+    display: inline-block;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--green-pitch);
+    color: #000;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+}
+
+.btn-primary:hover {
+    background-color: #27ae60;
+    transform: scale(1.05);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--green-pitch);
+    border: 2px solid var(--green-pitch);
+}
+
+.btn-outline:hover {
+    background-color: rgba(46, 204, 113, 0.1);
+    transform: scale(1.05);
+}
+
+/* ===== FORM ===== */
+.form-container {
+    background-color: var(--bg-card);
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    border: 1px solid #30363d;
+    width: 100%;
+    max-width: 400px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0 25px 0;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+    background-color: #0d1117;
+    color: var(--text-main);
+    font-family: 'Montserrat', sans-serif;
+    transition: border 0.3s ease;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--green-pitch);
+    box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+}
+
+/* ===== UTILITIES ===== */
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 30px;
+    color: #8b949e;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s;
+}
+
+.back-link:hover {
+    color: var(--green-pitch);
+}
+
+.badge {
+    background: #30363d;
+    color: var(--text-main);
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
