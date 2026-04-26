@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Classifica Torneo</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; background: var(--bg-card); border-radius: 10px; overflow: hidden; }
+        th, td { padding: 15px; text-align: center; border-bottom: 1px solid #30363d; }
+        th { background-color: var(--green-pitch); color: black; text-transform: uppercase; font-size: 0.8rem; }
+        tr:hover { background-color: rgba(46, 204, 113, 0.05); }
+        .pos { font-weight: 800; color: var(--green-pitch); }
+        .team-name { text-align: left; font-weight: 600; }
+        .pts { font-weight: 800; background: rgba(46, 204, 113, 0.2); border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 800px;">
+        <h1 th:text="'Classifica ' + ${torneo.nome}">Classifica</h1>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Pos</th>
+                    <th class="team-name">Squadra</th>
+                    <th>G</th>
+                    <th>V</th>
+                    <th>N</th>
+                    <th>P</th>
+                    <th class="pts">PT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="entry, iter : ${classifica}">
+                    <td class="pos" th:text="${iter.count}">1</td>
+                    <td class="team-name" th:text="${entry.squadra.nome}">Squadra</td>
+                    <td th:text="${entry.giocate}">0</td>
+                    <td th:text="${entry.vittorie}">0</td>
+                    <td th:text="${entry.pareggi}">0</td>
+                    <td th:text="${entry.sconfitte}">0</td>
+                    <td class="pts" th:text="${entry.punti}">0</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <a th:href="@{/tornei}" class="back-link">Torna ai Tornei</a>
+    </div>
+</body>
+</html>

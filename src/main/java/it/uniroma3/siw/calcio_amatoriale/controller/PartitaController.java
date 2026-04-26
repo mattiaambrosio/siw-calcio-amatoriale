@@ -5,7 +5,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Partita;
 import it.uniroma3.siw.calcio_amatoriale.service.PartitaService;
@@ -58,5 +60,37 @@ public class PartitaController {
     public String showPartite(Model model) {
         model.addAttribute("partite", partitaService.findAll());
         return "partite";
+    }
+
+    // 1. Lista delle partite ancora da giocare (per l'admin)
+    @GetMapping("/admin/partite/punteggio")
+    public String sceltaPartitaPunteggio(Model model) {
+        // Prendiamo tutte le partite, ma potremmo filtrarle in futuro
+        model.addAttribute("partite", partitaService.findAll());
+        return "admin/sceltaPartitaPunteggio";
+    }
+
+    // 2. Form per inserire i gol di una specifica partita
+    @GetMapping("/admin/partita/risultato/{id}")
+    public String formRisultato(@PathVariable("id") Long id, Model model) {
+        Partita partita = partitaService.findById(id);
+        model.addAttribute("partita", partita);
+        return "admin/formRisultato";
+    }
+
+    // 3. Salvataggio del risultato
+    @PostMapping("/admin/partita/risultato/{id}")
+    public String saveRisultato(@PathVariable("id") Long id, 
+                                @RequestParam("goalsHome") Integer goalsHome,
+                                @RequestParam("goalsAway") Integer goalsAway) {
+        Partita partita = partitaService.findById(id);
+        
+        // Aggiorniamo i dati
+        partita.setGoalsHome(goalsHome);
+        partita.setGoalsAway(goalsAway);
+        partita.setStato("GIOCATA"); // Cambiamo lo stato!
+        
+        partitaService.save(partita);
+        return "redirect:/partite"; // Torniamo a vedere il calendario aggiornato
     }
 }

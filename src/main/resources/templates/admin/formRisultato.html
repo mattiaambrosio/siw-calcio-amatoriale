@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Inserimento Gol</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<div class="form-container">
+    <h2 th:text="'Risultato: ' + ${partita.squadraCasa.nome} + ' - ' + ${partita.squadraOspite.nome}"></h2>
+    
+    <form th:action="@{'/admin/partita/risultato/' + ${partita.id}}" method="POST">
+        <label th:text="'Gol ' + ${partita.squadraCasa.nome}"></label>
+        <input type="number" name="goalsHome" min="0" value="0" required />
+
+        <label th:text="'Gol ' + ${partita.squadraOspite.nome}"></label>
+        <input type="number" name="goalsAway" min="0" value="0" required />
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%;">Conferma Finale</button>
+    </form>
+    <a href="/admin/partite/punteggio" class="back-link">Annulla</a>
+</div>
+</body>
+</html>

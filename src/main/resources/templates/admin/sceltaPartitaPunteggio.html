@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Aggiorna Risultati</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <h1>Seleziona Partita</h1>
+    <div class="card" th:each="p : ${partite}" th:if="${p.stato == 'PROGRAMMATA'}">
+        <h3 th:text="${p.squadraCasa.nome} + ' VS ' + ${p.squadraOspite.nome}">Match</h3>
+        <p th:text="${#temporals.format(p.dataEOra, 'dd/MM/yyyy HH:mm')}"></p>
+        <a th:href="@{'/admin/partita/risultato/' + ${p.id}}" class="btn btn-primary">Inserisci Risultato</a>
+    </div>
+    <div th:if="${partite.empty}">
+        <p>Nessuna partita da aggiornare.</p>
+    </div>
+    <a href="/" class="back-link">Torna alla Home</a>
+</body>
+</html>

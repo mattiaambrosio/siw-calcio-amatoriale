@@ -5,8 +5,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany; // Aggiunto questo
+import jakarta.persistence.CascadeType; // Aggiunto questo
 
 import java.util.Objects;
+import java.util.List;
 
 @Entity
 public class Torneo {
@@ -20,7 +23,12 @@ public class Torneo {
     private String descrizione;
 
     @ManyToMany(mappedBy = "tornei")
-    private java.util.List<Squadra> squadre;
+    private List<Squadra> squadre;
+
+    // --- NUOVA AGGIUNTA QUI ---
+    @OneToMany(mappedBy = "torneo", cascade = CascadeType.ALL)
+    private List<Partita> partite;
+    // --------------------------
 
     // Getter e Setter
     public Long getId() { return id; }
@@ -35,10 +43,14 @@ public class Torneo {
     public String getDescrizione() { return descrizione; }
     public void setDescrizione(String descrizione) { this.descrizione = descrizione; }
 
-    public java.util.List<Squadra> getSquadre() { return squadre; }
-    public void setSquadre(java.util.List<Squadra> squadre) { this.squadre = squadre; }
+    public List<Squadra> getSquadre() { return squadre; }
+    public void setSquadre(List<Squadra> squadre) { this.squadre = squadre; }
 
-    // Equals e HashCode (fondamentali per JPA)
+    // --- NUOVI GETTER E SETTER PER LE PARTITE ---
+    public List<Partita> getPartite() { return partite; }
+    public void setPartite(List<Partita> partite) { this.partite = partite; }
+    // --------------------------------------------
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -24,6 +24,10 @@
         <p th:if="${torneo.squadre.empty}" style="color: #888; font-style: italic; font-size: 0.9em;">
             Ancora nessuna squadra iscritta.
         </p>
+
+        <div style="margin-top: 20px; text-align: center;">
+            <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary" style="width: 100%;">Vedi Classifica</a>
+        </div>
     </div>
 
     <div th:if="${tornei.empty}">

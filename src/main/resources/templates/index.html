@@ -1,43 +1,61 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
+<html xmlns:th="http://www.thymeleaf.org" 
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"> <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calcio Amatoriale - Home</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
 
-<div class="container">
-    <h1>Calcio Amatoriale</h1>
-    <p th:if="${messaggioSuccesso}" th:text="${messaggioSuccesso}" style="color: #2ecc71; font-weight: bold; font-size: 1.2rem; margin-top:-30px;"></p>
-    <p>La gestione dei tuoi tornei, con lo stile che meriti.</p>
-    
-   <div class="button-group" style="margin-bottom: 15px;">
-        <a href="/admin/torneo/new" class="btn btn-primary">Crea Torneo</a>
-        <a href="/tornei" class="btn btn-outline">Esplora Tornei</a>
-        <a href="/admin/iscrizione" class="btn btn-primary" style="background-color: #f39c12; margin-top: 10px;">Iscrivi Squadra a Torneo</a>
-    </div>
+    <div class="container">
+        <h1>Calcio Amatoriale</h1>
+        
+        <p th:if="${messaggioSuccesso}" th:text="${messaggioSuccesso}"
+            style="color: #2ecc71; font-weight: bold; font-size: 1.2rem; margin-top:-30px;"></p>
+        
+        <p>La gestione dei tuoi tornei, con lo stile che meriti.</p>
 
-    <div class="button-group">
-        <a href="/admin/squadra/new" class="btn btn-primary" style="background-color: #0066cc;">Aggiungi Squadra</a>
-        <a href="/squadre" class="btn btn-outline" style="border-color: #0066cc; color: #0066cc;">Lista Squadre</a>
-    </div>
+        <div class="button-group" style="margin-bottom: 30px; border-bottom: 1px solid #30363d; padding-bottom: 20px;">
+            <a href="/tornei" class="btn btn-outline">Esplora Tornei</a>
+            <a href="/squadre" class="btn btn-outline" style="border-color: #0066cc; color: #0066cc;">Lista Squadre</a>
+            <a href="/giocatori" class="btn btn-outline" style="border-color: #e67e22; color: #e67e22;">Lista Giocatori</a>
+            <a href="/arbitri" class="btn btn-outline" style="border-color: #9b59b6; color: #9b59b6;">Lista Arbitri</a>
+            <a href="/partite" class="btn btn-outline" style="border-color: #e74c3c; color: #e74c3c;">Calendario Partite</a>
+            
+            <div sec:authorize="isAnonymous()" style="margin-top: 20px;">
+                <a href="/login" class="btn btn-primary">Area Admin (Accedi)</a>
+            </div>
+        </div>
 
-    <div class="button-group">
-        <a href="/admin/giocatore/new" class="btn btn-primary" style="background-color: #e67e22;">Aggiungi Giocatore</a>
-        <a href="/giocatori" class="btn btn-outline" style="border-color: #e67e22; color: #e67e22;">Lista Giocatori</a>
-    </div>
+        <div sec:authorize="isAuthenticated()" style="background: rgba(46, 204, 113, 0.05); padding: 20px; border-radius: 15px; border: 1px dashed var(--green-pitch);">
+            
+            <h2 style="color: var(--green-pitch); font-size: 1rem; margin-bottom: 20px; text-align: center;">PANNELLO DI CONTROLLO</h2>
 
-    <div class="button-group">
-        <a href="/admin/arbitro/new" class="btn btn-primary" style="background-color: #9b59b6;">Aggiungi Arbitro</a>
-        <a href="/arbitri" class="btn btn-outline" style="border-color: #9b59b6; color: #9b59b6;">Lista Arbitri</a>
-    </div>
+            <div class="button-group" style="margin-bottom: 15px;">
+                <a href="/admin/torneo/new" class="btn btn-primary">Crea Torneo</a>
+                <a href="/admin/iscrizione" class="btn btn-primary"
+                    style="background-color: #f39c12;">Iscrivi Squadra a Torneo</a>
+            </div>
 
-    <div class="button-group">
-        <a href="/admin/partita/new" class="btn btn-primary" style="background-color: #e74c3c;">Programma Partita</a>
-        <a href="/partite" class="btn btn-outline" style="border-color: #e74c3c; color: #e74c3c;">Calendario Partite</a>
-    </div>
+            <div class="button-group">
+                <a href="/admin/squadra/new" class="btn btn-primary" style="background-color: #0066cc;">Aggiungi Squadra</a>
+                <a href="/admin/giocatore/new" class="btn btn-primary" style="background-color: #e67e22;">Aggiungi Giocatore</a>
+                <a href="/admin/arbitro/new" class="btn btn-primary" style="background-color: #9b59b6;">Aggiungi Arbitro</a>
+            </div>
 
-</body>
+            <div class="button-group" style="margin-top: 20px;">
+                <h3 style="color: #e74c3c; font-size: 0.9rem; text-transform: uppercase;">Gestione Match</h3>
+                <a href="/admin/partita/new" class="btn btn-primary" style="background-color: #e74c3c;">Programma Partita</a>
+                <a href="/admin/partite/punteggio" class="btn btn-primary"
+                    style="background-color: #2ecc71; margin-top: 10px;">Aggiorna Risultati</a>
+            </div>
+
+            <form th:action="@{/logout}" method="post" style="margin-top: 30px; text-align: center;">
+                <button type="submit" class="btn btn-outline" style="border-color: #8b949e; color: #8b949e; font-size: 0.8rem;">Esci (Logout)</button>
+            </form>
+        </div>
+
+    </div> </body>
 </html>
