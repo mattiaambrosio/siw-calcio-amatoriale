@@ -24,9 +24,12 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/", "/index", "/css/**", "/tornei", "/torneo/**", "/squadra/**", "/partita/**", "/register", "/login")
+                        .requestMatchers(HttpMethod.GET, "/", "/index", "/css/**", "/js/**", "/tornei", "/torneo/**", "/squadra/**", "/partita/**", "/api/partita/*/commenti", "/api/me", "/register", "/login")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/register", "/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/**").authenticated()
+                        .requestMatchers(HttpMethod.PUT, "/api/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
                         .anyRequest().authenticated())
                 // ACCESSO TRADIZIONALE (Email/Password)

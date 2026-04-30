@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dettaglio Partita - Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <!-- CSRF tokens per le richieste AJAX di React -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
     <style>
         .container { padding: 2rem; }
         .breadcrumb { font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 1.5rem; }
@@ -225,58 +228,21 @@
     </div>
 
     <!-- ──────────────────────────────────────── -->
-    <!--  SEZIONE COMMENTI                        -->
+    <!--  SEZIONE COMMENTI — gestita da React      -->
     <!-- ──────────────────────────────────────── -->
-    <div class="comments-section">
-        <div class="section-title">
-            💬 Commenti (<span th:text="${#lists.size(commenti)}">0</span>)
-        </div>
 
-        <!-- Form per aggiungere commento (solo utenti loggati) -->
-        <div sec:authorize="isAuthenticated()" class="comment-form">
-            <form th:action="@{'/partita/' + ${partita.id} + '/commento'}" method="post">
-                <label for="testo" style="color: var(--gray-light); margin-bottom: 0.5rem; display:block;">
-                    Scrivi un commento sulla partita:
-                </label>
-                <textarea id="testo" name="testo" placeholder="Condividi il tuo pensiero sulla partita..." required maxlength="1000"></textarea>
-                <button type="submit" class="btn btn-primary">💬 Pubblica Commento</button>
-            </form>
-        </div>
-
-        <!-- Invito al login per i non autenticati -->
-        <div sec:authorize="!isAuthenticated()" class="login-prompt">
-            <a href="/login">Accedi</a> o <a href="/register">registrati</a> per lasciare un commento.
-        </div>
-
-        <!-- Lista commenti -->
-        <div th:if="${!commenti.empty}">
-            <div th:each="commento : ${commenti}" class="comment-card">
-                <div class="comment-header">
-                    <span class="comment-author"
-                          th:text="${commento.autore.user.nome} + ' ' + ${commento.autore.user.cognome}">Utente</span>
-                    <span class="comment-date"
-                          th:text="${#temporals.format(commento.dataCreazione, 'dd/MM/yyyy HH:mm')}">Data</span>
-                </div>
-                <div class="comment-text" th:text="${commento.testo}">Testo commento</div>
-
-                <!-- Pulsanti modifica/elimina solo per il proprietario -->
-                <div sec:authorize="isAuthenticated()" class="comment-actions"
-                     th:if="${emailLoggato == commento.autore.email}">
-                    <a th:href="@{'/commento/' + ${commento.id} + '/edit'}"
-                       class="btn btn-outline btn-sm">✏️ Modifica</a>
-                    <form th:action="@{'/commento/' + ${commento.id} + '/delete'}" method="post" style="display:inline;"
-                          onsubmit="return confirm('Eliminare il commento?')">
-                        <button type="submit" class="btn btn-danger btn-sm">🗑️ Elimina</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div th:if="${commenti.empty}" class="no-comments">
-            Ancora nessun commento. Sii il primo! 👋
-        </div>
-    </div>
+    <!-- Mount point: React monterà qui la sezione commenti -->
+    <div id="react-commenti-root" th:attr="data-partita-id=${partita.id}"></div>
 
 </div>
+
+<!-- CDN React 18 + Babel Standalone (per JSX senza build) -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<!-- Componente commenti React -->
+<script type="text/babel" th:src="@{/js/commenti.js}"></script>
+
 </body>
 </html>

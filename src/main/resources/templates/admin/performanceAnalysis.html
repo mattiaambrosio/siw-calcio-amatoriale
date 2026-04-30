@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analisi Prestazioni JPA - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .container { padding: 2rem; max-width: 1100px; margin: 0 auto; }
+
+        .page-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .page-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .page-header p { color: var(--gray-medium); max-width: 700px; line-height: 1.7; }
+
+        /* Sezione introduttiva */
+        .intro-box {
+            background: rgba(10,132,255,0.06);
+            border: 1px solid rgba(10,132,255,0.2);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .intro-box h2 { font-size: 1rem; color: var(--accent-blue); margin-bottom: 0.8rem; }
+        .intro-box p { color: var(--gray-medium); font-size: 0.9rem; line-height: 1.7; margin-bottom: 0.5rem; }
+        .intro-box ul { padding-left: 1.5rem; color: var(--gray-medium); font-size: 0.9rem; }
+        .intro-box li { margin-bottom: 0.4rem; line-height: 1.6; }
+
+        /* Barra di confronto visivo */
+        .comparison-bar-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .comparison-bar-container h2 { font-size: 1rem; color: var(--gray-medium); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1.5rem; }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .bar-label { width: 220px; font-size: 0.85rem; color: var(--gray-light); flex-shrink: 0; }
+        .bar-track { flex: 1; background: rgba(255,255,255,0.05); border-radius: 20px; height: 28px; overflow: hidden; }
+        .bar-fill {
+            height: 100%;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            padding-left: 0.7rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+            transition: width 1s ease;
+            min-width: 50px;
+        }
+        .bar-lazy { background: linear-gradient(90deg, rgba(255,69,58,0.7), rgba(255,69,58,0.4)); color: #fff; }
+        .bar-join { background: linear-gradient(90deg, rgba(50,215,75,0.8), rgba(50,215,75,0.5)); color: #000; }
+        .bar-entity { background: linear-gradient(90deg, rgba(10,132,255,0.8), rgba(10,132,255,0.5)); color: #fff; }
+
+        /* Card strategia */
+        .strategy-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .strategy-card.best {
+            border-color: rgba(50,215,75,0.4);
+            box-shadow: 0 0 20px rgba(50,215,75,0.1);
+        }
+        .best-badge {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            background: var(--pitch-green-light);
+            color: #000;
+            padding: 0.2rem 0.7rem;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+        .strategy-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .strategy-number {
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.1rem; flex-shrink: 0;
+        }
+        .num-1 { background: rgba(255,69,58,0.2); color: #FF453A; }
+        .num-2 { background: rgba(50,215,75,0.2); color: var(--pitch-green-light); }
+        .num-3 { background: rgba(10,132,255,0.2); color: var(--accent-blue); }
+
+        .strategy-name { font-size: 1.2rem; font-weight: 700; color: var(--white-main); }
+        .strategy-subtitle { font-size: 0.82rem; color: var(--gray-medium); margin-top: 0.2rem; }
+
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .metric-box {
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            text-align: center;
+        }
+        .metric-value { font-size: 1.6rem; font-weight: 700; color: var(--white-main); }
+        .metric-label { font-size: 0.75rem; color: var(--gray-medium); margin-top: 0.2rem; }
+
+        .description-text {
+            color: var(--gray-medium);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin: 1rem 0;
+        }
+
+        /* Query code block */
+        .query-block {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            margin-top: 1rem;
+        }
+        .query-block-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        .query-block pre {
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            color: #32D74B;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin: 0;
+        }
+
+        /* Sezione conclusioni */
+        .conclusions-box {
+            background: rgba(50,215,75,0.05);
+            border: 1px solid rgba(50,215,75,0.2);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        .conclusions-box h2 { color: var(--pitch-green-light); margin-bottom: 1rem; font-size: 1.1rem; }
+        .conclusions-box p { color: var(--gray-medium); font-size: 0.9rem; line-height: 1.7; margin-bottom: 0.8rem; }
+        .conclusions-box strong { color: var(--gray-light); }
+
+        .n1-explainer {
+            background: rgba(255,69,58,0.06);
+            border: 1px solid rgba(255,69,58,0.2);
+            border-radius: 12px;
+            padding: 1.2rem 1.5rem;
+            margin: 1rem 0;
+        }
+        .n1-explainer h3 { color: #FF453A; font-size: 0.95rem; margin-bottom: 0.5rem; }
+        .n1-explainer p { color: var(--gray-medium); font-size: 0.88rem; line-height: 1.6; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Header -->
+    <div class="page-header">
+        <div class="breadcrumb" style="font-size:0.85rem; color:var(--gray-medium); margin-bottom:1rem;">
+            <a href="/dashboard" style="color:var(--accent-blue);">← Dashboard</a>
+        </div>
+        <h1>📊 Analisi Sperimentale JPA/Hibernate</h1>
+        <p>
+            Confronto delle strategie di accesso ai dati per il caso d'uso:
+            <strong style="color:var(--white-main);">"Caricamento di tutti i Tornei con le Squadre iscritte"</strong>.
+            Sezione §8.2 della specifica di progetto.
+        </p>
+    </div>
+
+    <!-- Introduzione al caso d'uso -->
+    <div class="intro-box">
+        <h2>🎯 Caso d'Uso Analizzato</h2>
+        <p>
+            La relazione tra <strong>Torneo</strong> e <strong>Squadra</strong> è <code>@ManyToMany</code>, con
+            una tabella di join <code>iscrizione_squadra_torneo</code>. Il caso d'uso richiede di caricare
+            tutti i tornei con la rispettiva lista di squadre iscritte — operazione comune nella homepage e nella classifica.
+        </p>
+        <ul>
+            <li><strong>Strategia 1 — LAZY:</strong> comportamento default JPA, genera il problema N+1</li>
+            <li><strong>Strategia 2 — JOIN FETCH:</strong> query JPQL con <code>LEFT JOIN FETCH</code>, 1 sola query</li>
+            <li><strong>Strategia 3 — EntityGraph:</strong> annotazione <code>@EntityGraph</code> sul repository, 1 sola query</li>
+        </ul>
+    </div>
+
+    <!-- Grafico a barre comparativo -->
+    <div class="comparison-bar-container">
+        <h2>⏱️ Confronto Tempi di Esecuzione</h2>
+        <div th:each="r,i : ${risultati}" class="bar-row">
+            <div class="bar-label" th:text="${r.nomeStrategia}">Strategia</div>
+            <div class="bar-track">
+                <div class="bar-fill"
+                     th:classappend="${i.index == 0 ? 'bar-lazy' : (i.index == 1 ? 'bar-join' : 'bar-entity')}"
+                     th:style="'width: ' + (${r.tempoMs} > 0 ? ${r.tempoMs * 100 / (risultati[0].tempoMs > 0 ? risultati[0].tempoMs : 1)} : 30) + '%; min-width:50px;'"
+                     th:text="${r.tempoMs} + ' ms'">
+                    0 ms
+                </div>
+            </div>
+        </div>
+        <p style="font-size:0.78rem; color:var(--gray-medium); margin-top:0.5rem;">
+            * Il primo run può essere più lento a causa del warming-up di Hibernate e della JVM.
+        </p>
+    </div>
+
+    <!-- Card per ogni strategia -->
+    <div th:each="r,i : ${risultati}">
+        <div class="strategy-card" th:classappend="${r.tempoMs == minTempo ? 'best' : ''}">
+            <span th:if="${r.tempoMs == minTempo}" class="best-badge">⚡ Più veloce</span>
+
+            <div class="strategy-header">
+                <div class="strategy-number"
+                     th:classappend="${i.index == 0 ? 'num-1' : (i.index == 1 ? 'num-2' : 'num-3')}"
+                     th:text="${i.index + 1}">1</div>
+                <div>
+                    <div class="strategy-name" th:text="${r.nomeStrategia}">Nome strategia</div>
+                    <div class="strategy-subtitle">
+                        Tornei caricati: <span th:text="${r.numTornei}">0</span> |
+                        Squadre totali: <span th:text="${r.numTotaleSquadre}">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Metriche -->
+            <div class="metrics-row">
+                <div class="metric-box">
+                    <div class="metric-value" th:text="${r.tempoMs} + ' ms'">0 ms</div>
+                    <div class="metric-label">Tempo Esecuzione</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-value"
+                         th:text="${i.index == 0 ? (r.numTornei + 1) + ' query' : '1 query'}">N query</div>
+                    <div class="metric-label">Query SQL Eseguite</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-value"
+                         th:text="${i.index == 0 ? 'N+1 ⚠️' : 'Ottimale ✓'}">Efficienza</div>
+                    <div class="metric-label">Valutazione</div>
+                </div>
+            </div>
+
+            <!-- Spiegazione -->
+            <p class="description-text" th:text="${r.descrizione}">Descrizione</p>
+
+            <!-- N+1 explainer solo per LAZY -->
+            <div th:if="${i.index == 0}" class="n1-explainer">
+                <h3>⚠️ Problema N+1 Query</h3>
+                <p>
+                    Con <strong th:text="${r.numTornei}">N</strong> tornei nel database, Hibernate esegue:
+                    <strong>1 query</strong> per caricare i tornei +
+                    <strong th:text="${r.numTornei}">N</strong> query (una per ogni torneo) per caricare le squadre =
+                    <strong th:text="${r.numTornei + 1}">N+1</strong> query totali.
+                    Con molti tornei, questo degrada sensibilmente le prestazioni.
+                </p>
+            </div>
+
+            <!-- SQL rappresentativo -->
+            <div class="query-block">
+                <div class="query-block-label">SQL Generato da Hibernate</div>
+                <pre th:text="${r.queryGenerata}">SELECT ...</pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conclusioni -->
+    <div class="conclusions-box">
+        <h2>📝 Conclusioni e Scelta Implementativa</h2>
+        <p>
+            L'analisi dimostra che la strategia <strong>LAZY (default)</strong> genera il problema N+1:
+            ad ogni accesso alla collection <code>squadre</code> di un torneo, Hibernate esegue una query SQL separata.
+            Con pochi dati il divario è limitato, ma scala linearmente con il numero di tornei.
+        </p>
+        <p>
+            Le strategie <strong>JOIN FETCH</strong> e <strong>EntityGraph</strong> producono risultati equivalenti
+            (entrambe generano una sola query SQL), con la differenza che:
+        </p>
+        <p>
+            • <strong>JOIN FETCH</strong> è più esplicita e controllabile (la query è visibile nel repository).<br>
+            • <strong>EntityGraph</strong> è più dichiarativa e disaccoppiata dalla query stessa.
+        </p>
+        <p>
+            <strong>Scelta adottata nel progetto:</strong> per il caricamento della lista tornei in homepage
+            (<code>/tornei</code>) è stata adottata la strategia <strong>EntityGraph</strong> tramite
+            <code>@EntityGraph(attributePaths = {"squadre"})</code> nel <code>TorneoRepository</code>,
+            che garantisce efficienza mantenendo il codice dichiarativo e leggibile.
+        </p>
+    </div>
+
+</div>
+</body>
+</html>
