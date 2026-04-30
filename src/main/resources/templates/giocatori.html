@@ -2,28 +2,142 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Lista Giocatori</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giocatori Registrati - Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .container {
+            padding: 2rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            margin-bottom: 0.5rem;
+        }
+        .players-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .player-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-top: 3px solid var(--pitch-green-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        .player-card:hover {
+            border-top-color: var(--pitch-green-bright);
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
+            transform: translateY(-4px);
+        }
+        .player-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--white-main);
+            margin: 0 0 1rem 0;
+        }
+        .info-group {
+            margin-bottom: 1rem;
+        }
+        .info-label {
+            font-size: 0.85rem;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.3rem;
+        }
+        .info-value {
+            font-size: 1rem;
+            color: var(--white-main);
+            font-weight: 500;
+        }
+        .role-badge {
+            display: inline-block;
+            background: var(--accent-blue);
+            color: var(--white-main);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .team-badge {
+            display: inline-block;
+            background: var(--pitch-green-light);
+            color: var(--bg-main);
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-medium);
+        }
+        .empty-state h2 {
+            color: var(--gray-dark);
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 768px) {
+            .players-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Giocatori Registrati</h1>
-    
-    <div th:each="giocatore : ${giocatori}" class="card">
-        <h2>
-            <span th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</span>
-        </h2>
-        <p><strong>Ruolo:</strong> <span th:text="${giocatore.ruolo}">Ruolo</span></p>
-        <p><strong>Data di nascita:</strong> <span th:text="${giocatore.dataDiNascita}">01/01/2000</span></p>
-        <p><strong>Altezza:</strong> <span th:text="${giocatore.altezza}">180</span> cm</p>
-        <p><strong>Squadra:</strong> 
-            <span th:if="${giocatore.squadra != null}" class="badge-squadra" th:text="${giocatore.squadra.nome}">Squadra</span>
-        </p>
+    <div class="container">
+        <div class="header">
+            <h1>⚽ Giocatori Registrati</h1>
+            <p style="color: var(--gray-medium); margin: 0;">Tutti i giocatori della piattaforma</p>
+        </div>
+        
+        <div class="players-grid">
+            <div th:each="giocatore : ${giocatori}" class="player-card">
+                <h2 class="player-name" th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</h2>
+                
+                <div class="info-group">
+                    <div class="info-label">Ruolo</div>
+                    <div>
+                        <span class="role-badge" th:text="${giocatore.ruolo}">Ruolo</span>
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Data di Nascita</div>
+                    <div class="info-value" th:text="${giocatore.dataDiNascita}">01/01/2000</div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Altezza</div>
+                    <div class="info-value">
+                        <span th:text="${giocatore.altezza}">180</span> cm
+                    </div>
+                </div>
+
+                <div class="info-group">
+                    <div class="info-label">Squadra</div>
+                    <div>
+                        <span th:if="${giocatore.squadra != null}" class="team-badge" th:text="${giocatore.squadra.nome}">Squadra</span>
+                        <span th:if="${giocatore.squadra == null}" style="color: var(--gray-medium); font-style: italic;">Senza squadra</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${giocatori.empty}" class="empty-state">
+            <h2>📭 Nessun giocatore disponibile</h2>
+            <p>Non ci sono giocatori registrati al momento.</p>
+        </div>
     </div>
 
-    <div th:if="${giocatori.empty}">
-        <p>Nessun giocatore registrato.</p>
-    </div>
-
-    <a href="/" class="back-link">‹ Torna alla Home</a>
+    <a href="/" class="back-link" style="display: block; margin: 2rem; text-align: center;">← Torna alla Home</a>
 </body>
 </html>

@@ -20,19 +20,19 @@ public class DataInitializer {
     public CommandLineRunner initData(CredentialsRepository credentialsRepository) {
         return args -> {
             // Se non esiste ancora un utente admin, lo creiamo noi all'avvio
-            if (credentialsRepository.findByUsername("admin").isEmpty()) {
+            if (credentialsRepository.findByEmail("admin@email.it").isEmpty()) {
                 User user = new User();
                 user.setNome("Mattia");
                 user.setCognome("Admin");
 
                 Credentials admin = new Credentials();
-                admin.setUsername("admin");
+                admin.setEmail("admin@email.it");
                 admin.setPassword(passwordEncoder.encode("admin123")); // La tua password sarà: admin123
                 admin.setRole("ADMIN");
                 admin.setUser(user);
 
                 credentialsRepository.save(admin);
-                System.out.println(">>> UTENTE ADMIN CREATO: username: admin, password: admin123");
+                System.out.println(">>> UTENTE ADMIN CREATO: email: admin@email.it, password: admin123");
             }
         };
     }

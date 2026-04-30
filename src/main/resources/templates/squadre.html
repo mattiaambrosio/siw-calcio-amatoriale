@@ -2,36 +2,168 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Squadre Iscritte</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Squadre Iscritte - Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .container {
+            padding: 2rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            margin-bottom: 0.5rem;
+        }
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .team-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-top: 3px solid var(--pitch-green-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        .team-card:hover {
+            border-top-color: var(--pitch-green-bright);
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
+            transform: translateY(-4px);
+        }
+        .team-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white-main);
+            margin: 0 0 1rem 0;
+        }
+        .team-info {
+            margin-bottom: 1.5rem;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .info-row:last-child {
+            border-bottom: none;
+        }
+        .info-label {
+            font-weight: 600;
+            color: var(--white-main);
+        }
+        .info-value {
+            color: var(--gray-dark);
+        }
+        .roster-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border-color);
+        }
+        .roster-title {
+            color: var(--pitch-green-light);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .player-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            color: var(--gray-dark);
+            border-bottom: 1px solid rgba(46, 204, 113, 0.1);
+        }
+        .player-item:last-child {
+            border-bottom: none;
+        }
+        .player-name {
+            font-weight: 500;
+            color: var(--white-main);
+        }
+        .player-role {
+            color: var(--gray-medium);
+            font-size: 0.85rem;
+        }
+        .empty-roster {
+            color: var(--gray-medium);
+            font-style: italic;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-medium);
+        }
+        .empty-state h2 {
+            color: var(--gray-dark);
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 768px) {
+            .teams-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Squadre Attualmente Iscritte</h1>
-    
-    <div th:each="squadra : ${squadre}" class="card">
-        <h2 th:text="${squadra.nome}">Nome Squadra</h2>
-        <p><strong>Città:</strong> <span th:text="${squadra.citta}">Città</span></p>
-        <p><strong>Anno Fondazione:</strong> <span th:text="${squadra.annoDiFondazione}">1900</span></p>
+    <div class="container">
+        <div class="header">
+            <h1>🏆 Squadre Attualmente Iscritte</h1>
+            <p style="color: var(--gray-medium); margin: 0;">Tutte le squadre partecipanti</p>
+        </div>
         
-        <hr style="border-color: #555; margin-top: 15px;">
-        <p style="color: #0066cc; font-weight: bold;">Rosa Giocatori:</p>
-        
-        <ul th:if="${!squadra.giocatori.empty}" style="list-style-type: square; color: #ddd;">
-            <li th:each="giocatore : ${squadra.giocatori}">
-                <span th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</span> 
-                <span style="color: #888; font-size: 0.9em;" th:text="' - ' + ${giocatore.ruolo}"> - Ruolo</span>
-            </li>
-        </ul>
-        
-        <p th:if="${squadra.giocatori.empty}" style="color: #888; font-style: italic; font-size: 0.9em;">
-            Nessun giocatore attualmente in rosa.
-        </p>
+        <div class="teams-grid">
+            <div th:each="squadra : ${squadre}" class="team-card">
+                <h2 class="team-name" th:text="${squadra.nome}">Nome Squadra</h2>
+                
+                <div class="team-info">
+                    <div class="info-row">
+                        <span class="info-label">Città</span>
+                        <span class="info-value" th:text="${squadra.citta}">Città</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Fondazione</span>
+                        <span class="info-value" th:text="${squadra.annoDiFondazione}">1900</span>
+                    </div>
+                </div>
+
+                <div class="roster-section">
+                    <div class="roster-title">⚽ Rosa Giocatori</div>
+                    
+                    <ul th:if="${!squadra.giocatori.empty}" class="player-list">
+                        <li th:each="giocatore : ${squadra.giocatori}" class="player-item">
+                            <span class="player-name" th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</span>
+                            <span class="player-role" th:text="${giocatore.ruolo}">Ruolo</span>
+                        </li>
+                    </ul>
+                    
+                    <div th:if="${squadra.giocatori.empty}" class="empty-roster">
+                        Nessun giocatore in rosa
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${squadre.empty}" class="empty-state">
+            <h2>📭 Nessuna squadra disponibile</h2>
+            <p>Non ci sono squadre iscritte al momento.</p>
+        </div>
     </div>
 
-    <div th:if="${squadre.empty}">
-        <p>Non c'è ancora nessuna squadra registrata.</p>
-    </div>
-
-    <a href="/" class="back-link">‹ Torna alla Home</a>
+    <a href="/" class="back-link" style="display: block; margin: 2rem; text-align: center;">← Torna alla Home</a>
 </body>
 </html>

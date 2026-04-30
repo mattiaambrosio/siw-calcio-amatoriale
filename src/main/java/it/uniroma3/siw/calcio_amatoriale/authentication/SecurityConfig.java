@@ -23,28 +23,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorize -> authorize
-                // 1. Chiunque può accedere alla Home, CSS e alle liste pubbliche
-                .requestMatchers(HttpMethod.GET, "/", "/index", "/css/**", "/tornei", "/squadre", "/giocatori", "/arbitri", "/partite", "/register", "/login").permitAll()
-                .requestMatchers(HttpMethod.POST, "/register", "/login").permitAll()
-                // 2. Solo gli ADMIN possono accedere a tutto ciò che è sotto /admin/
-                .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                // 3. Tutto il resto richiede l'autenticazione
-                .anyRequest().authenticated()
-            )
-            // Configurazione Login
-            .formLogin(form -> form
-                .loginPage("/login")
-                .defaultSuccessUrl("/", true)
-            )
-            // Configurazione Logout
-            .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/")
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
-                .clearAuthentication(true).permitAll()
-            );
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "/", "/index", "/css/**", "/tornei", "/register", "/login")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/register", "/login").permitAll()
+                        .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                        .anyRequest().authenticated())
+                // ACCESSO TRADIZIONALE (Email/Password)
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .usernameParameter("email")
+                        .defaultSuccessUrl("/tornei", true))
+                // NUOVO: ACCESSO TRAMITE GOOGLE
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/tornei", true))
+                // LOGOUT
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .clearAuthentication(true).permitAll());
 
         return http.build();
     }
@@ -57,8 +57,9 @@ public class SecurityConfig {
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
-            .dataSource(dataSource)
-            .authoritiesByUsernameQuery("SELECT username, role FROM credentials WHERE username=?")
-            .usersByUsernameQuery("SELECT username, password, 1 as enabled FROM credentials WHERE username=?");
+                .dataSource(dataSource)
+                .authoritiesByUsernameQuery("SELECT email as username, role FROM credentials WHERE email=?")
+                .usersByUsernameQuery(
+                        "SELECT email as username, password, 1 as enabled FROM credentials WHERE email=?");
     }
 }

@@ -1,61 +1,91 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" 
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"> <head>
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcio Amatoriale - Home</title>
+    <title>Calcio Amatoriale - Gestione Tornei</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+        .hero-card {
+            max-width: 650px;
+            width: 100%;
+            text-align: center;
+            padding: 4rem 3rem;
+            position: relative;
+            z-index: 10;
+        }
+        .hero-card h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            animation: fadeUp 0.8s ease-out;
+        }
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--gray-medium);
+            margin-bottom: 3rem;
+            line-height: 1.6;
+            animation: fadeUp 0.8s ease-out 0.2s both;
+        }
+        .home-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            animation: fadeUp 0.8s ease-out 0.4s both;
+        }
+        .home-buttons .btn {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+        }
+        @media (min-width: 600px) {
+            .home-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+            .home-buttons .btn {
+                width: auto;
+                min-width: 180px;
+            }
+        }
+        .auth-status {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            animation: fadeUp 0.8s ease-out 0.6s both;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Sfondo Animato Ambientale -->
+    <div class="ambient-background"></div>
 
-    <div class="container">
-        <h1>Calcio Amatoriale</h1>
+    <div class="glass-panel hero-card">
+        <h1 class="text-gradient">⚽ Calcio Amatoriale</h1>
+        <p class="subtitle">La piattaforma definitiva per gestire i tuoi tornei, le squadre e le partite con un'esperienza premium.</p>
         
-        <p th:if="${messaggioSuccesso}" th:text="${messaggioSuccesso}"
-            style="color: #2ecc71; font-weight: bold; font-size: 1.2rem; margin-top:-30px;"></p>
-        
-        <p>La gestione dei tuoi tornei, con lo stile che meriti.</p>
-
-        <div class="button-group" style="margin-bottom: 30px; border-bottom: 1px solid #30363d; padding-bottom: 20px;">
-            <a href="/tornei" class="btn btn-outline">Esplora Tornei</a>
-            <a href="/squadre" class="btn btn-outline" style="border-color: #0066cc; color: #0066cc;">Lista Squadre</a>
-            <a href="/giocatori" class="btn btn-outline" style="border-color: #e67e22; color: #e67e22;">Lista Giocatori</a>
-            <a href="/arbitri" class="btn btn-outline" style="border-color: #9b59b6; color: #9b59b6;">Lista Arbitri</a>
-            <a href="/partite" class="btn btn-outline" style="border-color: #e74c3c; color: #e74c3c;">Calendario Partite</a>
-            
-            <div sec:authorize="isAnonymous()" style="margin-top: 20px;">
-                <a href="/login" class="btn btn-primary">Area Admin (Accedi)</a>
+        <div class="home-buttons">
+            <a href="/tornei" class="btn btn-primary">🏆 Esplora Tornei</a>
+            <div sec:authorize="!isAuthenticated()">
+                <a href="/login" class="btn btn-secondary">Accedi</a>
+                <a href="/register" class="btn btn-outline">Registrati</a>
             </div>
         </div>
 
-        <div sec:authorize="isAuthenticated()" style="background: rgba(46, 204, 113, 0.05); padding: 20px; border-radius: 15px; border: 1px dashed var(--green-pitch);">
-            
-            <h2 style="color: var(--green-pitch); font-size: 1rem; margin-bottom: 20px; text-align: center;">PANNELLO DI CONTROLLO</h2>
-
-            <div class="button-group" style="margin-bottom: 15px;">
-                <a href="/admin/torneo/new" class="btn btn-primary">Crea Torneo</a>
-                <a href="/admin/iscrizione" class="btn btn-primary"
-                    style="background-color: #f39c12;">Iscrivi Squadra a Torneo</a>
-            </div>
-
-            <div class="button-group">
-                <a href="/admin/squadra/new" class="btn btn-primary" style="background-color: #0066cc;">Aggiungi Squadra</a>
-                <a href="/admin/giocatore/new" class="btn btn-primary" style="background-color: #e67e22;">Aggiungi Giocatore</a>
-                <a href="/admin/arbitro/new" class="btn btn-primary" style="background-color: #9b59b6;">Aggiungi Arbitro</a>
-            </div>
-
-            <div class="button-group" style="margin-top: 20px;">
-                <h3 style="color: #e74c3c; font-size: 0.9rem; text-transform: uppercase;">Gestione Match</h3>
-                <a href="/admin/partita/new" class="btn btn-primary" style="background-color: #e74c3c;">Programma Partita</a>
-                <a href="/admin/partite/punteggio" class="btn btn-primary"
-                    style="background-color: #2ecc71; margin-top: 10px;">Aggiorna Risultati</a>
-            </div>
-
-            <form th:action="@{/logout}" method="post" style="margin-top: 30px; text-align: center;">
-                <button type="submit" class="btn btn-outline" style="border-color: #8b949e; color: #8b949e; font-size: 0.8rem;">Esci (Logout)</button>
-            </form>
+        <div sec:authorize="isAuthenticated()" class="auth-status">
+            <p>Sei già connesso alla piattaforma.</p>
+            <a href="/dashboard" class="btn btn-outline" style="margin-top: 1rem;">Accedi al tuo pannello →</a>
         </div>
-
-    </div> </body>
+    </div>
+</body>
 </html>

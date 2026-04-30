@@ -2,39 +2,157 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Tornei Disponibili</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tornei Disponibili - Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .container {
+            padding: 2rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            margin-bottom: 0.5rem;
+        }
+        .tournaments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .tournament-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-top: 3px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .tournament-card:hover {
+            border-top-color: var(--pitch-green-light);
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
+            transform: translateY(-4px);
+        }
+        .tournament-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white-main);
+            margin: 0 0 1rem 0;
+        }
+        .tournament-year {
+            display: inline-block;
+            background: var(--accent-blue);
+            color: var(--white-main);
+            padding: 0.3rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .tournament-description {
+            color: var(--gray-dark);
+            margin: 0 0 1.5rem 0;
+            line-height: 1.6;
+            flex-grow: 1;
+        }
+        .teams-section {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .teams-title {
+            color: var(--pitch-green-light);
+            font-weight: 600;
+            margin: 0 0 0.75rem 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .teams-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .team-item {
+            padding: 0.4rem 0;
+            color: var(--gray-dark);
+            font-size: 0.9rem;
+        }
+        .team-item::before {
+            content: "⚽ ";
+            color: var(--pitch-green-light);
+            margin-right: 0.5rem;
+        }
+        .empty-teams {
+            color: var(--gray-medium);
+            font-style: italic;
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 0.5rem 0;
+        }
+        .view-button {
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-medium);
+        }
+        .empty-state h2 {
+            color: var(--gray-dark);
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 768px) {
+            .tournaments-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-
-    <h1>Tornei Disponibili</h1>
-    <p>Ecco la lista dei tornei attualmente attivi.</p>
-
-   <div th:each="torneo : ${tornei}" class="card">
-        <h2 th:text="${torneo.nome}">Nome Torneo</h2>
-        <p><strong>Anno:</strong> <span th:text="${torneo.anno}">2026</span></p>
-        <p><strong>Descrizione:</strong> <span th:text="${torneo.descrizione}">Descrizione</span></p>
-
-        <hr style="border-color: #555; margin-top: 15px;">
-        <p style="color: #2ecc71; font-weight: bold;">Squadre Iscritte:</p>
-        
-        <ul th:if="${!torneo.squadre.empty}" style="list-style-type: square; color: #ddd;">
-            <li th:each="squadra : ${torneo.squadre}" th:text="${squadra.nome} + ' (' + ${squadra.citta} + ')'">Squadra</li>
-        </ul>
-        <p th:if="${torneo.squadre.empty}" style="color: #888; font-style: italic; font-size: 0.9em;">
-            Ancora nessuna squadra iscritta.
-        </p>
-
-        <div style="margin-top: 20px; text-align: center;">
-            <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary" style="width: 100%;">Vedi Classifica</a>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Tornei Disponibili</h1>
+            <p style="color: var(--gray-medium); margin: 0;">Ecco la lista dei tornei attualmente attivi</p>
         </div>
+
+        <div class="tournaments-grid">
+            <div th:each="torneo : ${tornei}" class="tournament-card">
+                <h2 class="tournament-name" th:text="${torneo.nome}">Nome Torneo</h2>
+                <span class="tournament-year" th:text="${torneo.anno}">2026</span>
+                
+                <p class="tournament-description" th:text="${torneo.descrizione}">Descrizione del torneo</p>
+
+                <div class="teams-section">
+                    <div class="teams-title">Squadre Iscritte</div>
+                    
+                    <ul th:if="${!torneo.squadre.empty}" class="teams-list">
+                        <li th:each="squadra : ${torneo.squadre}" class="team-item">
+                            <span th:text="${squadra.nome} + ' (' + ${squadra.citta} + ')'">Squadra</span>
+                        </li>
+                    </ul>
+                    
+                    <div th:if="${torneo.squadre.empty}" class="empty-teams">
+                        Ancora nessuna squadra iscritta
+                    </div>
+                </div>
+
+                <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary view-button">Vedi Classifica</a>
+            </div>
+        </div>
+
+        <div th:if="${tornei.empty}" class="empty-state">
+            <h2>📭 Nessun torneo disponibile</h2>
+            <p>Non ci sono tornei disponibili al momento.</p>
+        </div>
+
+        <a href="/" class="back-link" style="display: block; text-align: center; margin: 2rem 0;">← Torna alla Home</a>
     </div>
-
-    <div th:if="${tornei.empty}">
-        <p>Non c'è ancora nessun torneo nel sistema.</p>
-    </div>
-
-    <a href="/" class="back-link">‹ Torna alla Home</a>
-
 </body>
 </html>

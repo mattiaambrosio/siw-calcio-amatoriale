@@ -2,39 +2,183 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Calendario Partite</title>
-   <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario Partite - Calcio Amatoriale</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .container {
+            padding: 2rem;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            color: var(--accent-danger);
+            margin-bottom: 0.5rem;
+        }
+        .matches-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .match-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--pitch-green-light);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+        .match-card:hover {
+            border-left-color: var(--pitch-green-bright);
+            box-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
+            transform: translateY(-4px);
+        }
+        .tournament-badge {
+            display: inline-block;
+            background: var(--accent-purple);
+            color: var(--white-main);
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 1rem;
+        }
+        .teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(46, 204, 113, 0.05);
+            border-radius: 8px;
+        }
+        .team {
+            flex: 1;
+            text-align: center;
+        }
+        .team-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--white-main);
+            margin-bottom: 0.5rem;
+        }
+        .vs {
+            color: var(--pitch-green-light);
+            font-weight: 800;
+            font-size: 1.2rem;
+            margin: 0 1rem;
+        }
+        .score {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--pitch-green-bright);
+            margin: 1rem 0;
+        }
+        .status {
+            text-align: center;
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+        .status.played {
+            background: rgba(46, 204, 113, 0.15);
+            color: var(--pitch-green-light);
+        }
+        .status.scheduled {
+            background: rgba(255, 165, 2, 0.15);
+            color: var(--accent-warning);
+        }
+        .match-details {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            color: var(--gray-dark);
+            font-size: 0.95rem;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: var(--white-main);
+        }
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-medium);
+        }
+        .empty-state h2 {
+            color: var(--gray-dark);
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 768px) {
+            .matches-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1 style="color: #e74c3c;">Calendario Partite</h1>
-    
-    <div th:each="partita : ${partite}" class="card">
-        <span class="badge-torneo" th:text="${partita.torneo.nome}">Torneo</span>
-        
-        <div class="match-title">
-            <span th:text="${partita.squadraCasa.nome}">Casa</span>
-            <span class="vs">VS</span>
-            <span th:text="${partita.squadraOspite.nome}">Ospite</span>
+    <div class="container">
+        <div class="header">
+            <h1>⚔️ Calendario Partite</h1>
+            <p style="color: var(--gray-medium); margin: 0;">Visualizza tutte le partite e i risultati</p>
         </div>
         
-        <h3 th:if="${partita.stato == 'GIOCATA'}" style="color: #2ecc71;">
-            Risultato: <span th:text="${partita.goalsHome}">0</span> - <span th:text="${partita.goalsAway}">0</span>
-        </h3>
-        <h3 th:if="${partita.stato == 'PROGRAMMATA'}" style="color: #e67e22;">
-            Stato: Da giocare
-        </h3>
+        <div class="matches-container">
+            <div th:each="partita : ${partite}" class="match-card">
+                <span class="tournament-badge" th:text="${partita.torneo.nome}">Torneo</span>
+                
+                <div class="teams">
+                    <div class="team">
+                        <div class="team-name" th:text="${partita.squadraCasa.nome}">Home Team</div>
+                    </div>
+                    <div class="vs">VS</div>
+                    <div class="team">
+                        <div class="team-name" th:text="${partita.squadraOspite.nome}">Away Team</div>
+                    </div>
+                </div>
+                
+                <div th:if="${partita.stato == 'GIOCATA'}">
+                    <div class="score" th:text="${partita.goalsHome} + ' - ' + ${partita.goalsAway}">0 - 0</div>
+                    <div class="status played">✓ Partita Giocata</div>
+                </div>
+                <div th:if="${partita.stato == 'PROGRAMMATA'}">
+                    <div class="status scheduled">⏰ Da giocare</div>
+                </div>
 
-        <div class="details">
-            <p><strong>🕒 Data e Ora:</strong> <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span></p>
-            <p><strong>🏟️ Luogo:</strong> <span th:text="${partita.luogo}">Stadio</span></p>
-            <p><strong>⚽ Arbitro:</strong> <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Arbitro</span></p>
+                <div class="match-details">
+                    <div class="detail-row">
+                        <span class="detail-label">🕒 Data e Ora:</span>
+                        <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">🏟️ Luogo:</span>
+                        <span th:text="${partita.luogo}">Stadio</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">⚽ Arbitro:</span>
+                        <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Arbitro</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${partite.empty}" class="empty-state">
+            <h2>📭 Nessuna partita disponibile</h2>
+            <p>Non ci sono partite programmata al momento.</p>
         </div>
     </div>
 
-    <div th:if="${partite.empty}">
-        <p>Nessuna partita programmata al momento.</p>
-    </div>
-
-    <a href="/" class="back-link">‹ Torna alla Home</a>
+    <a href="/" class="back-link" style="display: block; margin: 2rem; text-align: center;">← Torna alla Home</a>
 </body>
 </html>

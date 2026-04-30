@@ -1,155 +1,444 @@
 /* =========================================
-   TEMA CALCIO AMATORIALE - NIGHT MATCH
+   TEMA CALCIO AMATORIALE - PREMIUM GLASSMORPHISM
 ========================================= */
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;800&display=swap');
 
 :root {
-    --green-pitch: #2ecc71;       /* Verde prato brillante */
-    --green-dark: #1e8449;        /* Verde scuro */
-    --bg-main: #0d1117;           /* Sfondo stile "notte" */
-    --bg-card: #161b22;           /* Sfondo schede/form */
-    --text-main: #f0f6fc;         /* Testo bianco/grigio */
-    --accent-red: #e74c3c;        /* Per errori e partite */
-    --accent-blue: #3498db;       /* Per squadre */
-    --accent-orange: #e67e22;     /* Per giocatori */
+    /* Colori tematici minimal & eleganti (Apple-style) */
+    --pitch-green: #0a1f0f;           /* Verde scurissimo */
+    --pitch-green-light: #32D74B;     /* Apple System Green Dark */
+    --pitch-green-bright: #30D158;    /* Apple Green acceso */
+    --pitch-green-glow: rgba(50, 215, 75, 0.4);
+    
+    --white-main: #ffffff;
+    --white-light: #f5f5f7;           /* Apple light gray */
+    --gray-light: #d2d2d7;
+    --gray-medium: #86868b;
+    --gray-dark: #1d1d1f;
+    
+    --bg-main: #000000;               /* Sfondo nero puro minimal */
+    --bg-card: #1c1c1e;               /* Sfondo card Apple dark */
+    
+    /* Variabili Glassmorphism Minimal */
+    --glass-bg: rgba(28, 28, 30, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+    --glass-blur: blur(20px);
+    
+    /* Accenti */
+    --accent-danger: #FF453A;         /* Apple System Red */
+    --accent-warning: #FF9F0A;        /* Apple System Orange */
+    --accent-blue: #0A84FF;           /* Apple System Blue */
+    --google-blue: #4285F4;           /* Google Brand Blue */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 body {
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'Inter', sans-serif;
     background-color: var(--bg-main);
-    background-image: radial-gradient(circle at top, #1a2a20 0%, #0d1117 40%);
-    color: var(--text-main);
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    color: var(--gray-medium);
+    line-height: 1.6;
     min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
 }
 
-h1, h2, h3 {
-    text-transform: uppercase;
-    letter-spacing: 1px;
+/* Sfondo Animato Ambientale - Reso estremamente sottile per stile minimal */
+.ambient-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+    background: radial-gradient(circle at 15% 50%, rgba(50, 215, 75, 0.03), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(10, 132, 255, 0.03), transparent 25%);
+}
+
+.ambient-background::before,
+.ambient-background::after {
+    content: '';
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    border-radius: 50%;
+    filter: blur(120px);
+    opacity: 0.5;
+    animation: float 20s infinite alternate cubic-bezier(0.5, 0, 0.5, 1);
+}
+
+.ambient-background::before {
+    background: var(--pitch-green-light);
+    top: -200px;
+    left: -200px;
+}
+
+.ambient-background::after {
+    background: var(--accent-blue);
+    bottom: -200px;
+    right: -200px;
+    animation-delay: -10s;
+}
+
+@keyframes float {
+    0% { transform: translate(0, 0) scale(1); }
+    100% { transform: translate(100px, 150px) scale(1.2); }
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    color: var(--white-main);
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
 }
 
 h1 {
-    font-weight: 800;
-    color: var(--text-main);
-    text-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
-    margin-bottom: 40px;
-    text-align: center;
+    font-size: 2.8rem;
+    letter-spacing: -1.5px;
+    font-weight: 700;
 }
 
-/* ===== SCHEDE (Card) ===== */
-.card {
-    background-color: var(--bg-card);
-    padding: 25px;
-    border-radius: 12px;
-    margin: 15px auto;
-    width: 100%;
-    max-width: 500px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-    border-top: 4px solid var(--green-pitch);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+.text-gradient {
+    color: var(--pitch-green-light);
+    background: none;
+    -webkit-text-fill-color: initial;
+    text-shadow: none;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(46, 204, 113, 0.2);
-}
-
-.card h2 {
-    color: var(--green-pitch);
-    margin-top: 0;
-}
-
-/* ===== BOTTONI ===== */
-.btn {
-    display: inline-block;
-    padding: 12px 24px;
-    border-radius: 30px;
-    font-weight: 600;
-    text-transform: uppercase;
+a {
+    color: var(--pitch-green-light);
     text-decoration: none;
-    font-size: 0.9rem;
     transition: all 0.3s ease;
-    cursor: pointer;
+}
+
+a:hover {
+    color: var(--pitch-green-bright);
+    text-shadow: 0 0 10px var(--pitch-green-glow);
+}
+
+/* ===== NAVBAR ===== */
+nav {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 1rem 2rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+nav a {
+    color: var(--white-main);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 2px;
+    background: var(--pitch-green-bright);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px var(--pitch-green-bright);
+}
+
+nav a:hover::after,
+nav a.active::after {
+    width: 80%;
+}
+
+nav a:hover,
+nav a.active {
+    color: var(--pitch-green-light);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ===== CONTAINER E COMPONENTI GLASSMORPHISM ===== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.glass-panel, 
+.card, 
+.form-container, 
+.sidebar, 
+.card-section, 
+.admin-card, 
+.quick-actions {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: var(--glass-shadow);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Effetti Hover Specifici */
+.card:hover, .admin-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(46, 204, 113, 0.3);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(46, 204, 113, 0.1);
+}
+
+.card h2, .card h3, .sidebar h3, .card-section h2 {
+    color: var(--white-main);
+    margin-top: 0;
+    border-bottom: 1px solid var(--glass-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.card-section { border-top: 3px solid var(--pitch-green-light); }
+
+.cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.card-match {
+    background: var(--bg-card);
+    border-left: 4px solid var(--pitch-green-light);
+}
+
+.card-match .score {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--white-main);
+    margin: 1rem 0;
+}
+
+.card-match .vs {
+    color: var(--pitch-green-bright);
+    font-weight: 800;
+}
+
+/* ===== TABELLE GLASS ===== */
+table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--glass-border);
+    margin: 2rem 0;
+    box-shadow: var(--glass-shadow);
+}
+
+thead {
+    background: rgba(0, 0, 0, 0.2);
+}
+
+thead th {
+    padding: 1.2rem 1rem;
+    text-align: left;
+    font-weight: 500;
+    color: var(--gray-medium);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+tbody td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--gray-light);
+}
+
+tbody tr {
+    transition: background 0.3s ease;
+}
+
+tbody tr:hover {
+    background: rgba(46, 204, 113, 0.05);
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+/* ===== FORMS ===== */
+.form-container {
+    max-width: 500px;
+    margin: 3rem auto;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--gray-light);
+    font-weight: 500;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    color: var(--white-main);
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--pitch-green-light);
+    background: rgba(46, 204, 113, 0.05);
+    box-shadow: 0 0 15px rgba(46, 204, 113, 0.2);
+}
+
+/* ===== BOTTONI PREMIUM (APPLE STYLE) ===== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.8rem 1.8rem;
     border: none;
+    border-radius: 980px; /* Pill shape like Apple */
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
     text-align: center;
 }
 
 .btn-primary {
-    background-color: var(--green-pitch);
-    color: #000;
-    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
+    background-color: var(--pitch-green-light);
+    color: #000000; /* Black text on green button for visibility */
 }
 
 .btn-primary:hover {
-    background-color: #27ae60;
-    transform: scale(1.05);
+    background-color: var(--pitch-green-bright);
+    transform: scale(1.02);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--white-main);
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: scale(1.02);
 }
 
 .btn-outline {
-    background-color: transparent;
-    color: var(--green-pitch);
-    border: 2px solid var(--green-pitch);
+    background: transparent;
+    color: var(--white-main);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .btn-outline:hover {
-    background-color: rgba(46, 204, 113, 0.1);
-    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
-/* ===== FORM ===== */
-.form-container {
-    background-color: var(--bg-card);
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    border: 1px solid #30363d;
-    width: 100%;
-    max-width: 400px;
+.btn-danger {
+    background-color: var(--accent-danger);
+    color: var(--white-main);
 }
 
-input, select {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0 25px 0;
-    border-radius: 8px;
-    border: 1px solid #30363d;
-    background-color: #0d1117;
-    color: var(--text-main);
-    font-family: 'Montserrat', sans-serif;
-    transition: border 0.3s ease;
-    box-sizing: border-box;
+.btn-danger:hover {
+    filter: brightness(1.1);
+    transform: scale(1.02);
 }
 
-input:focus, select:focus {
-    outline: none;
-    border-color: var(--green-pitch);
-    box-shadow: 0 0 10px rgba(46, 204, 113, 0.2);
+/* Bottone Google Specifico */
+.btn-google {
+    background-color: var(--google-blue);
+    color: var(--white-main);
+    border: none;
 }
 
-/* ===== UTILITIES ===== */
-.back-link {
-    display: block;
-    text-align: center;
-    margin-top: 30px;
-    color: #8b949e;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s;
+.btn-google:hover {
+    background-color: #3367D6;
+    transform: scale(1.02);
 }
 
-.back-link:hover {
-    color: var(--green-pitch);
+.button-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
 }
 
+/* ===== BADGES ===== */
 .badge {
-    background: #30363d;
-    color: var(--text-main);
-    padding: 4px 10px;
+    padding: 0.4rem 0.8rem;
     border-radius: 20px;
-    font-size: 0.8rem;
-    font-weight: bold;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    backdrop-filter: blur(4px);
 }
+
+.badge-role { background: rgba(46, 204, 113, 0.15); color: var(--pitch-green-bright); border: 1px solid rgba(46, 204, 113, 0.3); }
+.badge-info { background: rgba(0, 212, 255, 0.15); color: var(--accent-blue); border: 1px solid rgba(0, 212, 255, 0.3); }
+.badge-success { background: rgba(46, 204, 113, 0.1); color: var(--pitch-green-light); }
+
+/* ===== UTILITIES E ANIMAZIONI ===== */
+.text-center { text-align: center; }
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in { animation: fadeUp 0.8s cubic-bezier(0.165, 0.84, 0.44, 1) forwards; }
+.delay-1 { animation-delay: 0.2s; opacity: 0; }
+.delay-2 { animation-delay: 0.4s; opacity: 0; }
+
+/* Dashboard Specifics */
+.user-info p { color: var(--gray-light); margin: 0.2rem 0; }
+.user-info .username { font-family: 'Outfit', sans-serif; font-size: 1.3rem; color: var(--white-main); }
+.admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 1.5rem; }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--bg-main); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 5px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(46, 204, 113, 0.5); }
