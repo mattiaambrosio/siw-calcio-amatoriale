@@ -18,6 +18,11 @@ public class GiocatoreService {
         giocatoreRepository.save(giocatore);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        giocatoreRepository.deleteById(id);
+    }
+
     @Transactional(readOnly = true)
     public Giocatore findById(Long id) {
         return giocatoreRepository.findById(id).orElse(null);

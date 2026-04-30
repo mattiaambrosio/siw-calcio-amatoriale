@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifica Squadra - Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .form-container { max-width: 600px; margin: 3rem auto; }
+        .form-panel { background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .btn-group { display: flex; gap: 1rem; margin-top: 1rem; }
+        .breadcrumb { font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 1.5rem; }
+        .breadcrumb a { color: var(--accent-blue); }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <div class="breadcrumb">
+        <a th:href="@{'/squadra/' + ${squadra.id}}">← Torna alla Squadra</a>
+    </div>
+    <div class="form-panel">
+        <h1 style="margin-bottom:1.5rem;">✏️ Modifica Squadra</h1>
+        <form th:action="@{'/admin/squadra/' + ${squadra.id} + '/edit'}" th:object="${squadra}" method="post">
+            <div class="form-group">
+                <label for="nome">Nome della Squadra</label>
+                <input type="text" id="nome" th:field="*{nome}" required placeholder="Es. FC Roma Ovest">
+            </div>
+            <div class="form-group">
+                <label for="citta">Città</label>
+                <input type="text" id="citta" th:field="*{citta}" required placeholder="Es. Roma">
+            </div>
+            <div class="form-group">
+                <label for="annoDiFondazione">Anno di Fondazione</label>
+                <input type="number" id="annoDiFondazione" th:field="*{annoDiFondazione}" required min="1800" max="2026">
+            </div>
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">💾 Salva Modifiche</button>
+                <a th:href="@{'/squadra/' + ${squadra.id}}" class="btn btn-secondary">Annulla</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -18,6 +18,11 @@ public class SquadraService {
         squadraRepository.save(squadra);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        squadraRepository.deleteById(id);
+    }
+
     @Transactional(readOnly = true)
     public Squadra findById(Long id) {
         return squadraRepository.findById(id).orElse(null);

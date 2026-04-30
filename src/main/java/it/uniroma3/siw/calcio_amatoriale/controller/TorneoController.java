@@ -36,11 +36,40 @@ public class TorneoController {
         if (!torneoService.alreadyExists(torneo)) {
             torneoService.save(torneo);
             model.addAttribute("messaggioSuccesso", "Torneo salvato con successo nel database!");
-            return "index"; // Torna alla home dopo aver salvato
+            return "index";
         } else {
             model.addAttribute("messaggioErrore", "Attenzione: Esiste già un torneo con questo nome!");
-            return "admin/formNewTorneo"; // Rimane sulla pagina per farti correggere
+            return "admin/formNewTorneo";
         }
+    }
+
+    // Mostra il form di modifica torneo (precompilato)
+    @GetMapping("/admin/torneo/{id}/edit")
+    public String formEditTorneo(@PathVariable("id") Long id, Model model) {
+        Torneo torneo = torneoService.findById(id);
+        if (torneo == null) return "redirect:/tornei";
+        model.addAttribute("torneo", torneo);
+        return "admin/formEditTorneo";
+    }
+
+    // Salva la modifica del torneo
+    @PostMapping("/admin/torneo/{id}/edit")
+    public String editTorneo(@PathVariable("id") Long id,
+                              @ModelAttribute("torneo") Torneo torneoAggiornato, Model model) {
+        Torneo torneo = torneoService.findById(id);
+        if (torneo == null) return "redirect:/tornei";
+        torneo.setNome(torneoAggiornato.getNome());
+        torneo.setAnno(torneoAggiornato.getAnno());
+        torneo.setDescrizione(torneoAggiornato.getDescrizione());
+        torneoService.save(torneo);
+        return "redirect:/torneo/" + id;
+    }
+
+    // Elimina il torneo
+    @PostMapping("/admin/torneo/{id}/delete")
+    public String deleteTorneo(@PathVariable("id") Long id) {
+        torneoService.delete(id);
+        return "redirect:/tornei";
     }
 
     // Questa rotta mostra a TUTTI (anche ai Guest) la lista dei tornei

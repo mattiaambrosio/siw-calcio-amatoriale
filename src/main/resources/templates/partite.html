@@ -170,6 +170,10 @@
                         <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Arbitro</span>
                     </div>
                 </div>
+                <a th:href="@{'/partita/' + ${partita.id}}" class="btn btn-primary"
+                   style="margin-top:1rem; width:100%; display:block; text-align:center;">
+                    💬 Dettaglio e Commenti
+                </a>
             </div>
         </div>
 

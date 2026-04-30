@@ -93,4 +93,11 @@ public class PartitaController {
         partitaService.save(partita);
         return "redirect:/partite"; // Torniamo a vedere il calendario aggiornato
     }
+
+    // Elimina partita (Admin)
+    @PostMapping("/admin/partita/{id}/delete")
+    public String deletePartita(@PathVariable("id") Long id) {
+        partitaService.delete(id);
+        return "redirect:/partite";
+    }
 }

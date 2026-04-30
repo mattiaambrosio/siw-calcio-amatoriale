@@ -48,4 +48,37 @@ public class GiocatoreController {
         model.addAttribute("giocatori", giocatoreService.findAll());
         return "giocatori";
     }
+
+    // Form modifica giocatore (Admin)
+    @GetMapping("/admin/giocatore/{id}/edit")
+    public String formEditGiocatore(@PathVariable("id") Long id, Model model) {
+        Giocatore giocatore = giocatoreService.findById(id);
+        if (giocatore == null) return "redirect:/giocatori";
+        model.addAttribute("giocatore", giocatore);
+        model.addAttribute("squadre", squadraService.findAll());
+        return "admin/formEditGiocatore";
+    }
+
+    // Salva modifica giocatore (Admin)
+    @PostMapping("/admin/giocatore/{id}/edit")
+    public String editGiocatore(@PathVariable("id") Long id,
+                                 @ModelAttribute("giocatore") Giocatore aggiornato) {
+        Giocatore giocatore = giocatoreService.findById(id);
+        if (giocatore == null) return "redirect:/giocatori";
+        giocatore.setNome(aggiornato.getNome());
+        giocatore.setCognome(aggiornato.getCognome());
+        giocatore.setRuolo(aggiornato.getRuolo());
+        giocatore.setAltezza(aggiornato.getAltezza());
+        giocatore.setDataDiNascita(aggiornato.getDataDiNascita());
+        giocatore.setSquadra(aggiornato.getSquadra());
+        giocatoreService.save(giocatore);
+        return "redirect:/giocatori";
+    }
+
+    // Elimina giocatore (Admin)
+    @PostMapping("/admin/giocatore/{id}/delete")
+    public String deleteGiocatore(@PathVariable("id") Long id) {
+        giocatoreService.delete(id);
+        return "redirect:/giocatori";
+    }
 }

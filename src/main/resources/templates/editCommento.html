@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifica Commento - Calcio Amatoriale</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .form-container { max-width: 600px; margin: 3rem auto; padding: 2rem; }
+        .breadcrumb { font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 1.5rem; }
+        .breadcrumb a { color: var(--accent-blue); }
+        .form-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+        .form-panel h1 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+        textarea { resize: vertical; min-height: 120px; margin-bottom: 1rem; }
+        .btn-group { display: flex; gap: 1rem; }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <div class="breadcrumb">
+        <a th:href="@{'/partita/' + ${commento.partita.id}}">← Torna alla Partita</a>
+    </div>
+
+    <div class="form-panel">
+        <h1>✏️ Modifica il tuo Commento</h1>
+
+        <form th:action="@{'/commento/' + ${commento.id} + '/edit'}" method="post">
+            <label for="testo">Il tuo commento:</label>
+            <textarea id="testo" name="testo" th:text="${commento.testo}"
+                      required maxlength="1000" placeholder="Modifica il tuo commento..."></textarea>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">💾 Salva Modifiche</button>
+                <a th:href="@{'/partita/' + ${commento.partita.id}}" class="btn btn-secondary">Annulla</a>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

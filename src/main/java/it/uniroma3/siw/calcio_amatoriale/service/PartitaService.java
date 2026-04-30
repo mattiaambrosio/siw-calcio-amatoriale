@@ -18,6 +18,11 @@ public class PartitaService {
         partitaRepository.save(partita);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        partitaRepository.deleteById(id);
+    }
+
     @Transactional(readOnly = true)
     public Partita findById(Long id) {
         return partitaRepository.findById(id).orElse(null);

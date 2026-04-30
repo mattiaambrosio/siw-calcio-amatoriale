@@ -18,6 +18,11 @@ public class TorneoService {
         torneoRepository.save(torneo);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        torneoRepository.deleteById(id);
+    }
+
     @Transactional(readOnly = true)
     public Torneo findById(Long id) {
         return torneoRepository.findById(id).orElse(null);

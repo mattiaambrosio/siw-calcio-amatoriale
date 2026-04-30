@@ -48,10 +48,37 @@ public class SquadraController {
     @GetMapping("/squadra/{id}")
     public String showSquadraDetail(@PathVariable("id") Long id, Model model) {
         it.uniroma3.siw.calcio_amatoriale.model.Squadra squadra = squadraService.findById(id);
-        if (squadra == null) {
-            return "redirect:/squadre";
-        }
+        if (squadra == null) return "redirect:/squadre";
         model.addAttribute("squadra", squadra);
         return "squadraDetail";
+    }
+
+    // Form modifica squadra (Admin)
+    @GetMapping("/admin/squadra/{id}/edit")
+    public String formEditSquadra(@PathVariable("id") Long id, Model model) {
+        it.uniroma3.siw.calcio_amatoriale.model.Squadra squadra = squadraService.findById(id);
+        if (squadra == null) return "redirect:/squadre";
+        model.addAttribute("squadra", squadra);
+        return "admin/formEditSquadra";
+    }
+
+    // Salva modifica squadra (Admin)
+    @PostMapping("/admin/squadra/{id}/edit")
+    public String editSquadra(@PathVariable("id") Long id,
+                               @ModelAttribute("squadra") it.uniroma3.siw.calcio_amatoriale.model.Squadra aggiornata) {
+        it.uniroma3.siw.calcio_amatoriale.model.Squadra squadra = squadraService.findById(id);
+        if (squadra == null) return "redirect:/squadre";
+        squadra.setNome(aggiornata.getNome());
+        squadra.setCitta(aggiornata.getCitta());
+        squadra.setAnnoDiFondazione(aggiornata.getAnnoDiFondazione());
+        squadraService.save(squadra);
+        return "redirect:/squadra/" + id;
+    }
+
+    // Elimina squadra (Admin)
+    @PostMapping("/admin/squadra/{id}/delete")
+    public String deleteSquadra(@PathVariable("id") Long id) {
+        squadraService.delete(id);
+        return "redirect:/squadre";
     }
 }

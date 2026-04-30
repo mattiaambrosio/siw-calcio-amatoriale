@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dettaglio Partita - Calcio Amatoriale</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .container { padding: 2rem; }
+        .breadcrumb { font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 1.5rem; }
+        .breadcrumb a { color: var(--accent-blue); }
+
+        /* Match Hero */
+        .match-hero {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .tournament-badge {
+            display: inline-block;
+            background: rgba(10, 132, 255, 0.15);
+            color: var(--accent-blue);
+            border: 1px solid rgba(10, 132, 255, 0.3);
+            padding: 0.3rem 0.9rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .teams-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            margin: 1rem 0;
+        }
+        .team-block { flex: 1; max-width: 200px; }
+        .team-name {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--white-main);
+        }
+        .score-display {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--pitch-green-light);
+            padding: 0.5rem 2rem;
+            background: rgba(50, 215, 75, 0.08);
+            border-radius: 16px;
+            min-width: 140px;
+        }
+        .vs-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gray-medium);
+            padding: 0.5rem 1.5rem;
+        }
+        .match-status {
+            display: inline-block;
+            margin-top: 1rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .status-played { background: rgba(50,215,75,0.15); color: var(--pitch-green-light); }
+        .status-scheduled { background: rgba(255,159,10,0.15); color: var(--accent-warning); }
+
+        /* Info Bar */
+        .info-bar {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+        .info-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            font-size: 0.85rem;
+            color: var(--gray-light);
+        }
+        .info-chip span { color: var(--gray-medium); margin-right: 0.4rem; }
+
+        /* Sezione Commenti */
+        .comments-section {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--white-main);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* Form nuovo commento */
+        .comment-form {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .comment-form textarea {
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 1rem;
+            border-radius: 10px;
+        }
+        .login-prompt {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(10, 132, 255, 0.05);
+            border: 1px solid rgba(10, 132, 255, 0.15);
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            color: var(--gray-medium);
+        }
+        .login-prompt a { color: var(--accent-blue); font-weight: 600; }
+
+        /* Card commento singolo */
+        .comment-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 14px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+            transition: border-color 0.2s;
+        }
+        .comment-card:hover { border-color: rgba(255,255,255,0.12); }
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .comment-author {
+            font-weight: 600;
+            color: var(--pitch-green-light);
+            font-size: 0.9rem;
+        }
+        .comment-date {
+            font-size: 0.78rem;
+            color: var(--gray-medium);
+        }
+        .comment-text {
+            color: var(--gray-light);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        .comment-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+        .btn-sm {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.78rem;
+            border-radius: 8px;
+        }
+        .no-comments {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray-medium);
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="breadcrumb">
+        <a href="/partite">← Calendario Partite</a>
+    </div>
+
+    <!-- Hero Partita -->
+    <div class="match-hero">
+        <div class="tournament-badge" th:text="${partita.torneo.nome}">Torneo</div>
+
+        <div class="teams-row">
+            <div class="team-block">
+                <div class="team-name" th:text="${partita.squadraCasa.nome}">Casa</div>
+            </div>
+
+            <!-- Score o VS -->
+            <div th:if="${partita.stato == 'GIOCATA'}" class="score-display"
+                 th:text="${partita.goalsHome} + ' - ' + ${partita.goalsAway}">0 - 0</div>
+            <div th:if="${partita.stato != 'GIOCATA'}" class="vs-text">VS</div>
+
+            <div class="team-block">
+                <div class="team-name" th:text="${partita.squadraOspite.nome}">Ospite</div>
+            </div>
+        </div>
+
+        <span class="match-status status-played" th:if="${partita.stato == 'GIOCATA'}">✓ Partita Giocata</span>
+        <span class="match-status status-scheduled" th:if="${partita.stato == 'PROGRAMMATA'}">⏰ Da Giocare</span>
+
+        <div class="info-bar">
+            <div class="info-chip">
+                <span>🕒</span>
+                <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span>
+            </div>
+            <div class="info-chip">
+                <span>🏟️</span>
+                <span th:text="${partita.luogo}">Luogo</span>
+            </div>
+            <div class="info-chip">
+                <span>⚽</span>
+                Arbitro: <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Arbitro</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ──────────────────────────────────────── -->
+    <!--  SEZIONE COMMENTI                        -->
+    <!-- ──────────────────────────────────────── -->
+    <div class="comments-section">
+        <div class="section-title">
+            💬 Commenti (<span th:text="${#lists.size(commenti)}">0</span>)
+        </div>
+
+        <!-- Form per aggiungere commento (solo utenti loggati) -->
+        <div sec:authorize="isAuthenticated()" class="comment-form">
+            <form th:action="@{'/partita/' + ${partita.id} + '/commento'}" method="post">
+                <label for="testo" style="color: var(--gray-light); margin-bottom: 0.5rem; display:block;">
+                    Scrivi un commento sulla partita:
+                </label>
+                <textarea id="testo" name="testo" placeholder="Condividi il tuo pensiero sulla partita..." required maxlength="1000"></textarea>
+                <button type="submit" class="btn btn-primary">💬 Pubblica Commento</button>
+            </form>
+        </div>
+
+        <!-- Invito al login per i non autenticati -->
+        <div sec:authorize="!isAuthenticated()" class="login-prompt">
+            <a href="/login">Accedi</a> o <a href="/register">registrati</a> per lasciare un commento.
+        </div>
+
+        <!-- Lista commenti -->
+        <div th:if="${!commenti.empty}">
+            <div th:each="commento : ${commenti}" class="comment-card">
+                <div class="comment-header">
+                    <span class="comment-author"
+                          th:text="${commento.autore.user.nome} + ' ' + ${commento.autore.user.cognome}">Utente</span>
+                    <span class="comment-date"
+                          th:text="${#temporals.format(commento.dataCreazione, 'dd/MM/yyyy HH:mm')}">Data</span>
+                </div>
+                <div class="comment-text" th:text="${commento.testo}">Testo commento</div>
+
+                <!-- Pulsanti modifica/elimina solo per il proprietario -->
+                <div sec:authorize="isAuthenticated()" class="comment-actions"
+                     th:if="${emailLoggato == commento.autore.email}">
+                    <a th:href="@{'/commento/' + ${commento.id} + '/edit'}"
+                       class="btn btn-outline btn-sm">✏️ Modifica</a>
+                    <form th:action="@{'/commento/' + ${commento.id} + '/delete'}" method="post" style="display:inline;"
+                          onsubmit="return confirm('Eliminare il commento?')">
+                        <button type="submit" class="btn btn-danger btn-sm">🗑️ Elimina</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${commenti.empty}" class="no-comments">
+            Ancora nessun commento. Sii il primo! 👋
+        </div>
+    </div>
+
+</div>
+</body>
+</html>
