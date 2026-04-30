@@ -73,134 +73,83 @@
 </head>
 
 <body>
-    <!-- Sfondo Animato Ambientale -->
-    <div class="ambient-background"></div>
+    <div class="ambient-glow"></div>
+    
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/tornei">Tornei</a></li>
+            <li><a href="/squadre">Squadre</a></li>
+            <li><a href="/giocatori">Giocatori</a></li>
+            <li><a href="/dashboard" class="active">Area Personale</a></li>
+        </ul>
+    </nav>
 
-    <div class="container fade-in">
-        <div class="dashboard-header">
-            <h1>⚽ Pannello Personale</h1>
-            <div class="user-info">
-                <p>Connesso come</p>
-                <p class="username" th:text="${#authentication.name}"></p>
-                <div sec:authorize="hasAuthority('ADMIN')">
-                    <span class="badge badge-role">👑 ADMIN</span>
-                </div>
-                <div sec:authorize="!hasAuthority('ADMIN')">
-                    <span class="badge badge-info">👤 UTENTE</span>
-                </div>
+    <main class="container">
+        <header style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 3rem;">
+            <div>
+                <h1 style="font-size: 2.5rem;">Ciao, <span class="text-gradient" th:text="${#authentication.name}">Utente</span></h1>
+                <p style="color: var(--gray-medium);">Benvenuto nel tuo pannello di controllo.</p>
             </div>
-        </div>
+            <div th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">
+                <span style="background: var(--accent-green-glow); color: var(--accent-green); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.8rem; font-weight: 700;">👑 AMMINISTRATORE</span>
+            </div>
+        </header>
 
         <!-- AREA ADMIN -->
-        <div sec:authorize="hasAuthority('ADMIN')">
+        <div sec:authorize="hasAuthority('ADMIN')" class="grid-3">
             
-            <div class="sidebar">
-                <h3>Accesso Amministratore</h3>
-                <p>Hai i privilegi completi. Puoi gestire tutti gli aspetti della piattaforma: tornei, squadre, giocatori, arbitri e partite.</p>
-            </div>
-
-            <!-- SEZIONE TORNEI -->
-            <div class="card-section">
-                <h2>📅 Gestione Tornei</h2>
-                <div class="button-group">
-                    <a href="/admin/torneo/new" class="btn btn-primary">+ Crea Torneo</a>
-                    <a href="/tornei" class="btn btn-outline">Visualizza Tornei</a>
+            <section class="glass-panel" style="grid-column: span 2;">
+                <h2 style="margin-bottom: 1.5rem; color: var(--accent-green);">📅 Gestione Tornei e Partite</h2>
+                <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <a href="/admin/torneo/new" class="btn btn-primary">+ Nuovo Torneo</a>
+                    <a href="/admin/partita/new" class="btn btn-outline">Programma Match</a>
+                    <a href="/admin/partite/punteggio" class="btn btn-outline">Aggiorna Risultati</a>
                 </div>
-            </div>
-
-            <!-- SEZIONE SQUADRE -->
-            <div class="card-section">
-                <h2>🏆 Gestione Squadre</h2>
-                <div class="button-group">
-                    <a href="/admin/squadra/new" class="btn btn-primary">+ Crea Squadra</a>
-                    <a href="/admin/iscrizione" class="btn btn-secondary">Iscrivi Squadra</a>
-                    <a href="/squadre" class="btn btn-outline">Visualizza Squadre</a>
+                
+                <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--glass-border);">
+                    <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--gray-light);">📊 Analisi Prestazioni</h3>
+                    <a href="/admin/performance" class="btn btn-outline" style="border-color: var(--accent-green); color: var(--accent-green);">Avvia Analisi JPA</a>
                 </div>
-            </div>
+            </section>
 
-            <!-- SEZIONE GIOCATORI E ARBITRI -->
-            <div class="card-section">
-                <h2>👥 Gestione Risorse</h2>
-                <div class="admin-grid">
-                    <div class="admin-card">
-                        <h3>⚽ Giocatori</h3>
-                        <div class="button-group">
-                            <a href="/admin/giocatore/new" class="btn btn-primary">Aggiungi</a>
-                            <a href="/giocatori" class="btn btn-outline">Visualizza</a>
-                        </div>
-                    </div>
-                    <div class="admin-card">
-                        <h3>🏅 Arbitri</h3>
-                        <div class="button-group">
-                            <a href="/admin/arbitro/new" class="btn btn-primary">Aggiungi</a>
-                            <a href="/arbitri" class="btn btn-outline">Visualizza</a>
-                        </div>
-                    </div>
+            <section class="glass-panel">
+                <h2 style="margin-bottom: 1.5rem; color: var(--accent-green);">👥 Risorse</h2>
+                <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                    <a href="/admin/squadra/new" class="btn btn-outline">Nuova Squadra</a>
+                    <a href="/admin/giocatore/new" class="btn btn-outline">Nuovo Giocatore</a>
+                    <a href="/admin/arbitro/new" class="btn btn-outline">Nuovo Arbitro</a>
+                    <a href="/admin/iscrizione" class="btn btn-outline">Iscrivi Squadra a Torneo</a>
                 </div>
-            </div>
-
-            <!-- SEZIONE PARTITE E RISULTATI -->
-            <div class="card-section">
-                <h2>⚔️ Gestione Partite</h2>
-                <div class="button-group">
-                    <a href="/admin/partita/new" class="btn btn-primary">+ Programma Partita</a>
-                    <a href="/admin/partite/punteggio" class="btn btn-secondary">Aggiorna Risultati</a>
-                    <a href="/partite" class="btn btn-outline">Visualizza Partite</a>
-                </div>
-            </div>
-
-            <!-- ANALISI SPERIMENTALE JPA (§8.2) -->
-            <div class="card-section" style="border-top: 3px solid var(--accent-blue);">
-                <h2>📊 Analisi Sperimentale JPA</h2>
-                <p style="color: var(--gray-medium); margin-bottom: 1rem; line-height: 1.6;">
-                    Analisi comparativa delle strategie di fetch: <strong style="color:var(--white-main);">LAZY</strong>,
-                    <strong style="color:var(--pitch-green-light);">JOIN FETCH</strong> e
-                    <strong style="color:var(--accent-blue);">EntityGraph</strong>.
-                    Visualizza tempi di esecuzione, query SQL generate e conclusioni. (§8.2)
-                </p>
-                <div class="button-group">
-                    <a href="/admin/performance" class="btn btn-primary">📊 Avvia Analisi JPA</a>
-                </div>
-            </div>
-
+            </section>
         </div>
 
         <!-- AREA UTENTE -->
-        <div sec:authorize="!hasAuthority('ADMIN')">
-            
-            <div class="sidebar">
-                <h3>Area Personale Utente</h3>
-                <p>Benvenuto nella piattaforma! Qui puoi esplorare tornei, squadre, giocatori, arbitri e risultati di tutte le partite.</p>
+        <div sec:authorize="!hasAuthority('ADMIN')" class="glass-panel">
+            <h2 style="margin-bottom: 1.5rem; color: var(--accent-green);">🚀 Quick Actions</h2>
+            <div class="grid-3">
+                <a href="/tornei" class="card" style="text-decoration: none;">
+                    <h3>📅 Tornei</h3>
+                    <p style="font-size: 0.8rem; color: var(--gray-medium);">Vedi calendari e classifiche.</p>
+                </a>
+                <a href="/squadre" class="card" style="text-decoration: none;">
+                    <h3>🏆 Squadre</h3>
+                    <p style="font-size: 0.8rem; color: var(--gray-medium);">Esplora i club amatoriali.</p>
+                </a>
+                <a href="/giocatori" class="card" style="text-decoration: none;">
+                    <h3>⚽ Giocatori</h3>
+                    <p style="font-size: 0.8rem; color: var(--gray-medium);">Cerca i talenti del torneo.</p>
+                </a>
             </div>
-
-            <div class="card-section">
-                <h2>🌟 Benvenuto</h2>
-                <p style="color: var(--gray-dark); margin: 0 0 1.5rem 0; line-height: 1.6;">Usa i tasti qui sotto per esplorare tutti i contenuti della piattaforma.</p>
-                
-                <div class="quick-actions">
-                    <h3>Sezioni Disponibili</h3>
-                    <div class="button-group">
-                        <a href="/tornei" class="btn btn-outline">📅 Tornei</a>
-                        <a href="/squadre" class="btn btn-outline">🏆 Squadre</a>
-                        <a href="/giocatori" class="btn btn-outline">⚽ Giocatori</a>
-                        <a href="/arbitri" class="btn btn-outline">🏅 Arbitri</a>
-                        <a href="/partite" class="btn btn-outline">⚔️ Partite</a>
-                    </div>
-                </div>
-            </div>
-
         </div>
 
-        <!-- LOGOUT -->
-        <div class="logout-section">
+        <!-- LOGOUT SECTION -->
+        <footer style="margin-top: 4rem; text-align: center; padding: 2rem; border-top: 1px solid var(--glass-border);">
             <form th:action="@{/logout}" method="post">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <button type="submit" class="btn btn-danger">🚪 Esci (Logout)</button>
+                <button type="submit" class="btn btn-danger" style="padding: 1rem 3rem;">🚪 Termina Sessione (Logout)</button>
             </form>
-            <a href="/">← Torna alla Home</a>
-        </div>
-
-    </div>
+        </footer>
+    </main>
 </body>
 
 </html>

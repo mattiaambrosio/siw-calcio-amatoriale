@@ -144,38 +144,52 @@
 </head>
 
 <body>
-    <div class="auth-container">
-        <h1>⚽ Accedi</h1>
-        <p>Entra nel tuo account per gestire i tuoi tornei.</p>
+    <div class="ambient-glow"></div>
 
-        <div th:if="${messaggioSuccesso}" class="alert alert-success" th:text="${messaggioSuccesso}"></div>
-        <div th:if="${param.error}" class="alert alert-danger">Email o password errati!</div>
-
-        <form th:action="@{/login}" method="post">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-
-            <div class="form-section">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="es. mario@email.it" required />
+    <main class="container" style="display: flex; align-items: center; justify-content: center; min-height: 90vh;">
+        <div class="glass-panel" style="width: 100%; max-width: 450px; padding: 3rem;">
+            <div style="text-align: center; margin-bottom: 2.5rem;">
+                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Bentornato</h1>
+                <p style="color: var(--gray-medium);">Accedi per gestire il tuo profilo.</p>
             </div>
 
-            <div class="form-section">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required />
+            <!-- MESSAGGI ERRORE -->
+            <div th:if="${param.error}" style="background: rgba(255,69,58,0.1); color: var(--danger-red); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; font-size: 0.9rem; text-align: center;">
+                Email o password non corretti.
             </div>
 
-            <button type="submit" class="submit-btn">Entra in Campo</button>
-        </form>
+            <!-- FORM TRADIZIONALE -->
+            <form th:action="@{/login}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <div class="form-group">
+                    <label for="username">Indirizzo Email</label>
+                    <input type="email" id="username" name="email" required placeholder="nome@esempio.it">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem; padding: 1rem;">Accedi</button>
+            </form>
 
-        <div class="divider">Oppure</div>
+            <!-- DIVIDER -->
+            <div style="display: flex; align-items: center; margin: 2.5rem 0; color: var(--gray-medium); font-size: 0.8rem;">
+                <div style="flex: 1; height: 1px; background: var(--glass-border);"></div>
+                <span style="padding: 0 1rem;">oppure</span>
+                <div style="flex: 1; height: 1px; background: var(--glass-border);"></div>
+            </div>
 
-        <a href="/oauth2/authorization/google" class="oauth-btn">⚽ Accedi con Google</a>
+            <!-- GOOGLE LOGIN -->
+            <a href="/oauth2/authorization/google" class="btn btn-google" style="width: 100%; padding: 1rem; display: flex; align-items: center; justify-content: center; background: #4285F4; color: white; border-radius: 8px; text-decoration: none;">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22Color%22_Logo.svg" style="width:18px; margin-right:12px; filter: brightness(0) invert(1);">
+                Continua con Google
+            </a>
 
-        <div class="footer-links">
-            <p>Non hai un account? <a href="/register">Registrati qui</a></p>
-            <a href="/" class="back-home">← Torna alla Home</a>
+            <p style="text-align: center; margin-top: 2rem; font-size: 0.9rem; color: var(--gray-medium);">
+                Non hai un account? <a href="/register" style="color: var(--accent-green); text-decoration: none; font-weight: 600;">Registrati</a>
+            </p>
         </div>
-    </div>
+    </main>
 </body>
 
 </html>

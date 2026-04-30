@@ -139,46 +139,6 @@
             <span class="torneo-year" th:text="${torneo.anno}">2026</span>
             <h1 class="torneo-title" th:text="${torneo.nome}">Nome Torneo</h1>
             <p class="torneo-desc" th:text="${torneo.descrizione}">Descrizione</p>
-        </div>
-
-        <!-- Azioni -->
-        <div class="actions-bar">
-            <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary">🏆 Vedi Classifica</a>
-            <a href="/partite" class="btn btn-secondary">📅 Calendario Partite</a>
-            <!-- Solo Admin -->
-            <div sec:authorize="hasAuthority('ADMIN')" style="display:inline-flex; gap:1rem;">
-                <a th:href="@{'/admin/torneo/' + ${torneo.id} + '/edit'}" class="btn btn-outline">✏️ Modifica Torneo</a>
-            </div>
-        </div>
-
-        <div class="detail-grid">
-            <!-- Squadre Iscritte -->
-            <div class="section-panel">
-                <div class="section-title">⚽ Squadre Iscritte (<span th:text="${#lists.size(torneo.squadre)}">0</span>)</div>
-
-                <div th:if="${torneo.squadre != null and !torneo.squadre.empty}">
-                    <div th:each="squadra : ${torneo.squadre}" class="squadra-item">
-                        <div>
-                            <div class="squadra-nome" th:text="${squadra.nome}">Nome Squadra</div>
-                            <div class="squadra-citta" th:text="${squadra.citta}">Città</div>
-                        </div>
-                        <a th:href="@{'/squadra/' + ${squadra.id}}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Dettaglio →</a>
-                    </div>
-                </div>
-                <div th:if="${torneo.squadre == null or torneo.squadre.empty}" class="empty-msg">
-                    Nessuna squadra ancora iscritta.
-                </div>
-            </div>
-
-            <!-- Ultime Partite -->
-            <div class="section-panel">
-                <div class="section-title">🗓️ Partite del Torneo (<span th:text="${torneo.partite != null ? #lists.size(torneo.partite) : 0}">0</span>)</div>
-
-                <div th:if="${torneo.partite != null and !torneo.partite.empty}">
-                    <div th:each="partita : ${torneo.partite}" class="partita-item">
-                        <div class="partita-teams">
-                            <span th:text="${partita.squadraCasa.nome}">Casa</span>
-                            <span class="score-badge" th:if="${partita.stato == 'GIOCATA'}"
                                   th:text="' ' + ${partita.goalsHome} + '-' + ${partita.goalsAway} + ' '"> 0-0 </span>
                             <span th:if="${partita.stato != 'GIOCATA'}"> vs </span>
                             <span th:text="${partita.squadraOspite.nome}">Ospite</span>

@@ -67,25 +67,58 @@
 </head>
 
 <body>
-    <!-- Sfondo Animato Ambientale -->
-    <div class="ambient-background"></div>
+    <div class="ambient-glow"></div>
+    
+    <nav>
+        <ul>
+            <li><a href="/" class="active">Home</a></li>
+            <li><a href="/tornei">Tornei</a></li>
+            <li><a href="/squadre">Squadre</a></li>
+            <li><a href="/giocatori">Giocatori</a></li>
+            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
+        </ul>
+    </nav>
 
-    <div class="glass-panel hero-card">
-        <h1 class="text-gradient">⚽ Calcio Amatoriale</h1>
-        <p class="subtitle">La piattaforma definitiva per gestire i tuoi tornei, le squadre e le partite con un'esperienza premium.</p>
-        
-        <div class="home-buttons">
-            <a href="/tornei" class="btn btn-primary">🏆 Esplora Tornei</a>
-            <div sec:authorize="!isAuthenticated()">
-                <a href="/login" class="btn btn-secondary">Accedi</a>
-                <a href="/register" class="btn btn-outline">Registrati</a>
+    <main class="container">
+        <section style="text-align: center; padding: 5rem 0;">
+            <h1 class="text-gradient" style="font-size: 4.5rem; line-height: 1.1; margin-bottom: 1.5rem;">
+                Il Calcio Amatoriale<br>diventa Professionale.
+            </h1>
+            <p style="color: var(--gray-medium); font-size: 1.25rem; max-width: 600px; margin: 0 auto 3rem;">
+                Gestisci tornei, consulta classifiche e segui i tuoi giocatori preferiti con l'esperienza digitale definitiva.
+            </p>
+            
+            <div style="display: flex; justify-content: center; gap: 1.5rem;">
+                <a href="/tornei" class="btn btn-primary">🏆 Esplora Tornei</a>
+                <div sec:authorize="!isAuthenticated()" style="display: flex; gap: 1.5rem;">
+                    <a href="/login" class="btn btn-outline">Accedi</a>
+                    <a href="/oauth2/authorization/google" class="btn btn-google">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_\"Color\"_Logo.svg" style="width:18px; margin-right:10px; filter: brightness(0) invert(1);"> 
+                        Accedi con Google
+                    </a>
+                </div>
+                <div sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger">Esci</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid-3">
+            <div class="card">
+                <h3 style="color: var(--accent-green); margin-bottom: 1rem;">📅 Calendari Real-time</h3>
+                <p style="color: var(--gray-medium); font-size: 0.9rem;">Resta aggiornato su ogni match, orario e luogo degli incontri.</p>
+            </div>
+            <div class="card">
+                <h3 style="color: var(--accent-green); margin-bottom: 1rem;">📊 Analisi JPA</h3>
+                <p style="color: var(--gray-medium); font-size: 0.9rem;">Sotto il cofano, usiamo tecnologie all'avanguardia per gestire i tuoi dati.</p>
+            </div>
+            <div class="card">
+                <h3 style="color: var(--accent-green); margin-bottom: 1rem;">💬 Community React</h3>
+                <p style="color: var(--gray-medium); font-size: 0.9rem;">Commenta le partite in tempo reale grazie alla nostra integrazione React.</p>
             </div>
         </div>
-
-        <div sec:authorize="isAuthenticated()" class="auth-status">
-            <p>Sei già connesso alla piattaforma.</p>
-            <a href="/dashboard" class="btn btn-outline" style="margin-top: 1rem;">Accedi al tuo pannello →</a>
-        </div>
-    </div>
+    </main>
 </body>
 </html>

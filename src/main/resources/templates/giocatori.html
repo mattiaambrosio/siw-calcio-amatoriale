@@ -93,51 +93,67 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>⚽ Giocatori Registrati</h1>
-            <p style="color: var(--gray-medium); margin: 0;">Tutti i giocatori della piattaforma</p>
-        </div>
-        
-        <div class="players-grid">
-            <div th:each="giocatore : ${giocatori}" class="player-card">
-                <h2 class="player-name" th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</h2>
-                
-                <div class="info-group">
-                    <div class="info-label">Ruolo</div>
-                    <div>
-                        <span class="role-badge" th:text="${giocatore.ruolo}">Ruolo</span>
-                    </div>
-                </div>
+    <div class="ambient-glow"></div>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/tornei">Tornei</a></li>
+            <li><a href="/squadre">Squadre</a></li>
+            <li><a href="/giocatori" class="active">Giocatori</a></li>
+            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
+        </ul>
+    </nav>
 
-                <div class="info-group">
-                    <div class="info-label">Data di Nascita</div>
-                    <div class="info-value" th:text="${giocatore.dataDiNascita}">01/01/2000</div>
-                </div>
-
-                <div class="info-group">
-                    <div class="info-label">Altezza</div>
-                    <div class="info-value">
-                        <span th:text="${giocatore.altezza}">180</span> cm
-                    </div>
-                </div>
-
-                <div class="info-group">
-                    <div class="info-label">Squadra</div>
-                    <div>
-                        <span th:if="${giocatore.squadra != null}" class="team-badge" th:text="${giocatore.squadra.nome}">Squadra</span>
-                        <span th:if="${giocatore.squadra == null}" style="color: var(--gray-medium); font-style: italic;">Senza squadra</span>
-                    </div>
-                </div>
+    <main class="container">
+        <header style="margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: flex-end;">
+            <div>
+                <h1 class="text-gradient" style="font-size: 3rem;">Talenti del Torneo</h1>
+                <p style="color: var(--gray-medium);">L'elenco completo di tutti gli atleti registrati.</p>
             </div>
-        </div>
+            <a href="/admin/giocatore/new" sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary">+ Nuovo Giocatore</a>
+        </header>
 
-        <div th:if="${giocatori.empty}" class="empty-state">
-            <h2>📭 Nessun giocatore disponibile</h2>
-            <p>Non ci sono giocatori registrati al momento.</p>
-        </div>
-    </div>
-
-    <a href="/" class="back-link" style="display: block; margin: 2rem; text-align: center;">← Torna alla Home</a>
+        <section class="glass-panel" style="padding: 1rem;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome & Cognome</th>
+                        <th>Ruolo</th>
+                        <th>Squadra</th>
+                        <th sec:authorize="hasAuthority('ADMIN')">Azioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="g : ${giocatori}">
+                        <td>
+                            <div style="display: flex; flex-direction: column;">
+                                <span style="color: #fff; font-weight: 600;" th:text="${g.nome} + ' ' + ${g.cognome}">Nome Cognome</span>
+                                <span style="font-size: 0.75rem; color: var(--gray-medium);" th:text="'Nato il ' + ${#temporals.format(g.dataDiNascita, 'dd/MM/yyyy')}">Data</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="background: rgba(255,255,255,0.05); padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.8rem; color: var(--accent-green);" th:text="${g.ruolo}">Ruolo</span>
+                        </td>
+                        <td>
+                            <a th:if="${g.squadra != null}" th:href="@{'/squadra/' + ${g.squadra.id}}" style="color: var(--accent-green); text-decoration: none;" th:text="${g.squadra.nome}">Squadra</a>
+                            <span th:if="${g.squadra == null}" style="color: var(--gray-medium);">Svincolato</span>
+                        </td>
+                        <td sec:authorize="hasAuthority('ADMIN')">
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a th:href="@{'/admin/giocatore/' + ${g.id} + '/edit'}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">✏️</a>
+                                <form th:action="@{'/admin/giocatore/' + ${g.id} + '/delete'}" method="post">
+                                    <button type="submit" class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="return confirm('Eliminare il giocatore?')">🗑️</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div th:if="${#lists.isEmpty(giocatori)}" style="text-align: center; padding: 3rem;">
+                <p style="color: var(--gray-medium);">Nessun giocatore registrato nel sistema.</p>
+            </div>
+        </section>
+    </main>
 </body>
 </html>

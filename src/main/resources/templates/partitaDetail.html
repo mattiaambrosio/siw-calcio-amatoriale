@@ -183,58 +183,53 @@
     </style>
 </head>
 <body>
-<div class="container">
+    <div class="ambient-glow"></div>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/tornei">Tornei</a></li>
+            <li><a href="/squadre">Squadre</a></li>
+            <li><a href="/giocatori">Giocatori</a></li>
+            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
+        </ul>
+    </nav>
 
-    <div class="breadcrumb">
-        <a href="/partite">← Calendario Partite</a>
-    </div>
+    <main class="container">
+        <!-- Match Hero -->
+        <header class="glass-panel" style="margin-bottom: 3rem; text-align: center; padding: 3rem;">
+            <div style="background: var(--accent-green-glow); color: var(--accent-green); padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 2rem; display: inline-block;" th:text="${partita.torneo.nome}">Torneo</div>
+            
+            <div style="display: flex; justify-content: center; align-items: center; gap: 3rem; margin-bottom: 2rem;">
+                <div style="flex: 1; text-align: right;">
+                    <h2 style="font-size: 1.8rem;" th:text="${partita.squadraCasa.nome}">Casa</h2>
+                </div>
+                
+                <div style="background: rgba(255,255,255,0.05); padding: 1rem 2rem; border-radius: 16px; border: 1px solid var(--glass-border);">
+                    <div th:if="${partita.stato == 'GIOCATA'}" style="font-size: 3rem; font-weight: 800; color: var(--accent-green);" th:text="${partita.goalsHome} + ' - ' + ${partita.goalsAway}">0 - 0</div>
+                    <div th:if="${partita.stato != 'GIOCATA'}" style="font-size: 1.5rem; font-weight: 800; color: var(--gray-medium);">VS</div>
+                </div>
 
-    <!-- Hero Partita -->
-    <div class="match-hero">
-        <div class="tournament-badge" th:text="${partita.torneo.nome}">Torneo</div>
-
-        <div class="teams-row">
-            <div class="team-block">
-                <div class="team-name" th:text="${partita.squadraCasa.nome}">Casa</div>
+                <div style="flex: 1; text-align: left;">
+                    <h2 style="font-size: 1.8rem;" th:text="${partita.squadraOspite.nome}">Ospite</h2>
+                </div>
             </div>
 
-            <!-- Score o VS -->
-            <div th:if="${partita.stato == 'GIOCATA'}" class="score-display"
-                 th:text="${partita.goalsHome} + ' - ' + ${partita.goalsAway}">0 - 0</div>
-            <div th:if="${partita.stato != 'GIOCATA'}" class="vs-text">VS</div>
-
-            <div class="team-block">
-                <div class="team-name" th:text="${partita.squadraOspite.nome}">Ospite</div>
+            <div style="display: flex; justify-content: center; gap: 2rem; color: var(--gray-medium); font-size: 0.9rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
+                <span>📅 <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span></span>
+                <span>🏟️ <span th:text="${partita.luogo}">Luogo</span></span>
+                <span>⚽ Arbitro: <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Arbitro</span></span>
             </div>
-        </div>
-
-        <span class="match-status status-played" th:if="${partita.stato == 'GIOCATA'}">✓ Partita Giocata</span>
-        <span class="match-status status-scheduled" th:if="${partita.stato == 'PROGRAMMATA'}">⏰ Da Giocare</span>
-
-        <div class="info-bar">
-            <div class="info-chip">
-                <span>🕒</span>
-                <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span>
+            
+            <div sec:authorize="hasAuthority('ADMIN')" style="margin-top: 2rem;">
+                <form th:action="@{'/admin/partita/' + ${partita.id} + '/delete'}" method="post">
+                    <button type="submit" class="btn btn-danger" onclick="return confirm('Eliminare partita?')">🗑️ Elimina Match</button>
+                </form>
             </div>
-            <div class="info-chip">
-                <span>🏟️</span>
-                <span th:text="${partita.luogo}">Luogo</span>
-            </div>
-            <div class="info-chip">
-                <span>⚽</span>
-                Arbitro: <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Arbitro</span>
-            </div>
-        </div>
-    </div>
+        </header>
 
-    <!-- ──────────────────────────────────────── -->
-    <!--  SEZIONE COMMENTI — gestita da React      -->
-    <!-- ──────────────────────────────────────── -->
-
-    <!-- Mount point: React monterà qui la sezione commenti -->
-    <div id="react-commenti-root" th:attr="data-partita-id=${partita.id}"></div>
-
-</div>
+        <!-- SEZIONE COMMENTI — gestita da React -->
+        <div id="react-commenti-root" th:attr="data-partita-id=${partita.id}"></div>
+    </main>
 
 <!-- CDN React 18 + Babel Standalone (per JSX senza build) -->
 <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>

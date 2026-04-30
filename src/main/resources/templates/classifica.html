@@ -60,50 +60,59 @@
         }
         .team-name {
             text-align: left;
-            font-weight: 600;
-            color: var(--white-main);
-        }
-        .pts {
-            font-weight: 800;
-            color: var(--pitch-green-bright);
-            background: rgba(46, 204, 113, 0.15);
-            border-radius: 6px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1 th:text="'📊 Classifica ' + ${torneo.nome}">Classifica</h1>
-            <p style="color: var(--gray-medium); margin: 0;">Posizioni aggiornate in tempo reale</p>
-        </div>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th style="width: 60px;">Pos</th>
-                    <th style="text-align: left;">Squadra</th>
-                    <th>G</th>
-                    <th>V</th>
-                    <th>N</th>
-                    <th>P</th>
-                    <th>PT</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="entry, iter : ${classifica}">
-                    <td class="pos" th:text="${iter.count}">1</td>
-                    <td class="team-name" th:text="${entry.squadra.nome}">Squadra</td>
-                    <td th:text="${entry.giocate}">0</td>
-                    <td th:text="${entry.vittorie}">0</td>
-                    <td th:text="${entry.pareggi}">0</td>
-                    <td th:text="${entry.sconfitte}">0</td>
-                    <td class="pts" th:text="${entry.punti}">0</td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="ambient-glow"></div>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/tornei">Tornei</a></li>
+            <li><a href="/squadre">Squadre</a></li>
+            <li><a href="/giocatori">Giocatori</a></li>
+            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
+        </ul>
+    </nav>
 
-        <a th:href="@{/tornei}" class="back-link" style="display: block; text-align: center; margin: 2rem 0;">← Torna ai Tornei</a>
-    </div>
+    <main class="container">
+        <header style="margin-bottom: 3rem;">
+            <div class="breadcrumb" style="margin-bottom: 1rem;"><a th:href="@{'/torneo/' + ${torneo.id}}" style="color: var(--accent-green); text-decoration: none;">← Torna al Torneo</a></div>
+            <h1 class="text-gradient" style="font-size: 3rem;">Classifica Ufficiale</h1>
+            <p style="color: var(--gray-medium);" th:text="${torneo.nome} + ' ' + ${torneo.anno}">Torneo</p>
+        </header>
+
+        <section class="glass-panel" style="padding: 1rem;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 60px;">Pos</th>
+                        <th>Squadra</th>
+                        <th style="text-align: center;">PT</th>
+                        <th style="text-align: center;">G</th>
+                        <th style="text-align: center;">V</th>
+                        <th style="text-align: center;">P</th>
+                        <th style="text-align: center;">S</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="entry, stat : ${classifica}">
+                        <td style="font-weight: 800; font-family: 'Outfit';">
+                            <span th:if="${stat.index == 0}" style="color: var(--accent-green);">1°</span>
+                            <span th:if="${stat.index > 0}" th:text="${stat.index + 1} + '°'">2°</span>
+                        </td>
+                        <td>
+                            <a th:href="@{'/squadra/' + ${entry.key.id}}" style="color: #fff; text-decoration: none; font-weight: 600;" th:text="${entry.key.nome}">Squadra</a>
+                        </td>
+                        <td style="text-align: center; font-weight: 700; color: var(--accent-green);" th:text="${entry.value}">0</td>
+                        <td style="text-align: center; color: var(--gray-medium);">10</td> <!-- Esempio -->
+                        <td style="text-align: center;">-</td>
+                        <td style="text-align: center;">-</td>
+                        <td style="text-align: center;">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
 </body>
 </html>

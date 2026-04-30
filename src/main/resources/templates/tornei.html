@@ -116,44 +116,41 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>📅 Tornei Disponibili</h1>
-            <p style="color: var(--gray-medium); margin: 0;">Ecco la lista dei tornei attualmente attivi</p>
-        </div>
+    <div class="ambient-glow"></div>
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/tornei" class="active">Tornei</a></li>
+            <li><a href="/squadre">Squadre</a></li>
+            <li><a href="/giocatori">Giocatori</a></li>
+            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
+        </ul>
+    </nav>
 
-        <div class="tournaments-grid">
-            <div th:each="torneo : ${tornei}" class="tournament-card">
-                <h2 class="tournament-name" th:text="${torneo.nome}">Nome Torneo</h2>
-                <span class="tournament-year" th:text="${torneo.anno}">2026</span>
-                
-                <p class="tournament-description" th:text="${torneo.descrizione}">Descrizione del torneo</p>
+    <main class="container">
+        <header style="margin-bottom: 3rem;">
+            <h1 class="text-gradient" style="font-size: 3rem;">Tornei Disponibili</h1>
+            <p style="color: var(--gray-medium);">Scegli un torneo per vedere classifiche e calendari.</p>
+        </header>
 
-                <div class="teams-section">
-                    <div class="teams-title">Squadre Iscritte</div>
-                    
-                    <ul th:if="${!torneo.squadre.empty}" class="teams-list">
-                        <li th:each="squadra : ${torneo.squadre}" class="team-item">
-                            <span th:text="${squadra.nome} + ' (' + ${squadra.citta} + ')'">Squadra</span>
-                        </li>
-                    </ul>
-                    
-                    <div th:if="${torneo.squadre.empty}" class="empty-teams">
-                        Ancora nessuna squadra iscritta
-                    </div>
+        <div class="grid-3">
+            <div th:each="torneo : ${tornei}" class="card glass-panel" style="padding: 2rem;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                    <span style="background: var(--accent-green-glow); color: var(--accent-green); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;" th:text="${torneo.anno}">2026</span>
                 </div>
-
-                <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-secondary view-button" style="margin-top:0.75rem;">📋 Vedi Dettaglio</a>
-                <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary view-button">🏆 Classifica</a>
+                <h2 style="margin-bottom: 1rem;" th:text="${torneo.nome}">Nome Torneo</h2>
+                <p style="color: var(--gray-medium); font-size: 0.9rem; margin-bottom: 2rem; min-height: 3em;" th:text="${torneo.descrizione}">Descrizione breve del torneo.</p>
+                
+                <div style="display: flex; gap: 1rem;">
+                    <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-primary" style="flex: 1;">Vedi Dettaglio</a>
+                </div>
             </div>
         </div>
 
-        <div th:if="${tornei.empty}" class="empty-state">
-            <h2>📭 Nessun torneo disponibile</h2>
-            <p>Non ci sono tornei disponibili al momento.</p>
+        <div th:if="${#lists.isEmpty(tornei)}" style="text-align: center; padding: 5rem 0;">
+            <p style="color: var(--gray-medium);">Ancora nessun torneo registrato.</p>
+            <a href="/admin/torneo/new" sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary" style="margin-top: 1rem;">+ Crea il Primo Torneo</a>
         </div>
-
-        <a href="/" class="back-link" style="display: block; text-align: center; margin: 2rem 0;">← Torna alla Home</a>
-    </div>
+    </main>
 </body>
 </html>
