@@ -18,12 +18,12 @@ public class PartitaService {
         partitaRepository.save(partita);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Partita findById(Long id) {
         return partitaRepository.findById(id).orElse(null);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Iterable<Partita> findAll() {
         return partitaRepository.findAll();
     }

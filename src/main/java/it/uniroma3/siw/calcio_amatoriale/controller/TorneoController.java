@@ -50,6 +50,17 @@ public class TorneoController {
         return "tornei"; // Cerca il file tornei.html
     }
 
+    // Questa rotta mostra il dettaglio di un singolo torneo (pubblica)
+    @GetMapping("/torneo/{id}")
+    public String showTorneoDetail(@PathVariable("id") Long id, Model model) {
+        Torneo torneo = torneoService.findById(id);
+        if (torneo == null) {
+            return "redirect:/tornei";
+        }
+        model.addAttribute("torneo", torneo);
+        return "torneoDetail";
+    }
+
     // Mostra il form per iscrivere una squadra a un torneo
     @GetMapping("/admin/iscrizione")
     public String formIscrizione(Model model) {

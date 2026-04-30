@@ -18,17 +18,17 @@ public class TorneoService {
         torneoRepository.save(torneo);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Torneo findById(Long id) {
         return torneoRepository.findById(id).orElse(null);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Iterable<Torneo> findAll() {
         return torneoRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean alreadyExists(Torneo torneo) {
         return torneoRepository.existsByNome(torneo.getNome());
     }

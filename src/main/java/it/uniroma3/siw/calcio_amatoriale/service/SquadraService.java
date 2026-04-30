@@ -18,17 +18,17 @@ public class SquadraService {
         squadraRepository.save(squadra);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Squadra findById(Long id) {
         return squadraRepository.findById(id).orElse(null);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Iterable<Squadra> findAll() {
         return squadraRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean alreadyExists(Squadra squadra) {
         return squadraRepository.existsByNome(squadra.getNome());
     }

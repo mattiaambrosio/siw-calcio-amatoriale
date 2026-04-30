@@ -24,7 +24,7 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/", "/index", "/css/**", "/tornei", "/register", "/login")
+                        .requestMatchers(HttpMethod.GET, "/", "/index", "/css/**", "/tornei", "/torneo/**", "/squadra/**", "/register", "/login")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/register", "/login").permitAll()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")

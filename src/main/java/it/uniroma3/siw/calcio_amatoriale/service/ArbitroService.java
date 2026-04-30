@@ -18,17 +18,17 @@ public class ArbitroService {
         arbitroRepository.save(arbitro);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Arbitro findById(Long id) {
         return arbitroRepository.findById(id).orElse(null);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Iterable<Arbitro> findAll() {
         return arbitroRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean alreadyExists(Arbitro arbitro) {
         return arbitroRepository.existsByCodiceArbitrale(arbitro.getCodiceArbitrale());
     }

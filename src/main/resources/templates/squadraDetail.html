@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${squadra.nome} + ' - Calcio Amatoriale'">Dettaglio Squadra</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .container { padding: 2rem; }
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--gray-medium);
+            margin-bottom: 1.5rem;
+        }
+        .breadcrumb a { color: var(--accent-blue); }
+        .squadra-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            flex-wrap: wrap;
+        }
+        .squadra-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--pitch-green-light), var(--accent-blue));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+        .squadra-info-main { flex: 1; }
+        .squadra-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--white-main);
+            margin: 0 0 0.5rem 0;
+        }
+        .meta-pills {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
+        }
+        .meta-pill {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 0.3rem 0.9rem;
+            font-size: 0.85rem;
+            color: var(--gray-light);
+        }
+        .actions-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .section-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .players-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .players-table th {
+            text-align: left;
+            padding: 0.7rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            background: none;
+        }
+        .players-table td {
+            padding: 0.9rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            color: var(--gray-light);
+        }
+        .players-table tr:last-child td { border-bottom: none; }
+        .players-table tr:hover td { background: rgba(50, 215, 75, 0.04); }
+        .player-fullname { font-weight: 500; color: var(--white-main); }
+        .role-badge {
+            background: rgba(50, 215, 75, 0.1);
+            color: var(--pitch-green-light);
+            border: 1px solid rgba(50, 215, 75, 0.2);
+            padding: 0.2rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .tornei-list { list-style: none; padding: 0; margin: 0; }
+        .torneo-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .torneo-item:last-child { border-bottom: none; }
+        .torneo-nome { font-weight: 500; color: var(--white-main); }
+        .torneo-anno { font-size: 0.85rem; color: var(--gray-medium); }
+        .empty-msg {
+            color: var(--gray-medium);
+            font-style: italic;
+            text-align: center;
+            padding: 2rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="breadcrumb">
+            <a href="/squadre">← Tutte le Squadre</a>
+        </div>
+
+        <!-- Header Squadra -->
+        <div class="squadra-header">
+            <div class="squadra-avatar">🏆</div>
+            <div class="squadra-info-main">
+                <h1 class="squadra-title" th:text="${squadra.nome}">Nome Squadra</h1>
+                <div class="meta-pills">
+                    <span class="meta-pill" th:text="'📍 ' + ${squadra.citta}">Città</span>
+                    <span class="meta-pill" th:text="'📅 Fondata nel ' + ${squadra.annoDiFondazione}">Anno</span>
+                    <span class="meta-pill" th:text="'👥 ' + (${squadra.giocatori != null ? #lists.size(squadra.giocatori) : 0}) + ' giocatori'">Giocatori</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Azioni Admin -->
+        <div class="actions-bar" sec:authorize="hasAuthority('ADMIN')">
+            <a th:href="@{'/admin/squadra/' + ${squadra.id} + '/edit'}" class="btn btn-outline">✏️ Modifica Squadra</a>
+            <form th:action="@{'/admin/squadra/' + ${squadra.id} + '/delete'}" method="post" style="display:inline;"
+                  onsubmit="return confirm('Sei sicuro di voler eliminare questa squadra?')">
+                <button type="submit" class="btn btn-danger">🗑️ Elimina</button>
+            </form>
+        </div>
+
+        <!-- Rosa Giocatori -->
+        <div class="section-panel">
+            <div class="section-title">
+                👥 Rosa Giocatori (<span th:text="${squadra.giocatori != null ? #lists.size(squadra.giocatori) : 0}">0</span>)
+            </div>
+
+            <div th:if="${squadra.giocatori != null and !squadra.giocatori.empty}">
+                <table class="players-table">
+                    <thead>
+                        <tr>
+                            <th>Giocatore</th>
+                            <th>Ruolo</th>
+                            <th>Data di Nascita</th>
+                            <th>Altezza</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="giocatore : ${squadra.giocatori}">
+                            <td class="player-fullname" th:text="${giocatore.nome} + ' ' + ${giocatore.cognome}">Nome Cognome</td>
+                            <td><span class="role-badge" th:text="${giocatore.ruolo}">Ruolo</span></td>
+                            <td th:text="${#temporals.format(giocatore.dataDiNascita, 'dd/MM/yyyy')}">01/01/2000</td>
+                            <td th:text="${giocatore.altezza} + ' cm'">180 cm</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${squadra.giocatori == null or squadra.giocatori.empty}" class="empty-msg">
+                Nessun giocatore in rosa al momento.
+            </div>
+        </div>
+
+        <!-- Tornei a Cui Partecipa -->
+        <div class="section-panel">
+            <div class="section-title">
+                🏅 Tornei Partecipati (<span th:text="${squadra.tornei != null ? #lists.size(squadra.tornei) : 0}">0</span>)
+            </div>
+
+            <div th:if="${squadra.tornei != null and !squadra.tornei.empty}">
+                <ul class="tornei-list">
+                    <li th:each="torneo : ${squadra.tornei}" class="torneo-item">
+                        <div>
+                            <div class="torneo-nome" th:text="${torneo.nome}">Nome Torneo</div>
+                            <div class="torneo-anno" th:text="${torneo.anno}">2026</div>
+                        </div>
+                        <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Vai al Torneo →</a>
+                    </li>
+                </ul>
+            </div>
+            <div th:if="${squadra.tornei == null or squadra.tornei.empty}" class="empty-msg">
+                La squadra non partecipa a nessun torneo.
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${torneo.nome} + ' - Calcio Amatoriale'">Dettaglio Torneo</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .container { padding: 2rem; }
+        .page-header {
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--gray-medium);
+            margin-bottom: 1rem;
+        }
+        .breadcrumb a { color: var(--accent-blue); }
+        .torneo-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--white-main);
+            margin: 0.5rem 0;
+        }
+        .torneo-year {
+            display: inline-block;
+            background: var(--accent-blue);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .torneo-desc {
+            color: var(--gray-medium);
+            font-size: 1rem;
+            line-height: 1.7;
+            max-width: 700px;
+        }
+        .actions-bar {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 768px) { .detail-grid { grid-template-columns: 1fr; } }
+        .section-panel {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--gray-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .squadra-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .squadra-item:last-child { border-bottom: none; }
+        .squadra-nome {
+            font-weight: 500;
+            color: var(--white-main);
+        }
+        .squadra-citta {
+            font-size: 0.85rem;
+            color: var(--gray-medium);
+        }
+        .partita-item {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .partita-item:last-child { border-bottom: none; }
+        .partita-teams {
+            font-weight: 500;
+            color: var(--white-main);
+            margin-bottom: 0.3rem;
+        }
+        .partita-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--gray-medium);
+        }
+        .badge-played {
+            background: rgba(50, 215, 75, 0.15);
+            color: var(--pitch-green-light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+        }
+        .badge-scheduled {
+            background: rgba(255, 159, 10, 0.15);
+            color: var(--accent-warning);
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+        }
+        .empty-msg {
+            color: var(--gray-medium);
+            font-style: italic;
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 1rem 0;
+        }
+        .score-badge {
+            font-weight: 700;
+            color: var(--pitch-green-light);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="page-header">
+            <div class="breadcrumb">
+                <a href="/tornei">← Tutti i Tornei</a>
+            </div>
+            <span class="torneo-year" th:text="${torneo.anno}">2026</span>
+            <h1 class="torneo-title" th:text="${torneo.nome}">Nome Torneo</h1>
+            <p class="torneo-desc" th:text="${torneo.descrizione}">Descrizione</p>
+        </div>
+
+        <!-- Azioni -->
+        <div class="actions-bar">
+            <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary">🏆 Vedi Classifica</a>
+            <a href="/partite" class="btn btn-secondary">📅 Calendario Partite</a>
+            <!-- Solo Admin -->
+            <div sec:authorize="hasAuthority('ADMIN')" style="display:inline-flex; gap:1rem;">
+                <a th:href="@{'/admin/torneo/' + ${torneo.id} + '/edit'}" class="btn btn-outline">✏️ Modifica Torneo</a>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <!-- Squadre Iscritte -->
+            <div class="section-panel">
+                <div class="section-title">⚽ Squadre Iscritte (<span th:text="${#lists.size(torneo.squadre)}">0</span>)</div>
+
+                <div th:if="${torneo.squadre != null and !torneo.squadre.empty}">
+                    <div th:each="squadra : ${torneo.squadre}" class="squadra-item">
+                        <div>
+                            <div class="squadra-nome" th:text="${squadra.nome}">Nome Squadra</div>
+                            <div class="squadra-citta" th:text="${squadra.citta}">Città</div>
+                        </div>
+                        <a th:href="@{'/squadra/' + ${squadra.id}}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Dettaglio →</a>
+                    </div>
+                </div>
+                <div th:if="${torneo.squadre == null or torneo.squadre.empty}" class="empty-msg">
+                    Nessuna squadra ancora iscritta.
+                </div>
+            </div>
+
+            <!-- Ultime Partite -->
+            <div class="section-panel">
+                <div class="section-title">🗓️ Partite del Torneo (<span th:text="${torneo.partite != null ? #lists.size(torneo.partite) : 0}">0</span>)</div>
+
+                <div th:if="${torneo.partite != null and !torneo.partite.empty}">
+                    <div th:each="partita : ${torneo.partite}" class="partita-item">
+                        <div class="partita-teams">
+                            <span th:text="${partita.squadraCasa.nome}">Casa</span>
+                            <span class="score-badge" th:if="${partita.stato == 'GIOCATA'}"
+                                  th:text="' ' + ${partita.goalsHome} + '-' + ${partita.goalsAway} + ' '"> 0-0 </span>
+                            <span th:if="${partita.stato != 'GIOCATA'}"> vs </span>
+                            <span th:text="${partita.squadraOspite.nome}">Ospite</span>
+                        </div>
+                        <div class="partita-meta">
+                            <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span>
+                            <span class="badge-played" th:if="${partita.stato == 'GIOCATA'}">✓ Giocata</span>
+                            <span class="badge-scheduled" th:if="${partita.stato == 'PROGRAMMATA'}">⏰ Programmata</span>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${torneo.partite == null or torneo.partite.empty}" class="empty-msg">
+                    Nessuna partita programmata.
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

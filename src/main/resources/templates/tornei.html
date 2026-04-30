@@ -143,7 +143,8 @@
                     </div>
                 </div>
 
-                <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary view-button">Vedi Classifica</a>
+                <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-secondary view-button" style="margin-top:0.75rem;">📋 Vedi Dettaglio</a>
+                <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary view-button">🏆 Classifica</a>
             </div>
         </div>
 

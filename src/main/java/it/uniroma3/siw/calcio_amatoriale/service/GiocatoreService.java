@@ -18,17 +18,17 @@ public class GiocatoreService {
         giocatoreRepository.save(giocatore);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Giocatore findById(Long id) {
         return giocatoreRepository.findById(id).orElse(null);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Iterable<Giocatore> findAll() {
         return giocatoreRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public boolean alreadyExists(Giocatore giocatore) {
         return giocatoreRepository.existsByNomeAndCognome(giocatore.getNome(), giocatore.getCognome());
     }

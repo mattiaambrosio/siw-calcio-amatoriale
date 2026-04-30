@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Squadra;
@@ -41,5 +42,16 @@ public class SquadraController {
     public String showSquadre(Model model) {
         model.addAttribute("squadre", squadraService.findAll());
         return "squadre"; // Cerca il file squadre.html in templates
+    }
+
+    // Rotta pubblica per vedere il dettaglio di una squadra (con giocatori)
+    @GetMapping("/squadra/{id}")
+    public String showSquadraDetail(@PathVariable("id") Long id, Model model) {
+        it.uniroma3.siw.calcio_amatoriale.model.Squadra squadra = squadraService.findById(id);
+        if (squadra == null) {
+            return "redirect:/squadre";
+        }
+        model.addAttribute("squadra", squadra);
+        return "squadraDetail";
     }
 }
