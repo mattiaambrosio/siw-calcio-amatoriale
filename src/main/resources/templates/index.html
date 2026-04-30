@@ -92,10 +92,7 @@
                 <a href="/tornei" class="btn btn-primary">🏆 Esplora Tornei</a>
                 <div sec:authorize="!isAuthenticated()" style="display: flex; gap: 1.5rem;">
                     <a href="/login" class="btn btn-outline">Accedi</a>
-                    <a href="/oauth2/authorization/google" class="btn btn-google">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_\"Color\"_Logo.svg" style="width:18px; margin-right:10px; filter: brightness(0) invert(1);"> 
-                        Accedi con Google
-                    </a>
+                    <a href="/register" class="btn btn-primary">Registrati</a>
                 </div>
                 <div sec:authorize="isAuthenticated()">
                     <form th:action="@{/logout}" method="post" style="display:inline;">

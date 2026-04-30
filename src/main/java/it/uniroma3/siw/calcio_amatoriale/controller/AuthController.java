@@ -12,6 +12,10 @@ import it.uniroma3.siw.calcio_amatoriale.model.Credentials;
 import it.uniroma3.siw.calcio_amatoriale.model.RegistrationForm;
 import it.uniroma3.siw.calcio_amatoriale.model.User;
 import it.uniroma3.siw.calcio_amatoriale.repository.CredentialsRepository;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 @Controller
 public class AuthController {
@@ -29,6 +33,27 @@ public class AuthController {
 
     @GetMapping("/dashboard")
     public String showDashboard(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
+            Object principal = auth.getPrincipal();
+            
+            if (principal instanceof OAuth2User) {
+                OAuth2User oauthUser = (OAuth2User) principal;
+                model.addAttribute("displayName", oauthUser.getAttribute("name"));
+            } else {
+                String email = auth.getName();
+                credentialsRepository.findByEmail(email).ifPresent(credentials -> {
+                    User user = credentials.getUser();
+                    if (user != null) {
+                        model.addAttribute("displayName", user.getNome() + " " + user.getCognome());
+                    } else {
+                        model.addAttribute("displayName", email);
+                    }
+                });
+            }
+        }
+        
         return "dashboard";
     }
 
