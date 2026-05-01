@@ -139,9 +139,49 @@
             <span class="torneo-year" th:text="${torneo.anno}">2026</span>
             <h1 class="torneo-title" th:text="${torneo.nome}">Nome Torneo</h1>
             <p class="torneo-desc" th:text="${torneo.descrizione}">Descrizione</p>
-                                  th:text="' ' + ${partita.goalsHome} + '-' + ${partita.goalsAway} + ' '"> 0-0 </span>
-                            <span th:if="${partita.stato != 'GIOCATA'}"> vs </span>
-                            <span th:text="${partita.squadraOspite.nome}">Ospite</span>
+
+            <div class="actions-bar">
+                <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary" style="background-color: var(--pitch-green-light); color: black;">🏆 Visualizza Classifica</a>
+                
+                <div sec:authorize="hasAuthority('ADMIN')" style="display: flex; gap: 0.5rem;">
+                    <a th:href="@{'/admin/torneo/' + ${torneo.id} + '/edit'}" class="btn btn-secondary">✏️ Modifica Torneo</a>
+                    <form th:action="@{'/admin/torneo/' + ${torneo.id} + '/delete'}" method="post" style="display: inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Sei sicuro di voler eliminare questo torneo?')">🗑️ Elimina</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="section-panel">
+                <h3 class="section-title">Squadre Partecipanti</h3>
+                <div th:if="${torneo.squadre != null and !torneo.squadre.empty}">
+                    <div th:each="squadra : ${torneo.squadre}" class="squadra-item">
+                        <div>
+                            <div class="squadra-nome">
+                                <a th:href="@{'/squadra/' + ${squadra.id}}" th:text="${squadra.nome}" style="color: var(--white-main); text-decoration: none;">Nome Squadra</a>
+                            </div>
+                            <div class="squadra-citta" th:text="${squadra.citta}">Città</div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${torneo.squadre == null or torneo.squadre.empty}" class="empty-msg">
+                    Nessuna squadra iscritta.
+                </div>
+            </div>
+
+            <div class="section-panel">
+                <h3 class="section-title">Calendario Partite</h3>
+                <div th:if="${torneo.partite != null and !torneo.partite.empty}">
+                    <div th:each="partita : ${torneo.partite}" class="partita-item">
+                        <div class="partita-teams">
+                            <a th:href="@{'/partita/' + ${partita.id}}" style="color: inherit; text-decoration: none;">
+                                <span th:text="${partita.squadraCasa.nome}">Casa</span>
+                                <span class="score-badge" th:if="${partita.stato == 'GIOCATA'}" 
+                                      th:text="' ' + ${partita.goalsHome} + '-' + ${partita.goalsAway} + ' '"> 0-0 </span>
+                                <span th:if="${partita.stato != 'GIOCATA'}"> vs </span>
+                                <span th:text="${partita.squadraOspite.nome}">Ospite</span>
+                            </a>
                         </div>
                         <div class="partita-meta">
                             <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span>
@@ -155,7 +195,6 @@
                 </div>
             </div>
         </div>
-
     </div>
 </body>
 </html>
