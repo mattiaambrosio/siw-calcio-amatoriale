@@ -57,6 +57,47 @@ public class AuthController {
         return "dashboard";
     }
 
+    @GetMapping("/benvenuto")
+    public String showBenvenuto(Model model) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return "redirect:/login";
+        }
+
+        Object principal = auth.getPrincipal();
+        String displayName = "Utente";
+        boolean isAdmin = false;
+
+        if (principal instanceof OAuth2User) {
+            OAuth2User oauthUser = (OAuth2User) principal;
+            displayName = oauthUser.getAttribute("name");
+            if (displayName == null) displayName = oauthUser.getAttribute("email");
+        } else {
+            String email = auth.getName();
+            Credentials cred = credentialsRepository.findByEmail(email).orElse(null);
+            if (cred != null) {
+                User user = cred.getUser();
+                if (user != null && user.getNome() != null) {
+                    displayName = user.getNome() + " " + user.getCognome();
+                } else {
+                    displayName = email;
+                }
+                isAdmin = "ADMIN".equals(cred.getRole());
+            }
+        }
+
+        // Controlla anche dalle authorities di Spring Security
+        if (!isAdmin) {
+            isAdmin = auth.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+        }
+
+        model.addAttribute("displayName", displayName);
+        model.addAttribute("isAdmin", isAdmin);
+        return "benvenuto";
+    }
+
     @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("registrationForm", new RegistrationForm());

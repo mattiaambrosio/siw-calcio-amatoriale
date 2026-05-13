@@ -141,7 +141,7 @@
             <p class="torneo-desc" th:text="${torneo.descrizione}">Descrizione</p>
 
             <div class="actions-bar">
-                <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn btn-primary" style="background-color: var(--pitch-green-light); color: black;">🏆 Visualizza Classifica</a>
+                <a th:href="@{'/torneo/' + ${torneo.id} + '/classifica'}" class="btn" style="background: linear-gradient(135deg, #32D74B 0%, #30D158 100%); color: #000; font-weight: 700; font-size: 1rem; padding: 0.9rem 2rem; box-shadow: 0 4px 15px rgba(50, 215, 75, 0.3);">🏆 Visualizza Classifica</a>
                 
                 <div sec:authorize="hasAuthority('ADMIN')" style="display: flex; gap: 0.5rem;">
                     <a th:href="@{'/admin/torneo/' + ${torneo.id} + '/edit'}" class="btn btn-secondary">✏️ Modifica Torneo</a>

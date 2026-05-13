@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -93,6 +94,8 @@
                         <th style="text-align: center;">V</th>
                         <th style="text-align: center;">P</th>
                         <th style="text-align: center;">S</th>
+                        <th style="text-align: center;">GF</th>
+                        <th style="text-align: center;">GS</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -102,16 +105,22 @@
                             <span th:if="${stat.index > 0}" th:text="${stat.index + 1} + '°'">2°</span>
                         </td>
                         <td>
-                            <a th:href="@{'/squadra/' + ${entry.key.id}}" style="color: #fff; text-decoration: none; font-weight: 600;" th:text="${entry.key.nome}">Squadra</a>
+                            <a th:href="@{'/squadra/' + ${entry.squadra.id}}" style="color: #fff; text-decoration: none; font-weight: 600;" th:text="${entry.squadra.nome}">Squadra</a>
                         </td>
-                        <td style="text-align: center; font-weight: 700; color: var(--accent-green);" th:text="${entry.value}">0</td>
-                        <td style="text-align: center; color: var(--gray-medium);">10</td> <!-- Esempio -->
-                        <td style="text-align: center;">-</td>
-                        <td style="text-align: center;">-</td>
-                        <td style="text-align: center;">-</td>
+                        <td style="text-align: center; font-weight: 700; color: var(--accent-green);" th:text="${entry.punti}">0</td>
+                        <td style="text-align: center; color: var(--gray-medium);" th:text="${entry.giocate}">0</td>
+                        <td style="text-align: center;" th:text="${entry.vittorie}">0</td>
+                        <td style="text-align: center;" th:text="${entry.pareggi}">0</td>
+                        <td style="text-align: center;" th:text="${entry.sconfitte}">0</td>
+                        <td style="text-align: center;" th:text="${entry.golFatti}">0</td>
+                        <td style="text-align: center;" th:text="${entry.golSubiti}">0</td>
                     </tr>
                 </tbody>
             </table>
+
+            <div th:if="${#lists.isEmpty(classifica)}" style="text-align: center; padding: 2rem; color: var(--gray-medium); font-style: italic;">
+                Nessuna squadra iscritta a questo torneo.
+            </div>
         </section>
     </main>
 </body>

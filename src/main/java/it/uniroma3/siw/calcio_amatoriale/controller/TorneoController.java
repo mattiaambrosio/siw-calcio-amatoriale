@@ -126,29 +126,12 @@ public class TorneoController {
     @GetMapping("/torneo/{id}/classifica")
     public String showClassifica(@PathVariable("id") Long id, Model model) {
         Torneo torneo = torneoService.findById(id);
-
-        // Mappa per tenere traccia dei punteggi di ogni squadra iscritta
-        java.util.Map<Long, SquadraPunteggio> classificaMap = new java.util.HashMap<>();
-        for (Squadra s : torneo.getSquadre()) {
-            classificaMap.put(s.getId(), new SquadraPunteggio(s));
+        if (torneo == null) {
+            return "redirect:/tornei";
         }
-
-        // Analizziamo le partite del torneo
-        if (torneo.getPartite() != null) {
-            for (Partita p : torneo.getPartite()) {
-                if ("GIOCATA".equals(p.getStato())) {
-                    classificaMap.get(p.getSquadraCasa().getId()).aggiungiPartita(p.getGoalsHome(), p.getGoalsAway());
-                    classificaMap.get(p.getSquadraOspite().getId()).aggiungiPartita(p.getGoalsAway(), p.getGoalsHome());
-                }
-            }
-        }
-
-        // Trasformiamo la mappa in una lista e ordiniamola
-        java.util.List<SquadraPunteggio> classificaOrdinata = new java.util.ArrayList<>(classificaMap.values());
-        java.util.Collections.sort(classificaOrdinata);
 
         model.addAttribute("torneo", torneo);
-        model.addAttribute("classifica", classificaOrdinata);
+        model.addAttribute("classifica", torneoService.calcolaClassifica(id));
         return "classifica";
     }
 }
