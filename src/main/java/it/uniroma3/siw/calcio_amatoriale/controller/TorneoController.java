@@ -98,36 +98,28 @@ public class TorneoController {
         return "admin/formIscrizione";
     }
 
-    // Salva l'iscrizione
+    // Salva l'iscrizione — la logica è nel Service Layer
     @PostMapping("/admin/iscrizione")
-    @org.springframework.transaction.annotation.Transactional
     public String iscriviSquadra(@org.springframework.web.bind.annotation.RequestParam("torneoId") Long torneoId,
             @org.springframework.web.bind.annotation.RequestParam("squadraId") Long squadraId,
             Model model) {
 
-        Torneo torneo = torneoService.findById(torneoId);
-        it.uniroma3.siw.calcio_amatoriale.model.Squadra squadra = squadraService.findById(squadraId);
+        String esito = torneoService.iscriviSquadraATorneo(torneoId, squadraId);
 
-        // Evitiamo crash se la lista è vuota
-        if (squadra.getTornei() == null) {
-            squadra.setTornei(new java.util.ArrayList<>());
-        }
-
-        // Controlliamo che la squadra non sia già iscritta a questo torneo
-        // Controlliamo che la squadra non sia già iscritta a questo torneo
-        if (!squadra.getTornei().contains(torneo)) {
-            squadra.getTornei().add(torneo);
-            torneo.getSquadre().add(squadra); // <-- AGGIUNGI QUESTA RIGA: Sincronizza anche l'altro lato!
-
-            squadraService.save(squadra);
-            model.addAttribute("messaggioSuccesso", "Squadra iscritta al torneo con successo!");
-            return "index";
-
-        } else {
-            model.addAttribute("messaggioErrore", "Attenzione: La squadra è già iscritta a questo torneo!");
-            model.addAttribute("tornei", torneoService.findAll());
-            model.addAttribute("squadre", squadraService.findAll());
-            return "admin/formIscrizione";
+        switch (esito) {
+            case "OK":
+                model.addAttribute("messaggioSuccesso", "Squadra iscritta al torneo con successo!");
+                return "index";
+            case "GIA_ISCRITTA":
+                model.addAttribute("messaggioErrore", "Attenzione: La squadra è già iscritta a questo torneo!");
+                model.addAttribute("tornei", torneoService.findAll());
+                model.addAttribute("squadre", squadraService.findAll());
+                return "admin/formIscrizione";
+            default:
+                model.addAttribute("messaggioErrore", "Errore: Torneo o squadra non trovati.");
+                model.addAttribute("tornei", torneoService.findAll());
+                model.addAttribute("squadre", squadraService.findAll());
+                return "admin/formIscrizione";
         }
     }
 

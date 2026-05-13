@@ -21,6 +21,11 @@ public interface TorneoRepository extends CrudRepository<Torneo, Long> {
     @Query("SELECT DISTINCT t FROM Torneo t LEFT JOIN FETCH t.squadre")
     List<Torneo> findAllWithSquadreJoinFetch();
 
+    // ── Strategia LAZY pura (per l'analisi sperimentale) ─────────────────────
+    // Query JPQL senza EntityGraph: Hibernate userà il fetch LAZY di default
+    @Query("SELECT t FROM Torneo t")
+    List<Torneo> findAllLazy();
+
     // ── Strategia EntityGraph (1 sola query, più dichiarativa) ───────────────
     // Spring genera automaticamente una JOIN FETCH basandosi sull'attributo
     @EntityGraph(attributePaths = {"squadre"})

@@ -44,10 +44,8 @@ public class PerformanceService {
         log.info("=== [ANALISI LAZY] Inizio ===");
         long start = System.currentTimeMillis();
 
-        // findAll() eredita da CrudRepository → fetch LAZY sulle collection
-        Iterable<Torneo> torneiIterable = torneoRepository.findAll();
-        List<Torneo> tornei = new ArrayList<>();
-        torneiIterable.forEach(tornei::add);
+        // findAllLazy() usa una query JPQL senza @EntityGraph → fetch LAZY puro
+        List<Torneo> tornei = torneoRepository.findAllLazy();
 
         // ACCESSO ESPLICITO alle squadre → trigger query N+1
         int totaleSquadre = 0;
