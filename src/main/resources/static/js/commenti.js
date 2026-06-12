@@ -3,6 +3,8 @@
    Tecnologia: React 18 + Babel Standalone (CDN, no build)
    ===================================================== */
 
+/* commento */
+
 const { useState, useEffect, useCallback } = React;
 
 // ─── Utility: legge il cookie CSRF di Spring Security ───
@@ -110,6 +112,7 @@ function CommentiSection({ partitaId }) {
     const [loading, setLoading] = useState(true);
     const [errore, setErrore] = useState(null);
     const [invioInCorso, setInvioInCorso] = useState(false);
+    const [filtroRicerca, setFiltroRicerca] = useState('');
 
     // Carica chi è loggato
     useEffect(() => {
@@ -209,7 +212,7 @@ function CommentiSection({ partitaId }) {
                 marginBottom: '1.5rem', paddingBottom: '1rem',
                 borderBottom: '1px solid rgba(255,255,255,0.06)'
             }}>
-                💬 Commenti ({commenti.length})
+                💬 Commenti
                 <span style={{
                     marginLeft: '0.75rem', fontSize: '0.7rem', fontWeight: 500,
                     background: 'rgba(50,215,75,0.15)', color: '#32D74B',
@@ -281,15 +284,65 @@ function CommentiSection({ partitaId }) {
                     Ancora nessun commento. Sii il primo! 👋
                 </div>
             ) : (
-                commenti.map(c => (
-                    <CommentoCard
-                        key={c.id}
-                        commento={c}
-                        utenteEmail={utenteEmail}
-                        onDelete={eliminaCommento}
-                        onEdit={modificaCommento}
-                    />
-                ))
+                <>
+                    {/* Barra di ricerca */}
+                    <div style={{
+                        marginBottom: '1.5rem', display: 'flex', gap: '0.8rem', alignItems: 'center'
+                    }}>
+                        <span style={{ color: '#86868b', fontSize: '0.9rem' }}>🔍 Filtra:</span>
+                        <input
+                            type="text"
+                            value={filtroRicerca}
+                            onChange={e => setFiltroRicerca(e.target.value)}
+                            placeholder="Cerca nei commenti..."
+                            style={{
+                                flex: 1, padding: '0.6rem 1rem', borderRadius: '10px',
+                                background: 'rgba(0,0,0,0.25)', border: '1px solid rgba(255,255,255,0.1)',
+                                color: '#fff', fontFamily: 'Inter, sans-serif', fontSize: '0.9rem',
+                                outline: 'none', transition: 'border-color 0.2s'
+                            }}
+                            onFocus={e => e.target.style.borderColor = '#32D74B'}
+                            onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                        />
+                        {filtroRicerca && (
+                            <button 
+                                onClick={() => setFiltroRicerca('')}
+                                style={btnStyle('rgba(255,255,255,0.08)', '#fff', '0.3rem 0.7rem', '0.78rem')}
+                            >
+                                ✕ Cancella
+                            </button>
+                        )}
+                    </div>
+
+                    {/* Commenti filtrati */}
+                    {commenti
+                        .filter(c => 
+                            c.testo.toLowerCase().includes(filtroRicerca.toLowerCase()) ||
+                            (c.autoreNome && c.autoreNome.toLowerCase().includes(filtroRicerca.toLowerCase())) ||
+                            c.autoreEmail.toLowerCase().includes(filtroRicerca.toLowerCase())
+                        )
+                        .length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '2rem', color: '#86868b', fontStyle: 'italic' }}>
+                            Nessun commento corrisponde al filtro. 🔍
+                        </div>
+                    ) : (
+                        commenti
+                            .filter(c => 
+                                c.testo.toLowerCase().includes(filtroRicerca.toLowerCase()) ||
+                                (c.autoreNome && c.autoreNome.toLowerCase().includes(filtroRicerca.toLowerCase())) ||
+                                c.autoreEmail.toLowerCase().includes(filtroRicerca.toLowerCase())
+                            )
+                            .map(c => (
+                                <CommentoCard
+                                    key={c.id}
+                                    commento={c}
+                                    utenteEmail={utenteEmail}
+                                    onDelete={eliminaCommento}
+                                    onEdit={modificaCommento}
+                                />
+                            ))
+                    )}
+                </>
             )}
         </div>
     );

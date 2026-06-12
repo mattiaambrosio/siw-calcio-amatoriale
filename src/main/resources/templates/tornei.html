@@ -133,6 +133,23 @@
             <p style="color: var(--gray-medium);">Scegli un torneo per vedere classifiche e calendari.</p>
         </header>
 
+        <!-- Barra di ricerca -->
+        <div style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center; justify-content: center;">
+            <input type="text" id="searchTornei" placeholder="🔍 Cerca un torneo..." style="
+                padding: 0.8rem 1.2rem;
+                border-radius: 10px;
+                background: rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.1);
+                color: #fff;
+                font-size: 0.95rem;
+                width: 100%;
+                max-width: 400px;
+                outline: none;
+                transition: border-color 0.2s;
+            " />
+            <button id="clearSearchTornei" style="display:none; padding: 0.8rem 1.2rem; border-radius: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-weight: 600;">✕ Cancella</button>
+        </div>
+
         <div class="grid-3">
             <div th:each="torneo : ${tornei}" class="card glass-panel" style="padding: 2rem;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
@@ -152,5 +169,46 @@
             <a href="/admin/torneo/new" sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary" style="margin-top: 1rem;">+ Crea il Primo Torneo</a>
         </div>
     </main>
+
+    <script>
+        // Ricerca in tempo reale per i tornei
+        const searchInput = document.getElementById('searchTornei');
+        const clearBtn = document.getElementById('clearSearchTornei');
+        const cards = document.querySelectorAll('.grid-3 > .card');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            clearBtn.style.display = searchTerm ? 'block' : 'none';
+            
+            let visibleCount = 0;
+            cards.forEach(card => {
+                const nome = card.querySelector('h2')?.textContent.toLowerCase() || '';
+                const desc = card.querySelector('p')?.textContent.toLowerCase() || '';
+                const match = nome.includes(searchTerm) || desc.includes(searchTerm);
+                card.style.display = match ? '' : 'none';
+                if (match) visibleCount++;
+            });
+
+            // Mostra messaggio se nessun torneo trovato
+            if (visibleCount === 0 && searchTerm) {
+                if (!document.getElementById('noResults')) {
+                    const msg = document.createElement('div');
+                    msg.id = 'noResults';
+                    msg.style.cssText = 'text-align: center; padding: 3rem; color: var(--gray-medium); font-style: italic;';
+                    msg.textContent = '❌ Nessun torneo trovato';
+                    document.querySelector('.grid-3').parentElement.appendChild(msg);
+                }
+            } else {
+                const noResults = document.getElementById('noResults');
+                if (noResults) noResults.remove();
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+            searchInput.focus();
+        });
+    </script>
 </body>
 </html>

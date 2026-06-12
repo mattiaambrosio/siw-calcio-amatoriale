@@ -113,6 +113,22 @@
             <a href="/admin/giocatore/new" sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary">+ Nuovo Giocatore</a>
         </header>
 
+        <!-- Barra di ricerca -->
+        <div style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center;">
+            <input type="text" id="searchGiocatori" placeholder="🔍 Cerca per nome, squadra o ruolo..." style="
+                padding: 0.8rem 1.2rem;
+                border-radius: 10px;
+                background: rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.1);
+                color: #fff;
+                font-size: 0.95rem;
+                flex: 1;
+                outline: none;
+                transition: border-color 0.2s;
+            " />
+            <button id="clearSearchGiocatori" style="display:none; padding: 0.8rem 1.2rem; border-radius: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-weight: 600;">✕ Cancella</button>
+        </div>
+
         <section class="glass-panel" style="padding: 1rem;">
             <table>
                 <thead>
@@ -155,5 +171,46 @@
             </div>
         </section>
     </main>
+
+    <script>
+        // Ricerca in tempo reale per i giocatori
+        const searchInput = document.getElementById('searchGiocatori');
+        const clearBtn = document.getElementById('clearSearchGiocatori');
+        const rows = document.querySelectorAll('tbody tr');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            clearBtn.style.display = searchTerm ? 'block' : 'none';
+            
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const nome = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
+                const ruolo = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
+                const squadra = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
+                const match = nome.includes(searchTerm) || ruolo.includes(searchTerm) || squadra.includes(searchTerm);
+                row.style.display = match ? '' : 'none';
+                if (match) visibleCount++;
+            });
+
+            // Mostra messaggio se nessun giocatore trovato
+            if (visibleCount === 0 && searchTerm) {
+                if (!document.getElementById('noResults')) {
+                    const msg = document.createElement('tr');
+                    msg.id = 'noResults';
+                    msg.innerHTML = '<td colspan="4" style="text-align: center; padding: 2rem; color: var(--gray-medium);">❌ Nessun giocatore trovato</td>';
+                    document.querySelector('tbody').appendChild(msg);
+                }
+            } else {
+                const noResults = document.getElementById('noResults');
+                if (noResults) noResults.remove();
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+            searchInput.focus();
+        });
+    </script>
 </body>
 </html>
