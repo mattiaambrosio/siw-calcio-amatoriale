@@ -36,7 +36,7 @@ public class TorneoController {
         if (!torneoService.alreadyExists(torneo)) {
             torneoService.save(torneo);
             model.addAttribute("messaggioSuccesso", "Torneo salvato con successo nel database!");
-            return "index";
+            return "redirect:/dashboard";
         } else {
             model.addAttribute("messaggioErrore", "Attenzione: Esiste già un torneo con questo nome!");
             return "admin/formNewTorneo";
@@ -109,7 +109,7 @@ public class TorneoController {
         switch (esito) {
             case "OK":
                 model.addAttribute("messaggioSuccesso", "Squadra iscritta al torneo con successo!");
-                return "index";
+                return "redirect:/dashboard";
             case "GIA_ISCRITTA":
                 model.addAttribute("messaggioErrore", "Attenzione: La squadra è già iscritta a questo torneo!");
                 model.addAttribute("tornei", torneoService.findAll());

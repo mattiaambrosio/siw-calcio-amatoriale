@@ -52,7 +52,7 @@ public class PartitaController {
         
         partitaService.save(partita);
         model.addAttribute("messaggioSuccesso", "Partita programmata con successo!");
-        return "index";
+        return "redirect:/dashboard";
     }
 
     // Mostra tutte le partite

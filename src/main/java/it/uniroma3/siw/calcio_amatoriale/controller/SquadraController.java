@@ -30,7 +30,7 @@ public class SquadraController {
         if (!squadraService.alreadyExists(squadra)) {
             squadraService.save(squadra);
             model.addAttribute("messaggioSuccesso", "Squadra salvata con successo nel database!");
-            return "index";
+            return "redirect:/dashboard";
         } else {
             model.addAttribute("messaggioErrore", "Attenzione: Esiste già una squadra con questo nome!");
             return "admin/formNewSquadra";

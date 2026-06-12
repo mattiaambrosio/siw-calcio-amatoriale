@@ -35,7 +35,7 @@ public class GiocatoreController {
         if (!giocatoreService.alreadyExists(giocatore)) {
             giocatoreService.save(giocatore);
             model.addAttribute("messaggioSuccesso", "Giocatore aggiunto alla squadra con successo!");
-            return "index";
+            return "redirect:/dashboard";
         } else {
             model.addAttribute("messaggioErrore", "Attenzione: Questo giocatore esiste già!");
             model.addAttribute("squadre", squadraService.findAll()); // Ricarica le squadre in caso di errore

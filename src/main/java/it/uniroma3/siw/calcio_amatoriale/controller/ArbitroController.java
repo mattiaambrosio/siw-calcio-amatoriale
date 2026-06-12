@@ -29,7 +29,7 @@ public class ArbitroController {
         if (!arbitroService.alreadyExists(arbitro)) {
             arbitroService.save(arbitro);
             model.addAttribute("messaggioSuccesso", "Arbitro registrato con successo!");
-            return "index";
+           return "redirect:/dashboard";
         } else {
             model.addAttribute("messaggioErrore", "Attenzione: Esiste già un arbitro con questo Codice!");
             return "admin/formNewArbitro";
