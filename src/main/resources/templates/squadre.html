@@ -1,214 +1,87 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Squadre Iscritte - Calcio Amatoriale</title>
+    <title>Squadre – Calcio Amatoriale</title>
+    <meta name="description" content="Elenco di tutte le squadre iscritte ai tornei di calcio amatoriale.">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .container {
-            padding: 2rem;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        .header h1 {
-            margin-bottom: 0.5rem;
-        }
-        .teams-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-        .team-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-top: 3px solid var(--pitch-green-light);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-        }
-        .team-card:hover {
-            border-top-color: var(--pitch-green-bright);
-            box-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
-            transform: translateY(-4px);
-        }
-        .team-name {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--white-main);
-            margin: 0 0 1rem 0;
-        }
-        .team-info {
-            margin-bottom: 1.5rem;
-        }
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.6rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-        .info-row:last-child {
-            border-bottom: none;
-        }
-        .info-label {
-            font-weight: 600;
-            color: var(--white-main);
-        }
-        .info-value {
-            color: var(--gray-dark);
-        }
-        .roster-section {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 2px solid var(--border-color);
-        }
-        .roster-title {
-            color: var(--pitch-green-light);
-            font-weight: 600;
-            margin-bottom: 1rem;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .player-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .player-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.6rem 0;
-            color: var(--gray-dark);
-            border-bottom: 1px solid rgba(46, 204, 113, 0.1);
-        }
-        .player-item:last-child {
-            border-bottom: none;
-        }
-        .player-name {
-            font-weight: 500;
-            color: var(--white-main);
-        }
-        .player-role {
-            color: var(--gray-medium);
-            font-size: 0.85rem;
-        }
-        .empty-roster {
-            color: var(--gray-medium);
-            font-style: italic;
-            font-size: 0.9rem;
-            text-align: center;
-            padding: 1rem 0;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray-medium);
-        }
-        .empty-state h2 {
-            color: var(--gray-dark);
-            margin-bottom: 1rem;
-        }
-        @media (max-width: 768px) {
-            .teams-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/tornei">Tornei</a></li>
-            <li><a href="/squadre" class="active">Squadre</a></li>
-            <li><a href="/giocatori">Giocatori</a></li>
-            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <main class="container">
-        <header style="margin-bottom: 3rem;">
-            <h1 class="text-gradient" style="font-size: 3rem;">Club & Squadre</h1>
-            <p style="color: var(--gray-medium);">I protagonisti dei nostri campionati.</p>
-        </header>
+    <main class="container page-content">
 
-        <!-- Barra di ricerca -->
-        <div style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center; justify-content: center;">
-            <input type="text" id="searchSquadre" placeholder="🔍 Cerca una squadra..." style="
-                padding: 0.8rem 1.2rem;
-                border-radius: 10px;
-                background: rgba(255,255,255,0.05);
-                border: 1px solid rgba(255,255,255,0.1);
-                color: #fff;
-                font-size: 0.95rem;
-                width: 100%;
-                max-width: 400px;
-                outline: none;
-                transition: border-color 0.2s;
-            " />
-            <button id="clearSearch" style="display:none; padding: 0.8rem 1.2rem; border-radius: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-weight: 600;">✕ Cancella</button>
+        <!-- Header -->
+        <div class="section-header anim-fade-up" style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1>Squadre</h1>
+                <p>Esplora i club partecipanti ai nostri tornei.</p>
+            </div>
+            <a href="/admin/squadra/new"
+               sec:authorize="hasAuthority('ADMIN')"
+               class="btn btn-primary">+ Nuova Squadra</a>
         </div>
 
-        <div class="grid-3">
-            <div th:each="squadra : ${squadre}" class="card glass-panel" style="padding: 2rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <div style="width: 50px; height: 50px; background: rgba(255,255,255,0.05); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">🛡️</div>
-                    <span style="color: var(--gray-medium); font-size: 0.8rem;" th:text="'Fond. ' + ${squadra.annoDiFondazione}">1900</span>
+        <!-- Search -->
+        <div class="search-bar anim-fade-up anim-delay-1">
+            <input type="text" id="searchSquadre" placeholder="🔍 Cerca per nome o città…">
+            <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none;">✕ Cancella</button>
+        </div>
+
+        <!-- Grid squadre -->
+        <div class="grid-3 anim-fade-up anim-delay-2" id="squadreGrid">
+            <div th:each="squadra : ${squadre}" class="card card-green">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+                    <div style="width: 44px; height: 44px; background: var(--green-dim); border: 1px solid var(--green-border); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">🛡️</div>
+                    <span style="font-size: 0.8rem; color: var(--text-muted);"
+                          th:text="'Fond. ' + ${squadra.annoDiFondazione}">1900</span>
                 </div>
-                <h2 style="margin-bottom: 0.5rem;" th:text="${squadra.nome}">Nome Squadra</h2>
-                <p style="color: var(--accent-green); font-size: 0.85rem; font-weight: 600; margin-bottom: 1.5rem;" th:text="${squadra.citta}">Città</p>
-                
-                <a th:href="@{'/squadra/' + ${squadra.id}}" class="btn btn-outline" style="width: 100%;">Esplora Rosa</a>
+                <h2 style="font-size: 1.15rem; margin-bottom: 0.3rem;" th:text="${squadra.nome}">Nome</h2>
+                <p style="font-size: 0.875rem; color: var(--green); font-weight: 600; margin-bottom: 1.5rem;"
+                   th:text="${squadra.citta}">Città</p>
+                <a th:href="@{'/squadra/' + ${squadra.id}}" class="btn btn-outline" style="width: 100%;">Esplora Rosa →</a>
             </div>
         </div>
-        </div>
-    </div>
 
-    <a href="/" class="back-link" style="display: block; margin: 2rem; text-align: center;">← Torna alla Home</a>
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(squadre)}" class="empty-state">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🛡️</div>
+            <h3>Nessuna squadra registrata</h3>
+            <p>Non ci sono ancora squadre nel sistema.</p>
+            <a href="/admin/squadra/new" sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary" style="margin-top: 1.5rem;">+ Aggiungi Squadra</a>
+        </div>
+
+        <div id="noResults" style="display:none;" class="empty-state">
+            <p>Nessuna squadra corrisponde alla ricerca.</p>
+        </div>
+
+    </main>
 
     <script>
-        // Ricerca in tempo reale per le squadre
-        const searchInput = document.getElementById('searchSquadre');
+        const input    = document.getElementById('searchSquadre');
         const clearBtn = document.getElementById('clearSearch');
-        const cards = document.querySelectorAll('.grid-3 > .card');
+        const cards    = document.querySelectorAll('#squadreGrid > .card');
+        const noRes    = document.getElementById('noResults');
 
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            clearBtn.style.display = searchTerm ? 'block' : 'none';
-            
-            let visibleCount = 0;
-            cards.forEach(card => {
-                const nome = card.querySelector('h2')?.textContent.toLowerCase() || '';
-                const citta = card.querySelector('p')?.textContent.toLowerCase() || '';
-                const match = nome.includes(searchTerm) || citta.includes(searchTerm);
-                card.style.display = match ? '' : 'none';
-                if (match) visibleCount++;
+        input.addEventListener('input', () => {
+            const q = input.value.toLowerCase();
+            clearBtn.style.display = q ? 'inline-flex' : 'none';
+            let visible = 0;
+            cards.forEach(c => {
+                const match = c.textContent.toLowerCase().includes(q);
+                c.style.display = match ? '' : 'none';
+                if (match) visible++;
             });
-
-            // Mostra messaggio se nessuna squadra trovata
-            if (visibleCount === 0 && searchTerm) {
-                if (!document.getElementById('noResults')) {
-                    const msg = document.createElement('div');
-                    msg.id = 'noResults';
-                    msg.style.cssText = 'text-align: center; padding: 3rem; color: var(--gray-medium); font-style: italic;';
-                    msg.textContent = '❌ Nessuna squadra trovata';
-                    document.querySelector('.grid-3').parentElement.appendChild(msg);
-                }
-            } else {
-                const noResults = document.getElementById('noResults');
-                if (noResults) noResults.remove();
-            }
+            noRes.style.display = (visible === 0 && q) ? 'block' : 'none';
         });
 
         clearBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            searchInput.dispatchEvent(new Event('input'));
-            searchInput.focus();
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+            input.focus();
         });
     </script>
 </body>

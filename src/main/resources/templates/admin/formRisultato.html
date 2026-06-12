@@ -2,23 +2,56 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Inserimento Gol</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inserisci Risultato – Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="form-container">
-    <h2 th:text="'Risultato: ' + ${partita.squadraCasa.nome} + ' - ' + ${partita.squadraOspite.nome}"></h2>
-    
-    <form th:action="@{'/admin/partita/risultato/' + ${partita.id}}" method="POST">
-        <label th:text="'Gol ' + ${partita.squadraCasa.nome}"></label>
-        <input type="number" name="goalsHome" min="0" value="0" required />
+    <div class="ambient-glow"></div>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-        <label th:text="'Gol ' + ${partita.squadraOspite.nome}"></label>
-        <input type="number" name="goalsAway" min="0" value="0" required />
-        
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Conferma Finale</button>
-    </form>
-    <a href="/admin/partite/punteggio" class="back-link">Annulla</a>
-</div>
+    <div class="form-page">
+        <div class="form-card anim-fade-up">
+
+            <div class="breadcrumb" style="margin-bottom: 1.5rem;">
+                <a href="/admin/partite/punteggio">← Seleziona Partita</a>
+            </div>
+
+            <h1 style="font-size: 1.4rem; margin-bottom: 0.35rem;">📝 Inserisci Risultato</h1>
+
+            <!-- Match info -->
+            <div style="background: var(--bg-raised); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; margin-bottom: 1.75rem; text-align: center;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+                    <span style="font-weight: 700; color: var(--text-primary);" th:text="${partita.squadraCasa.nome}">Casa</span>
+                    <span class="badge badge-gray">vs</span>
+                    <span style="font-weight: 700; color: var(--text-primary);" th:text="${partita.squadraOspite.nome}">Ospite</span>
+                </div>
+                <div style="font-size: 0.82rem; color: var(--text-muted); margin-top: 0.4rem;"
+                     th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')} + ' · ' + ${partita.luogo}">Data · Luogo</div>
+            </div>
+
+            <form th:action="@{'/admin/partita/risultato/' + ${partita.id}}" method="POST">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label th:text="'Gol ' + ${partita.squadraCasa.nome}">Gol Casa</label>
+                        <input type="number" name="goalsHome" min="0" value="0" required
+                               style="text-align: center; font-size: 1.5rem; font-weight: 700;">
+                    </div>
+                    <div class="form-group">
+                        <label th:text="'Gol ' + ${partita.squadraOspite.nome}">Gol Ospite</label>
+                        <input type="number" name="goalsAway" min="0" value="0" required
+                               style="text-align: center; font-size: 1.5rem; font-weight: 700;">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">✅ Conferma Risultato</button>
+                    <a href="/admin/partite/punteggio" class="btn btn-secondary" style="flex: 1; text-align: center;">Annulla</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </body>
 </html>

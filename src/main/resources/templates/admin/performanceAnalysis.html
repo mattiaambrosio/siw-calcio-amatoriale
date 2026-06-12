@@ -3,106 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisi JPA - Calcio Amatoriale</title>
+    <title>Analisi JPA – Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        .bar-lazy { background: linear-gradient(90deg, var(--danger-red), #b02a24); }
-        .bar-join { background: linear-gradient(90deg, var(--accent-green), #248a3d); }
-        .bar-entity { background: linear-gradient(90deg, var(--google-blue), #2a5bb0); }
-        
-        .metric-value { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; color: #fff; }
-        .metric-label { font-size: 0.75rem; color: var(--gray-medium); text-transform: uppercase; letter-spacing: 1px; }
-        
         pre {
             background: #000;
-            border: 1px solid var(--glass-border);
-            padding: 1.5rem;
-            border-radius: 16px;
-            color: var(--accent-green);
-            font-size: 0.85rem;
+            border: 1px solid var(--border);
+            padding: 1.25rem;
+            border-radius: 12px;
+            color: var(--green);
+            font-size: 0.82rem;
             overflow-x: auto;
             font-family: 'Courier New', monospace;
             margin-top: 1rem;
         }
+        .bar-lazy   { background: linear-gradient(90deg, var(--red), #b02a24); }
+        .bar-join   { background: linear-gradient(90deg, var(--green), #16a34a); }
+        .bar-entity { background: linear-gradient(90deg, var(--blue), #2563eb); }
     </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
-    
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/tornei">Tornei</a></li>
-            <li><a href="/dashboard">Dashboard</a></li>
-            <li><a href="/admin/performance" class="active">Analisi JPA</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <main class="container">
-        <header style="margin-bottom: 4rem;">
-            <h1 class="text-gradient" style="font-size: 3.5rem; line-height: 1.1;">Analisi Sperimentale<br>JPA & Hibernate</h1>
-            <p style="color: var(--gray-medium); margin-top: 1rem; max-width: 700px;">
-                Studio comparativo delle strategie di caricamento dati (Eager vs Lazy) per risolvere il problema N+1 Query. (§8.2)
-            </p>
-        </header>
+    <main class="container page-content">
 
-        <!-- Grafico Comparativo -->
-        <section class="glass-panel" style="margin-bottom: 3rem; padding: 2.5rem;">
-            <h2 style="font-size: 1.2rem; margin-bottom: 2.5rem; color: var(--gray-light);">⏱️ Tempi di Risposta (ms)</h2>
-            <div th:each="r,i : ${risultati}" style="margin-bottom: 2rem;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.8rem;">
-                    <span style="font-weight: 600;" th:text="${r.nomeStrategia}">Strategia</span>
-                    <span style="color: var(--accent-green); font-weight: 700;" th:text="${r.tempoMs} + ' ms'">0 ms</span>
-                </div>
-                <div style="height: 14px; background: rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border);">
-                    <div th:style="'width: ' + (${r.tempoMs} > 0 ? ${r.tempoMs * 100 / (risultati[0].tempoMs > 0 ? risultati[0].tempoMs : 1)} : 10) + '%; height: 100%; transition: width 1s ease-out;'"
-                         th:class="${i.index == 0 ? 'bar-lazy' : (i.index == 1 ? 'bar-join' : 'bar-entity')}"></div>
-                </div>
+        <!-- Header -->
+        <div class="section-header anim-fade-up">
+            <div class="breadcrumb">
+                <a href="/dashboard">← Dashboard</a>
+                <span class="sep">/</span>
+                <span>Analisi JPA</span>
             </div>
-        </section>
+            <h1>Analisi Sperimentale JPA &amp; Hibernate</h1>
+            <p style="max-width: 680px;">
+                Studio comparativo delle strategie di caricamento dati per risolvere il problema N+1 Query. (§8.2 traccia esame)
+            </p>
+        </div>
 
-        <!-- Dettaglio Strategie -->
-        <div class="grid-3" style="grid-template-columns: 1fr; gap: 2rem;">
-            <div th:each="r,i : ${risultati}" class="glass-panel" style="padding: 2.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
-                    <div>
-                        <h3 style="font-size: 1.8rem; color: #fff;" th:text="${r.nomeStrategia}">Nome Strategia</h3>
-                        <p style="color: var(--gray-medium); font-size: 0.9rem; margin-top: 0.5rem;" th:text="${r.descrizione}">Descrizione.</p>
-                    </div>
-                    <span th:if="${i.index > 0}" style="background: var(--accent-green-glow); color: var(--accent-green); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">OTTIMALE ✓</span>
-                    <span th:if="${i.index == 0}" style="background: rgba(255,69,58,0.1); color: var(--danger-red); padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 800;">INEFFICIENTE ⚠️</span>
+        <!-- Grafico comparativo -->
+        <div class="glass-panel anim-fade-up anim-delay-1" style="margin-bottom: 2rem;">
+            <h2 style="font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 1.75rem;">
+                ⏱️ Tempi di Risposta (ms)
+            </h2>
+            <div th:each="r, i : ${risultati}" style="margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.6rem;">
+                    <span style="font-weight: 600; color: var(--text-primary);" th:text="${r.nomeStrategia}">Strategia</span>
+                    <span style="color: var(--green); font-weight: 700;" th:text="${r.tempoMs} + ' ms'">0 ms</span>
                 </div>
-
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2.5rem;">
-                    <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 16px; text-align: center;">
-                        <div class="metric-value" th:text="${i.index == 0 ? (r.numTornei + 1) : 1}">1</div>
-                        <div class="metric-label">Query SQL</div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 16px; text-align: center;">
-                        <div class="metric-value" th:text="${r.numTornei}">0</div>
-                        <div class="metric-label">Tornei</div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 16px; text-align: center;">
-                        <div class="metric-value" th:text="${r.numTotaleSquadre}">0</div>
-                        <div class="metric-label">Squadre</div>
+                <div style="height: 10px; background: var(--bg-raised); border-radius: 20px; overflow: hidden;">
+                    <div th:style="'width: ' + (${r.tempoMs} > 0 ? ${r.tempoMs * 100 / (risultati[0].tempoMs > 0 ? risultati[0].tempoMs : 1)} : 10) + '%; height: 100%; transition: width 1.2s ease;'"
+                         th:class="${i.index == 0 ? 'bar-lazy' : (i.index == 1 ? 'bar-join' : 'bar-entity')}">
                     </div>
                 </div>
-
-                <h4 style="font-size: 0.8rem; text-transform: uppercase; color: var(--gray-medium); letter-spacing: 1px;">Query SQL Generata:</h4>
-                <pre th:text="${r.queryGenerata}">SELECT ...</pre>
             </div>
         </div>
 
-        <!-- Conclusioni -->
-        <section class="glass-panel" style="margin-top: 3rem; border-left: 5px solid var(--accent-green); padding: 2.5rem;">
-            <h2 style="font-size: 1.5rem; color: #fff; margin-bottom: 1.5rem;">📝 Choice & Results</h2>
-            <p style="color: var(--gray-medium); line-height: 1.8;">
-                Nel progetto è stata adottata la strategia <strong>EntityGraph</strong>. Come dimostrato dai test, questa scelta permette di abbattere il numero di query da <strong>N+1</strong> a <strong>1 singola query</strong>, riducendo drasticamente il carico sul database e migliorando l'esperienza utente.
-            </p>
-            <div style="margin-top: 2rem;">
-                <a href="/dashboard" class="btn btn-primary">Torna alla Dashboard</a>
+        <!-- Dettaglio strategie -->
+        <div th:each="r, i : ${risultati}" class="glass-panel anim-fade-up" style="margin-bottom: 1.5rem;">
+            <div style="display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="font-size: 1.25rem; margin-bottom: 0.4rem;" th:text="${r.nomeStrategia}">Strategia</h2>
+                    <p style="font-size: 0.875rem; max-width: 600px;" th:text="${r.descrizione}">Descrizione.</p>
+                </div>
+                <span class="badge badge-red" th:if="${i.index == 0}">⚠️ N+1 Problem</span>
+                <span class="badge badge-green" th:if="${i.index > 0}">✓ Ottimale</span>
             </div>
-        </section>
+
+            <!-- Metrics -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="background: var(--bg-raised); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                    <div style="font-family: 'Outfit'; font-size: 2rem; font-weight: 800; color: var(--text-primary);"
+                         th:text="${i.index == 0 ? (r.numTornei + 1) : 1}">1</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.3rem;">Query SQL</div>
+                </div>
+                <div style="background: var(--bg-raised); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                    <div style="font-family: 'Outfit'; font-size: 2rem; font-weight: 800; color: var(--text-primary);"
+                         th:text="${r.numTornei}">0</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.3rem;">Tornei</div>
+                </div>
+                <div style="background: var(--bg-raised); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                    <div style="font-family: 'Outfit'; font-size: 2rem; font-weight: 800; color: var(--text-primary);"
+                         th:text="${r.numTotaleSquadre}">0</div>
+                    <div style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.3rem;">Squadre</div>
+                </div>
+            </div>
+
+            <div style="font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 0.5rem;">
+                Query SQL Generata:
+            </div>
+            <pre th:text="${r.queryGenerata}">SELECT ...</pre>
+        </div>
+
+        <!-- Conclusioni -->
+        <div class="glass-panel anim-fade-up" style="border-left: 3px solid var(--green);">
+            <h2 style="margin-bottom: 1rem;">📝 Conclusioni &amp; Scelta Implementativa</h2>
+            <p style="line-height: 1.8;">
+                Nel progetto è stata adottata la strategia <strong style="color: var(--green);">EntityGraph</strong>.
+                Come dimostrato dai benchmark, questa scelta riduce il numero di query da
+                <strong>N+1</strong> a <strong>1 singola query</strong>, abbattendo il carico sul database
+                e migliorando significativamente i tempi di risposta.
+            </p>
+            <div style="margin-top: 1.5rem;">
+                <a href="/dashboard" class="btn btn-outline">← Torna alla Dashboard</a>
+            </div>
+        </div>
+
     </main>
 </body>
 </html>

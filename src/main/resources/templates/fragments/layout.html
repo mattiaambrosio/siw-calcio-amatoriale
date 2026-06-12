@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<!-- =============================================
+     FRAGMENT: nav
+     Uso: <nav th:replace="~{fragments/layout :: nav}"></nav>
+     ============================================= -->
+<nav th:fragment="nav">
+    <div class="nav-inner">
+        <!-- Brand -->
+        <a href="/" class="nav-brand">⚽ Calcio Amatoriale</a>
+
+        <!-- Links principali -->
+        <ul class="nav-links">
+            <li><a href="/tornei">Tornei</a></li>
+            <li><a href="/squadre">Squadre</a></li>
+            <li><a href="/giocatori">Giocatori</a></li>
+            <li><a href="/partite">Partite</a></li>
+        </ul>
+
+        <!-- Azioni destra -->
+        <ul class="nav-actions">
+            <!-- Autenticato -->
+            <li sec:authorize="isAuthenticated()">
+                <a href="/dashboard" class="btn btn-ghost btn-sm">Area Personale</a>
+            </li>
+            <li sec:authorize="isAuthenticated()">
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-sm logout-btn">Esci</button>
+                </form>
+            </li>
+
+            <!-- Non autenticato -->
+            <li sec:authorize="!isAuthenticated()">
+                <a href="/login" class="btn btn-ghost btn-sm">Accedi</a>
+            </li>
+            <li sec:authorize="!isAuthenticated()">
+                <a href="/register" class="btn btn-primary btn-sm">Registrati</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+</html>

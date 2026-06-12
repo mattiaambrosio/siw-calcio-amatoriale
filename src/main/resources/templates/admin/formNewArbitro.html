@@ -2,27 +2,54 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Nuovo Arbitro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuovo Arbitro – Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="form-container">
-    <h2>Registra Arbitro</h2>
-    <p class="error-msg" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></p>
+    <div class="ambient-glow"></div>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <form th:action="@{/admin/arbitro}" th:object="${arbitro}" method="POST">
-        <label>Nome</label>
-        <input type="text" th:field="*{nome}" required />
-        
-        <label>Cognome</label>
-        <input type="text" th:field="*{cognome}" required />
-        
-        <label>Codice Arbitrale</label>
-        <input type="text" th:field="*{codiceArbitrale}" required placeholder="es. ARB-001" />
-        
-        <button type="submit" class="btn-submit">Salva Arbitro</button>
-    </form>
-    <a href="/" class="back-link">Torna alla Home</a>
-</div>
+    <div class="form-page">
+        <div class="form-card anim-fade-up">
+
+            <div class="breadcrumb" style="margin-bottom: 1.5rem;">
+                <a href="/arbitri">← Arbitri</a>
+                <span class="sep">/</span>
+                <span>Nuovo Arbitro</span>
+            </div>
+
+            <h1 style="font-size: 1.4rem; margin-bottom: 0.35rem;">🏁 Registra Arbitro</h1>
+            <p style="margin-bottom: 1.75rem; font-size: 0.875rem;">Inserisci i dati del nuovo arbitro.</p>
+
+            <div class="alert alert-error" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></div>
+
+            <form th:action="@{/admin/arbitro}" th:object="${arbitro}" method="POST">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nome">Nome</label>
+                        <input type="text" id="nome" th:field="*{nome}" required placeholder="Mario">
+                    </div>
+                    <div class="form-group">
+                        <label for="cognome">Cognome</label>
+                        <input type="text" id="cognome" th:field="*{cognome}" required placeholder="Rossi">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="codiceArbitrale">Codice Arbitrale</label>
+                    <input type="text" id="codiceArbitrale" th:field="*{codiceArbitrale}"
+                           required placeholder="es. ARB-001">
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Salva Arbitro</button>
+                    <a href="/arbitri" class="btn btn-secondary" style="flex: 1; text-align: center;">Annulla</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </body>
 </html>

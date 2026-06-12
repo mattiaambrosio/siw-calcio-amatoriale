@@ -1,121 +1,64 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" 
+<html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcio Amatoriale - Gestione Tornei</title>
+    <title>Calcio Amatoriale – Gestione Tornei</title>
+    <meta name="description" content="Gestisci tornei di calcio amatoriale: squadre, giocatori, partite e classifiche.">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem 1rem;
-            position: relative;
-        }
-        .hero-card {
-            max-width: 650px;
-            width: 100%;
-            text-align: center;
-            padding: 4rem 3rem;
-            position: relative;
-            z-index: 10;
-        }
-        .hero-card h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            animation: fadeUp 0.8s ease-out;
-        }
-        .subtitle {
-            font-size: 1.2rem;
-            color: var(--gray-medium);
-            margin-bottom: 3rem;
-            line-height: 1.6;
-            animation: fadeUp 0.8s ease-out 0.2s both;
-        }
-        .home-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-            animation: fadeUp 0.8s ease-out 0.4s both;
-        }
-        .home-buttons .btn {
-            width: 100%;
-            padding: 1.2rem;
-            font-size: 1.1rem;
-        }
-        @media (min-width: 600px) {
-            .home-buttons {
-                flex-direction: row;
-                justify-content: center;
-            }
-            .home-buttons .btn {
-                width: auto;
-                min-width: 180px;
-            }
-        }
-        .auth-status {
-            margin-top: 3rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--glass-border);
-            animation: fadeUp 0.8s ease-out 0.6s both;
-        }
-    </style>
 </head>
-
 <body>
     <div class="ambient-glow"></div>
-    
-    <nav>
-        <ul>
-            <li><a href="/" class="active">Home</a></li>
-            <li><a href="/tornei">Tornei</a></li>
-            <li><a href="/squadre">Squadre</a></li>
-            <li><a href="/giocatori">Giocatori</a></li>
-            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <main class="container">
-        <section style="text-align: center; padding: 5rem 0;">
-            <h1 class="text-gradient" style="font-size: 4.5rem; line-height: 1.1; margin-bottom: 1.5rem;">
-                Il Calcio Amatoriale<br>diventa Professionale.
+    <main style="min-height: calc(100vh - 60px); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4rem 1.5rem;">
+
+        <!-- Hero -->
+        <section style="text-align: center; max-width: 680px;" class="anim-fade-up">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: var(--green-dim); border: 1px solid var(--green-border); border-radius: 99px; padding: 0.3rem 1rem; font-size: 0.8rem; font-weight: 600; color: var(--green); margin-bottom: 1.5rem;">
+                ⚽ Sistema Informativo su Web
+            </div>
+
+            <h1 style="font-size: 3.5rem; margin-bottom: 1rem; line-height: 1.1;" class="text-gradient">
+                Il calcio amatoriale<br>diventa digitale.
             </h1>
-            <p style="color: var(--gray-medium); font-size: 1.25rem; max-width: 600px; margin: 0 auto 3rem;">
-                Gestisci tornei, consulta classifiche e segui i tuoi giocatori preferiti con l'esperienza digitale definitiva.
+
+            <p style="font-size: 1.1rem; color: var(--text-secondary); max-width: 520px; margin: 0 auto 2.5rem; line-height: 1.7;">
+                Gestisci tornei, consulta classifiche, segui giocatori e commenta le partite. Tutto in un unico posto.
             </p>
-            
-            <div style="display: flex; justify-content: center; gap: 1.5rem;">
-                <a href="/tornei" class="btn btn-primary">🏆 Esplora Tornei</a>
-                <div sec:authorize="!isAuthenticated()" style="display: flex; gap: 1.5rem;">
-                    <a href="/login" class="btn btn-outline">Accedi</a>
-                    <a href="/register" class="btn btn-primary">Registrati</a>
+
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="/tornei" class="btn btn-primary btn-lg">🏆 Esplora Tornei</a>
+                <div sec:authorize="!isAuthenticated()" style="display: flex; gap: 1rem;">
+                    <a href="/login"    class="btn btn-outline btn-lg">Accedi</a>
+                    <a href="/register" class="btn btn-outline btn-lg">Registrati</a>
                 </div>
                 <div sec:authorize="isAuthenticated()">
-                    <form th:action="@{/logout}" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-danger">Esci</button>
-                    </form>
+                    <a href="/dashboard" class="btn btn-outline btn-lg">Area Personale</a>
                 </div>
             </div>
         </section>
 
-        <div class="grid-3">
-            <div class="card">
-                <h3 style="color: var(--accent-green); margin-bottom: 1rem;">📅 Calendari Real-time</h3>
-                <p style="color: var(--gray-medium); font-size: 0.9rem;">Resta aggiornato su ogni match, orario e luogo degli incontri.</p>
+        <!-- Feature cards -->
+        <div class="grid-3" style="max-width: 1000px; width: 100%; margin-top: 5rem;" class="anim-fade-up anim-delay-2">
+            <div class="card card-green" style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">📅</div>
+                <h3 style="margin-bottom: 0.5rem;">Calendari & Risultati</h3>
+                <p style="font-size: 0.875rem;">Segui ogni match in tempo reale con date, orari e risultati aggiornati.</p>
             </div>
-            <div class="card">
-                <h3 style="color: var(--accent-green); margin-bottom: 1rem;">📊 Analisi JPA</h3>
-                <p style="color: var(--gray-medium); font-size: 0.9rem;">Sotto il cofano, usiamo tecnologie all'avanguardia per gestire i tuoi dati.</p>
+            <div class="card card-green" style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">📊</div>
+                <h3 style="margin-bottom: 0.5rem;">Classifiche Ufficiali</h3>
+                <p style="font-size: 0.875rem;">Punti, vittorie, pareggi, sconfitte e differenza reti per ogni torneo.</p>
             </div>
-            <div class="card">
-                <h3 style="color: var(--accent-green); margin-bottom: 1rem;">💬 Community React</h3>
-                <p style="color: var(--gray-medium); font-size: 0.9rem;">Commenta le partite in tempo reale grazie alla nostra integrazione React.</p>
+            <div class="card card-green" style="text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 1rem;">💬</div>
+                <h3 style="margin-bottom: 0.5rem;">Commenti React</h3>
+                <p style="font-size: 0.875rem;">Commenta le partite in tempo reale grazie alla sezione React integrata.</p>
             </div>
         </div>
+
     </main>
 </body>
 </html>

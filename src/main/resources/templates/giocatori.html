@@ -1,215 +1,113 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giocatori Registrati - Calcio Amatoriale</title>
+    <title>Giocatori – Calcio Amatoriale</title>
+    <meta name="description" content="Elenco completo di tutti i giocatori registrati nei tornei.">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .container {
-            padding: 2rem;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        .header h1 {
-            margin-bottom: 0.5rem;
-        }
-        .players-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-        .player-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-top: 3px solid var(--pitch-green-light);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-        }
-        .player-card:hover {
-            border-top-color: var(--pitch-green-bright);
-            box-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
-            transform: translateY(-4px);
-        }
-        .player-name {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--white-main);
-            margin: 0 0 1rem 0;
-        }
-        .info-group {
-            margin-bottom: 1rem;
-        }
-        .info-label {
-            font-size: 0.85rem;
-            color: var(--gray-medium);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.3rem;
-        }
-        .info-value {
-            font-size: 1rem;
-            color: var(--white-main);
-            font-weight: 500;
-        }
-        .role-badge {
-            display: inline-block;
-            background: var(--accent-blue);
-            color: var(--white-main);
-            padding: 0.35rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        .team-badge {
-            display: inline-block;
-            background: var(--pitch-green-light);
-            color: var(--bg-main);
-            padding: 0.35rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray-medium);
-        }
-        .empty-state h2 {
-            color: var(--gray-dark);
-            margin-bottom: 1rem;
-        }
-        @media (max-width: 768px) {
-            .players-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/tornei">Tornei</a></li>
-            <li><a href="/squadre">Squadre</a></li>
-            <li><a href="/giocatori" class="active">Giocatori</a></li>
-            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <main class="container">
-        <header style="margin-bottom: 3rem; display: flex; justify-content: space-between; align-items: flex-end;">
+    <main class="container page-content">
+
+        <!-- Header -->
+        <div class="section-header anim-fade-up" style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
             <div>
-                <h1 class="text-gradient" style="font-size: 3rem;">Talenti del Torneo</h1>
-                <p style="color: var(--gray-medium);">L'elenco completo di tutti gli atleti registrati.</p>
+                <h1>Giocatori</h1>
+                <p>Tutti gli atleti registrati nei tornei.</p>
             </div>
-            <a href="/admin/giocatore/new" sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary">+ Nuovo Giocatore</a>
-        </header>
-
-        <!-- Barra di ricerca -->
-        <div style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center;">
-            <input type="text" id="searchGiocatori" placeholder="🔍 Cerca per nome, squadra o ruolo..." style="
-                padding: 0.8rem 1.2rem;
-                border-radius: 10px;
-                background: rgba(255,255,255,0.05);
-                border: 1px solid rgba(255,255,255,0.1);
-                color: #fff;
-                font-size: 0.95rem;
-                flex: 1;
-                outline: none;
-                transition: border-color 0.2s;
-            " />
-            <button id="clearSearchGiocatori" style="display:none; padding: 0.8rem 1.2rem; border-radius: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-weight: 600;">✕ Cancella</button>
+            <a href="/admin/giocatore/new"
+               sec:authorize="hasAuthority('ADMIN')"
+               class="btn btn-primary">+ Nuovo Giocatore</a>
         </div>
 
-        <section class="glass-panel" style="padding: 1rem;">
-            <table>
+        <!-- Search -->
+        <div class="search-bar anim-fade-up anim-delay-1">
+            <input type="text" id="searchGiocatori" placeholder="🔍 Cerca per nome, squadra o ruolo…">
+            <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none;">✕ Cancella</button>
+        </div>
+
+        <!-- Tabella -->
+        <div class="glass-panel anim-fade-up anim-delay-2" style="padding: 1rem;">
+            <table id="giocatoriTable">
                 <thead>
                     <tr>
-                        <th>Nome & Cognome</th>
+                        <th>Giocatore</th>
                         <th>Ruolo</th>
                         <th>Squadra</th>
+                        <th>Altezza</th>
                         <th sec:authorize="hasAuthority('ADMIN')">Azioni</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="g : ${giocatori}">
                         <td>
-                            <div style="display: flex; flex-direction: column;">
-                                <span style="color: #fff; font-weight: 600;" th:text="${g.nome} + ' ' + ${g.cognome}">Nome Cognome</span>
-                                <span style="font-size: 0.75rem; color: var(--gray-medium);" th:text="'Nato il ' + ${#temporals.format(g.dataDiNascita, 'dd/MM/yyyy')}">Data</span>
-                            </div>
+                            <div style="font-weight: 600; color: var(--text-primary);"
+                                 th:text="${g.nome} + ' ' + ${g.cognome}">Nome</div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);"
+                                 th:text="'Nato il ' + ${#temporals.format(g.dataDiNascita, 'dd/MM/yyyy')}">Data</div>
                         </td>
+                        <td><span class="badge badge-green" th:text="${g.ruolo}">Ruolo</span></td>
                         <td>
-                            <span style="background: rgba(255,255,255,0.05); padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.8rem; color: var(--accent-green);" th:text="${g.ruolo}">Ruolo</span>
+                            <a th:if="${g.squadra != null}"
+                               th:href="@{'/squadra/' + ${g.squadra.id}}"
+                               style="color: var(--green); font-weight: 500;"
+                               th:text="${g.squadra.nome}">Squadra</a>
+                            <span th:if="${g.squadra == null}"
+                                  style="color: var(--text-muted); font-style: italic; font-size: 0.85rem;">Svincolato</span>
                         </td>
-                        <td>
-                            <a th:if="${g.squadra != null}" th:href="@{'/squadra/' + ${g.squadra.id}}" style="color: var(--accent-green); text-decoration: none;" th:text="${g.squadra.nome}">Squadra</a>
-                            <span th:if="${g.squadra == null}" style="color: var(--gray-medium);">Svincolato</span>
-                        </td>
+                        <td style="color: var(--text-muted);" th:text="${g.altezza} + ' cm'">180</td>
                         <td sec:authorize="hasAuthority('ADMIN')">
-                            <div style="display: flex; gap: 0.5rem;">
-                                <a th:href="@{'/admin/giocatore/' + ${g.id} + '/edit'}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">✏️</a>
+                            <div style="display: flex; gap: 0.4rem;">
+                                <a th:href="@{'/admin/giocatore/' + ${g.id} + '/edit'}" class="btn btn-outline btn-sm">✏️</a>
                                 <form th:action="@{'/admin/giocatore/' + ${g.id} + '/delete'}" method="post">
-                                    <button type="submit" class="btn btn-danger" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;" onclick="return confirm('Eliminare il giocatore?')">🗑️</button>
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            onclick="return confirm('Eliminare il giocatore?')">🗑️</button>
                                 </form>
                             </div>
                         </td>
                     </tr>
                 </tbody>
             </table>
-            
-            <div th:if="${#lists.isEmpty(giocatori)}" style="text-align: center; padding: 3rem;">
-                <p style="color: var(--gray-medium);">Nessun giocatore registrato nel sistema.</p>
+
+            <div th:if="${#lists.isEmpty(giocatori)}" class="empty-state" style="padding: 3rem;">
+                <p>Nessun giocatore registrato nel sistema.</p>
             </div>
-        </section>
+        </div>
+
     </main>
 
     <script>
-        // Ricerca in tempo reale per i giocatori
-        const searchInput = document.getElementById('searchGiocatori');
-        const clearBtn = document.getElementById('clearSearchGiocatori');
-        const rows = document.querySelectorAll('tbody tr');
+        const input    = document.getElementById('searchGiocatori');
+        const clearBtn = document.getElementById('clearSearch');
+        const rows     = document.querySelectorAll('#giocatoriTable tbody tr');
+        let noRow      = null;
 
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            clearBtn.style.display = searchTerm ? 'block' : 'none';
-            
-            let visibleCount = 0;
-            rows.forEach(row => {
-                const nome = row.querySelector('td:nth-child(1)')?.textContent.toLowerCase() || '';
-                const ruolo = row.querySelector('td:nth-child(2)')?.textContent.toLowerCase() || '';
-                const squadra = row.querySelector('td:nth-child(3)')?.textContent.toLowerCase() || '';
-                const match = nome.includes(searchTerm) || ruolo.includes(searchTerm) || squadra.includes(searchTerm);
-                row.style.display = match ? '' : 'none';
-                if (match) visibleCount++;
+        input.addEventListener('input', () => {
+            const q = input.value.toLowerCase();
+            clearBtn.style.display = q ? 'inline-flex' : 'none';
+            let visible = 0;
+            rows.forEach(r => {
+                const match = r.textContent.toLowerCase().includes(q);
+                r.style.display = match ? '' : 'none';
+                if (match) visible++;
             });
-
-            // Mostra messaggio se nessun giocatore trovato
-            if (visibleCount === 0 && searchTerm) {
-                if (!document.getElementById('noResults')) {
-                    const msg = document.createElement('tr');
-                    msg.id = 'noResults';
-                    msg.innerHTML = '<td colspan="4" style="text-align: center; padding: 2rem; color: var(--gray-medium);">❌ Nessun giocatore trovato</td>';
-                    document.querySelector('tbody').appendChild(msg);
-                }
-            } else {
-                const noResults = document.getElementById('noResults');
-                if (noResults) noResults.remove();
+            if (noRow) noRow.remove();
+            if (visible === 0 && q) {
+                noRow = document.createElement('tr');
+                noRow.innerHTML = '<td colspan="5" style="text-align:center; padding:2rem; color:var(--text-muted);">Nessun giocatore trovato</td>';
+                document.querySelector('#giocatoriTable tbody').appendChild(noRow);
             }
         });
 
         clearBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            searchInput.dispatchEvent(new Event('input'));
-            searchInput.focus();
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+            input.focus();
         });
     </script>
 </body>

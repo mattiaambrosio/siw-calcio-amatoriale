@@ -2,29 +2,53 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Iscrivi Squadra</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iscrivi Squadra al Torneo – Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="form-container">
-    <h2 style="color: #f39c12;">Iscrivi al Torneo</h2>
-    <p class="error-msg" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></p>
+    <div class="ambient-glow"></div>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <form th:action="@{/admin/iscrizione}" method="POST">
-        
-        <label>Seleziona Torneo</label>
-        <select name="torneoId" required>
-            <option th:each="t : ${tornei}" th:value="${t.id}" th:text="${t.nome}"></option>
-        </select>
+    <div class="form-page">
+        <div class="form-card anim-fade-up">
 
-        <label>Seleziona Squadra da Iscrivere</label>
-        <select name="squadraId" required>
-            <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
-        </select>
-        
-        <button type="submit" class="btn-submit">Conferma Iscrizione</button>
-    </form>
-    <a href="/" class="back-link">Torna alla Home</a>
-</div>
+            <div class="breadcrumb" style="margin-bottom: 1.5rem;">
+                <a href="/tornei">← Tornei</a>
+                <span class="sep">/</span>
+                <span>Iscrivi Squadra</span>
+            </div>
+
+            <h1 style="font-size: 1.4rem; margin-bottom: 0.35rem;">🔗 Iscrivi Squadra al Torneo</h1>
+            <p style="margin-bottom: 1.75rem; font-size: 0.875rem;">Associa una squadra a un torneo esistente.</p>
+
+            <div class="alert alert-error" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></div>
+
+            <form th:action="@{/admin/iscrizione}" method="POST">
+
+                <div class="form-group">
+                    <label for="torneoId">Torneo</label>
+                    <select id="torneoId" name="torneoId" required>
+                        <option value="">— Seleziona Torneo —</option>
+                        <option th:each="t : ${tornei}" th:value="${t.id}" th:text="${t.nome}">Torneo</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="squadraId">Squadra da Iscrivere</label>
+                    <select id="squadraId" name="squadraId" required>
+                        <option value="">— Seleziona Squadra —</option>
+                        <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}">Squadra</option>
+                    </select>
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">✅ Conferma Iscrizione</button>
+                    <a href="/tornei" class="btn btn-secondary" style="flex: 1; text-align: center;">Annulla</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </body>
 </html>

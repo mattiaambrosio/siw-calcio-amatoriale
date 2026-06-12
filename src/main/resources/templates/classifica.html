@@ -4,90 +4,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classifica - Calcio Amatoriale</title>
+    <title>Classifica – Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        .container {
-            padding: 2rem;
-            max-width: 900px;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .header h1 {
-            margin-bottom: 0.5rem;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            background: var(--bg-card);
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: var(--shadow-sm);
-        }
-        thead {
-            background: linear-gradient(90deg, var(--pitch-green) 0%, var(--pitch-green-light) 100%);
-            color: var(--white-main);
-        }
-        thead th {
-            padding: 1rem;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        tbody td {
-            padding: 1rem;
-            text-align: center;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--gray-dark);
-        }
-        tbody tr {
-            transition: all 0.3s ease;
-        }
-        tbody tr:hover {
-            background: rgba(46, 204, 113, 0.08);
-        }
-        tbody tr:last-child td {
-            border-bottom: none;
-        }
-        .pos {
-            font-weight: 800;
-            color: var(--pitch-green-light);
-            font-size: 1.1rem;
-        }
-        .team-name {
-            text-align: left;
-        }
+        .rank-medal { font-size: 1.1rem; }
     </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/tornei">Tornei</a></li>
-            <li><a href="/squadre">Squadre</a></li>
-            <li><a href="/giocatori">Giocatori</a></li>
-            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <main class="container">
-        <header style="margin-bottom: 3rem;">
-            <div class="breadcrumb" style="margin-bottom: 1rem;"><a th:href="@{'/torneo/' + ${torneo.id}}" style="color: var(--accent-green); text-decoration: none;">← Torna al Torneo</a></div>
-            <h1 class="text-gradient" style="font-size: 3rem;">Classifica Ufficiale</h1>
-            <p style="color: var(--gray-medium);" th:text="${torneo.nome} + ' ' + ${torneo.anno}">Torneo</p>
-        </header>
+    <main class="container page-content" style="max-width: 960px;">
 
-        <section class="glass-panel" style="padding: 1rem;">
-            <table>
+        <!-- Breadcrumb -->
+        <div class="breadcrumb anim-fade-up">
+            <a href="/tornei">Tornei</a>
+            <span class="sep">/</span>
+            <a th:href="@{'/torneo/' + ${torneo.id}}" th:text="${torneo.nome}">Torneo</a>
+            <span class="sep">/</span>
+            <span>Classifica</span>
+        </div>
+
+        <!-- Header -->
+        <div class="section-header anim-fade-up">
+            <h1>🏆 Classifica Ufficiale</h1>
+            <p th:text="${torneo.nome} + ' · ' + ${torneo.anno}">Torneo 2026</p>
+        </div>
+
+        <!-- Tabella classifica -->
+        <div class="glass-panel anim-fade-up anim-delay-1" style="padding: 0.5rem;">
+            <table class="standings-table">
                 <thead>
                     <tr>
-                        <th style="width: 60px;">Pos</th>
+                        <th style="width: 56px; text-align: center;">Pos</th>
                         <th>Squadra</th>
                         <th style="text-align: center;">PT</th>
                         <th style="text-align: center;">G</th>
@@ -96,32 +45,54 @@
                         <th style="text-align: center;">S</th>
                         <th style="text-align: center;">GF</th>
                         <th style="text-align: center;">GS</th>
+                        <th style="text-align: center;">DR</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr th:each="entry, stat : ${classifica}">
-                        <td style="font-weight: 800; font-family: 'Outfit';">
-                            <span th:if="${stat.index == 0}" style="color: var(--accent-green);">1°</span>
-                            <span th:if="${stat.index > 0}" th:text="${stat.index + 1} + '°'">2°</span>
+                        <td style="text-align: center; font-weight: 800;">
+                            <span th:if="${stat.index == 0}" class="rank-medal rank-1">🥇</span>
+                            <span th:if="${stat.index == 1}" class="rank-medal rank-2">🥈</span>
+                            <span th:if="${stat.index == 2}" class="rank-medal rank-3">🥉</span>
+                            <span th:if="${stat.index > 2}" style="color: var(--text-muted);"
+                                  th:text="${stat.index + 1} + '°'">4°</span>
                         </td>
                         <td>
-                            <a th:href="@{'/squadra/' + ${entry.squadra.id}}" style="color: #fff; text-decoration: none; font-weight: 600;" th:text="${entry.squadra.nome}">Squadra</a>
+                            <a th:href="@{'/squadra/' + ${entry.squadra.id}}"
+                               style="font-weight: 600; color: var(--text-primary);"
+                               th:text="${entry.squadra.nome}">Squadra</a>
                         </td>
-                        <td style="text-align: center; font-weight: 700; color: var(--accent-green);" th:text="${entry.punti}">0</td>
-                        <td style="text-align: center; color: var(--gray-medium);" th:text="${entry.giocate}">0</td>
-                        <td style="text-align: center;" th:text="${entry.vittorie}">0</td>
+                        <td style="text-align: center; font-weight: 700; color: var(--green);"
+                            th:text="${entry.punti}">0</td>
+                        <td style="text-align: center; color: var(--text-muted);" th:text="${entry.giocate}">0</td>
+                        <td style="text-align: center; color: var(--green);" th:text="${entry.vittorie}">0</td>
                         <td style="text-align: center;" th:text="${entry.pareggi}">0</td>
-                        <td style="text-align: center;" th:text="${entry.sconfitte}">0</td>
+                        <td style="text-align: center; color: var(--red);" th:text="${entry.sconfitte}">0</td>
                         <td style="text-align: center;" th:text="${entry.golFatti}">0</td>
                         <td style="text-align: center;" th:text="${entry.golSubiti}">0</td>
+                        <td style="text-align: center; font-weight: 600;"
+                            th:text="${entry.golFatti - entry.golSubiti}">0</td>
                     </tr>
                 </tbody>
             </table>
 
-            <div th:if="${#lists.isEmpty(classifica)}" style="text-align: center; padding: 2rem; color: var(--gray-medium); font-style: italic;">
-                Nessuna squadra iscritta a questo torneo.
+            <div th:if="${#lists.isEmpty(classifica)}" class="empty-state" style="padding: 3rem;">
+                <p>Nessuna squadra iscritta a questo torneo.</p>
             </div>
-        </section>
+        </div>
+
+        <!-- Legend -->
+        <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1rem;" class="anim-fade-up anim-delay-2">
+            <span style="font-size: 0.78rem; color: var(--text-muted);">PT = Punti</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">G = Giocate</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">V = Vittorie</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">P = Pareggi</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">S = Sconfitte</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">GF = Gol Fatti</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">GS = Gol Subiti</span>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">DR = Diff. Reti</span>
+        </div>
+
     </main>
 </body>
 </html>

@@ -2,48 +2,86 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Nuova Partita</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuova Partita – Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="form-container">
-    <h2>Programma Partita</h2>
-    <p class="error-msg" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></p>
+    <div class="ambient-glow"></div>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <form th:action="@{/admin/partita}" th:object="${partita}" method="POST">
-        
-        <label>Torneo</label>
-        <select th:field="*{torneo}" required>
-            <option th:each="t : ${tornei}" th:value="${t.id}" th:text="${t.nome}"></option>
-        </select>
+    <div class="form-page">
+        <div class="form-card anim-fade-up">
 
-        <label>Squadra in Casa</label>
-        <select th:field="*{squadraCasa}" required>
-            <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
-        </select>
+            <div class="breadcrumb" style="margin-bottom: 1.5rem;">
+                <a href="/partite">← Partite</a>
+                <span class="sep">/</span>
+                <span>Nuova Partita</span>
+            </div>
 
-        <label>Squadra in Trasferta</label>
-        <select th:field="*{squadraOspite}" required>
-            <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
-        </select>
+            <h1 style="font-size: 1.4rem; margin-bottom: 0.35rem;">📅 Programma Partita</h1>
+            <p style="margin-bottom: 1.75rem; font-size: 0.875rem;">Inserisci i dati per registrare una nuova partita.</p>
 
-        <label>Arbitro</label>
-        <select th:field="*{arbitro}" required>
-            <option th:each="a : ${arbitri}" th:value="${a.id}" th:text="${a.nome} + ' ' + ${a.cognome}"></option>
-        </select>
+            <div class="alert alert-error" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></div>
 
-        <label>Data e Ora</label>
-        <input type="datetime-local" th:field="*{dataEOra}" required />
-        
-        <label>Luogo (Stadio/Campo)</label>
-        <input type="text" th:field="*{luogo}" required placeholder="es. Stadio Olimpico" />
-        
-        <input type="hidden" th:field="*{goalsHome}" value="0" />
-        <input type="hidden" th:field="*{goalsAway}" value="0" />
-        
-        <button type="submit" class="btn-submit">Salva Partita</button>
-    </form>
-    <a href="/" class="back-link">Torna alla Home</a>
-</div>
+            <form th:action="@{/admin/partita}" th:object="${partita}" method="POST">
+
+                <div class="form-group">
+                    <label for="torneo">Torneo</label>
+                    <select id="torneo" th:field="*{torneo}" required>
+                        <option value="">— Seleziona Torneo —</option>
+                        <option th:each="t : ${tornei}" th:value="${t.id}" th:text="${t.nome}">Torneo</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="squadraCasa">Squadra in Casa</label>
+                        <select id="squadraCasa" th:field="*{squadraCasa}" required>
+                            <option value="">— Seleziona —</option>
+                            <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}">Squadra</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="squadraOspite">Squadra Ospite</label>
+                        <select id="squadraOspite" th:field="*{squadraOspite}" required>
+                            <option value="">— Seleziona —</option>
+                            <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}">Squadra</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="arbitro">Arbitro</label>
+                    <select id="arbitro" th:field="*{arbitro}" required>
+                        <option value="">— Seleziona Arbitro —</option>
+                        <option th:each="a : ${arbitri}"
+                                th:value="${a.id}"
+                                th:text="${a.nome} + ' ' + ${a.cognome}">Arbitro</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="dataEOra">Data e Ora</label>
+                        <input type="datetime-local" id="dataEOra" th:field="*{dataEOra}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="luogo">Luogo (Stadio/Campo)</label>
+                        <input type="text" id="luogo" th:field="*{luogo}" required placeholder="es. Campo Sportivo Roma">
+                    </div>
+                </div>
+
+                <input type="hidden" th:field="*{goalsHome}" value="0"/>
+                <input type="hidden" th:field="*{goalsAway}" value="0"/>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Salva Partita</button>
+                    <a href="/partite" class="btn btn-secondary" style="flex: 1; text-align: center;">Annulla</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </body>
 </html>

@@ -4,240 +4,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dettaglio Partita - Calcio Amatoriale</title>
+    <title>Dettaglio Partita – Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <!-- CSRF tokens per le richieste AJAX di React -->
-    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <!-- CSRF per React -->
+    <meta name="_csrf"        th:content="${_csrf.token}"/>
     <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
-    <style>
-        .container { padding: 2rem; }
-        .breadcrumb { font-size: 0.85rem; color: var(--gray-medium); margin-bottom: 1.5rem; }
-        .breadcrumb a { color: var(--accent-blue); }
-
-        /* Match Hero */
-        .match-hero {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-        .tournament-badge {
-            display: inline-block;
-            background: rgba(10, 132, 255, 0.15);
-            color: var(--accent-blue);
-            border: 1px solid rgba(10, 132, 255, 0.3);
-            padding: 0.3rem 0.9rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-        .teams-row {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 2rem;
-            margin: 1rem 0;
-        }
-        .team-block { flex: 1; max-width: 200px; }
-        .team-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--white-main);
-        }
-        .score-display {
-            font-size: 3rem;
-            font-weight: 800;
-            color: var(--pitch-green-light);
-            padding: 0.5rem 2rem;
-            background: rgba(50, 215, 75, 0.08);
-            border-radius: 16px;
-            min-width: 140px;
-        }
-        .vs-text {
-            font-size: 1.5rem;
-            font-weight: 800;
-            color: var(--gray-medium);
-            padding: 0.5rem 1.5rem;
-        }
-        .match-status {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.5rem 1.2rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-        .status-played { background: rgba(50,215,75,0.15); color: var(--pitch-green-light); }
-        .status-scheduled { background: rgba(255,159,10,0.15); color: var(--accent-warning); }
-
-        /* Info Bar */
-        .info-bar {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid rgba(255,255,255,0.06);
-        }
-        .info-chip {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 10px;
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-            color: var(--gray-light);
-        }
-        .info-chip span { color: var(--gray-medium); margin-right: 0.4rem; }
-
-        /* Sezione Commenti */
-        .comments-section {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 20px;
-            padding: 2rem;
-        }
-        .section-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--white-main);
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-
-        /* Form nuovo commento */
-        .comment-form {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 14px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .comment-form textarea {
-            resize: vertical;
-            min-height: 80px;
-            margin-bottom: 1rem;
-            border-radius: 10px;
-        }
-        .login-prompt {
-            text-align: center;
-            padding: 1.5rem;
-            background: rgba(10, 132, 255, 0.05);
-            border: 1px solid rgba(10, 132, 255, 0.15);
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            color: var(--gray-medium);
-        }
-        .login-prompt a { color: var(--accent-blue); font-weight: 600; }
-
-        /* Card commento singolo */
-        .comment-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 14px;
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 1rem;
-            transition: border-color 0.2s;
-        }
-        .comment-card:hover { border-color: rgba(255,255,255,0.12); }
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.8rem;
-        }
-        .comment-author {
-            font-weight: 600;
-            color: var(--pitch-green-light);
-            font-size: 0.9rem;
-        }
-        .comment-date {
-            font-size: 0.78rem;
-            color: var(--gray-medium);
-        }
-        .comment-text {
-            color: var(--gray-light);
-            line-height: 1.6;
-            font-size: 0.95rem;
-        }
-        .comment-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.8rem;
-        }
-        .btn-sm {
-            padding: 0.3rem 0.7rem;
-            font-size: 0.78rem;
-            border-radius: 8px;
-        }
-        .no-comments {
-            text-align: center;
-            padding: 2rem;
-            color: var(--gray-medium);
-            font-style: italic;
-        }
-    </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/tornei">Tornei</a></li>
-            <li><a href="/squadre">Squadre</a></li>
-            <li><a href="/giocatori">Giocatori</a></li>
-            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <main class="container">
-        <!-- Match Hero -->
-        <header class="glass-panel" style="margin-bottom: 3rem; text-align: center; padding: 3rem;">
-            <div style="background: var(--accent-green-glow); color: var(--accent-green); padding: 0.3rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700; margin-bottom: 2rem; display: inline-block;" th:text="${partita.torneo.nome}">Torneo</div>
-            
-            <div style="display: flex; justify-content: center; align-items: center; gap: 3rem; margin-bottom: 2rem;">
-                <div style="flex: 1; text-align: right;">
-                    <h2 style="font-size: 1.8rem;" th:text="${partita.squadraCasa.nome}">Casa</h2>
-                </div>
-                
-                <div style="background: rgba(255,255,255,0.05); padding: 1rem 2rem; border-radius: 16px; border: 1px solid var(--glass-border);">
-                    <div th:if="${partita.stato == 'GIOCATA'}" style="font-size: 3rem; font-weight: 800; color: var(--accent-green);" th:text="${partita.goalsHome} + ' - ' + ${partita.goalsAway}">0 - 0</div>
-                    <div th:if="${partita.stato != 'GIOCATA'}" style="font-size: 1.5rem; font-weight: 800; color: var(--gray-medium);">VS</div>
+    <main class="container page-content">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb anim-fade-up">
+            <a href="/partite">← Partite</a>
+            <span class="sep">/</span>
+            <span th:text="${partita.squadraCasa.nome} + ' vs ' + ${partita.squadraOspite.nome}">Match</span>
+        </div>
+
+        <!-- Match hero -->
+        <div class="glass-panel anim-fade-up" style="text-align: center; margin-bottom: 2rem;">
+
+            <!-- Torneo badge -->
+            <span class="badge badge-blue" style="margin-bottom: 1.5rem; display: inline-block;"
+                  th:text="${partita.torneo.nome}">Torneo</span>
+
+            <!-- Squadre e score -->
+            <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 120px; text-align: right;">
+                    <div style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--text-primary);"
+                         th:text="${partita.squadraCasa.nome}">Casa</div>
                 </div>
 
-                <div style="flex: 1; text-align: left;">
-                    <h2 style="font-size: 1.8rem;" th:text="${partita.squadraOspite.nome}">Ospite</h2>
+                <div class="score-box">
+                    <div class="score" th:if="${partita.stato == 'GIOCATA'}"
+                         th:text="${partita.goalsHome} + ' – ' + ${partita.goalsAway}">0 – 0</div>
+                    <div class="vs" th:if="${partita.stato != 'GIOCATA'}">VS</div>
+                </div>
+
+                <div style="flex: 1; min-width: 120px; text-align: left;">
+                    <div style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--text-primary);"
+                         th:text="${partita.squadraOspite.nome}">Ospite</div>
                 </div>
             </div>
 
-            <div style="display: flex; justify-content: center; gap: 2rem; color: var(--gray-medium); font-size: 0.9rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.05);">
-                <span>📅 <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span></span>
-                <span>🏟️ <span th:text="${partita.luogo}">Luogo</span></span>
-                <span>⚽ Arbitro: <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Arbitro</span></span>
+            <!-- Status -->
+            <div style="margin-bottom: 1.5rem;">
+                <span class="badge badge-green" th:if="${partita.stato == 'GIOCATA'}">✓ Partita Giocata</span>
+                <span class="badge badge-orange" th:if="${partita.stato == 'PROGRAMMATA'}">⏰ Programmata</span>
             </div>
-            
-            <div sec:authorize="hasAuthority('ADMIN')" style="margin-top: 2rem;">
+
+            <!-- Info bar -->
+            <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; padding-top: 1.25rem; border-top: 1px solid var(--border);">
+                <span class="info-pill">📅 <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span></span>
+                <span class="info-pill">🏟️ <span th:text="${partita.luogo}">Stadio</span></span>
+                <span class="info-pill">⚖️ Arbitro: <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Nome</span></span>
+            </div>
+
+            <!-- Admin actions -->
+            <div sec:authorize="hasAuthority('ADMIN')" style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+                <a th:href="@{'/admin/partite/punteggio'}" class="btn btn-outline btn-sm">📝 Aggiorna Risultato</a>
                 <form th:action="@{'/admin/partita/' + ${partita.id} + '/delete'}" method="post">
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Eliminare partita?')">🗑️ Elimina Match</button>
+                    <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('Eliminare questa partita?')">🗑️ Elimina</button>
                 </form>
             </div>
-        </header>
+        </div>
 
-        <!-- SEZIONE COMMENTI — gestita da React -->
+        <!-- Sezione commenti — React -->
         <div id="react-commenti-root" th:attr="data-partita-id=${partita.id}"></div>
+
     </main>
 
-<!-- CDN React 18 + Babel Standalone (per JSX senza build) -->
-<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-<!-- Componente commenti React -->
-<script type="text/babel" th:src="@{/js/commenti.js}"></script>
+    <!-- React 18 + Babel (senza build) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel" th:src="@{/js/commenti.js}"></script>
 
 </body>
 </html>

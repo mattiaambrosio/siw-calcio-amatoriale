@@ -2,27 +2,55 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Nuova Squadra</title>
-   <link rel="stylesheet" th:href="@{/css/style.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuova Squadra – Admin</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-<div class="form-container">
-    <h2>Aggiungi Squadra</h2>
-    <p class="error-msg" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></p>
+    <div class="ambient-glow"></div>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <form th:action="@{/admin/squadra}" th:object="${squadra}" method="POST">
-        <label>Nome Squadra</label>
-        <input type="text" th:field="*{nome}" required placeholder="es. Napoli" />
-        
-        <label>Anno di Fondazione</label>
-        <input type="number" th:field="*{annoDiFondazione}" required placeholder="es. 1926" />
-        
-        <label>Città</label>
-        <input type="text" th:field="*{citta}" required placeholder="es. Napoli" />
-        
-        <button type="submit" class="btn-submit">Salva Squadra</button>
-    </form>
-    <a href="/" class="back-link">Torna alla Home</a>
-</div>
+    <div class="form-page">
+        <div class="form-card anim-fade-up">
+
+            <div class="breadcrumb" style="margin-bottom: 1.5rem;">
+                <a href="/squadre">← Squadre</a>
+                <span class="sep">/</span>
+                <span>Nuova Squadra</span>
+            </div>
+
+            <h1 style="font-size: 1.4rem; margin-bottom: 0.35rem;">🛡️ Aggiungi Squadra</h1>
+            <p style="margin-bottom: 1.75rem; font-size: 0.875rem;">Inserisci i dati della nuova squadra.</p>
+
+            <div class="alert alert-error" th:if="${messaggioErrore}" th:text="${messaggioErrore}"></div>
+
+            <form th:action="@{/admin/squadra}" th:object="${squadra}" method="POST">
+
+                <div class="form-group">
+                    <label for="nome">Nome Squadra</label>
+                    <input type="text" id="nome" th:field="*{nome}"
+                           required placeholder="es. FC Roma Ovest">
+                </div>
+
+                <div class="form-group">
+                    <label for="citta">Città</label>
+                    <input type="text" id="citta" th:field="*{citta}"
+                           required placeholder="es. Roma">
+                </div>
+
+                <div class="form-group">
+                    <label for="annoDiFondazione">Anno di Fondazione</label>
+                    <input type="number" id="annoDiFondazione" th:field="*{annoDiFondazione}"
+                           required placeholder="es. 1926" min="1800" max="2100">
+                </div>
+
+                <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">💾 Salva Squadra</button>
+                    <a href="/squadre" class="btn btn-secondary" style="flex: 1; text-align: center;">Annulla</a>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </body>
 </html>

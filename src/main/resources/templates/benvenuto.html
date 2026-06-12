@@ -4,263 +4,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Benvenuto - Calcio Amatoriale</title>
+    <title>Benvenuto – Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .welcome-container {
-            min-height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        .welcome-card {
-            background: var(--glass-bg);
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border);
-            border-radius: 28px;
-            padding: 3.5rem;
-            max-width: 700px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            animation: fadeUp 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .welcome-emoji {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            animation: wave 1.5s ease-in-out;
-        }
-        @keyframes wave {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(20deg); }
-            50% { transform: rotate(-10deg); }
-            75% { transform: rotate(15deg); }
-        }
-        .welcome-title {
-            font-family: 'Outfit', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #fff 0%, #32D74B 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .welcome-username {
-            color: #32D74B;
-            font-weight: 700;
-        }
-        .welcome-subtitle {
-            color: var(--gray-medium);
-            font-size: 1.1rem;
-            margin-bottom: 2.5rem;
-            line-height: 1.6;
-        }
-        .role-badge {
-            display: inline-block;
-            padding: 0.4rem 1.2rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 2rem;
-        }
-        .role-admin {
-            background: rgba(255, 69, 58, 0.15);
-            color: #FF453A;
-            border: 1px solid rgba(255, 69, 58, 0.3);
-        }
-        .role-user {
-            background: rgba(10, 132, 255, 0.15);
-            color: #0A84FF;
-            border: 1px solid rgba(10, 132, 255, 0.3);
-        }
-        .features-section {
-            text-align: left;
-            margin: 2rem 0;
-        }
-        .features-title {
-            color: var(--gray-medium);
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .feature-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.8rem 1rem;
-            border-radius: 12px;
-            margin-bottom: 0.5rem;
-            transition: all 0.2s ease;
-        }
-        .feature-item:hover {
-            background: rgba(255,255,255,0.03);
-        }
-        .feature-icon {
-            font-size: 1.3rem;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255,255,255,0.05);
-            border-radius: 10px;
-            flex-shrink: 0;
-        }
-        .feature-text {
-            color: var(--gray-light);
-            font-size: 0.95rem;
-        }
-        .actions-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 2.5rem;
-        }
-        .action-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 1rem 1.5rem;
-            border-radius: 14px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 1px solid var(--glass-border);
-        }
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-        .action-explore {
-            background: linear-gradient(135deg, #32D74B 0%, #30D158 100%);
-            color: #000;
-            border: none;
-        }
-        .action-explore:hover {
-            box-shadow: 0 8px 20px rgba(50, 215, 75, 0.3);
-        }
-        .action-secondary {
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-        }
-        .action-secondary:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: var(--gray-medium);
-        }
-        .action-admin {
-            background: rgba(255, 69, 58, 0.1);
-            color: #FF453A;
-            border-color: rgba(255, 69, 58, 0.3);
-        }
-        .action-admin:hover {
-            background: rgba(255, 69, 58, 0.2);
-        }
-        @media (max-width: 600px) {
-            .actions-grid { grid-template-columns: 1fr; }
-            .welcome-title { font-size: 1.8rem; }
-            .welcome-card { padding: 2rem; }
-        }
-    </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/tornei">Tornei</a></li>
-            <li><a href="/squadre">Squadre</a></li>
-            <li><a href="/giocatori">Giocatori</a></li>
-            <li><a href="/dashboard">Area Personale</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <main class="welcome-container">
-        <div class="welcome-card">
-            <div class="welcome-emoji">👋</div>
-            <h1 class="welcome-title">Benvenuto, <span class="welcome-username" th:text="${displayName}">Utente</span>!</h1>
-            
-            <!-- Badge Ruolo -->
-            <div th:if="${isAdmin}">
-                <span class="role-badge role-admin">🔑 Amministratore</span>
-            </div>
-            <div th:unless="${isAdmin}">
-                <span class="role-badge role-user">👤 Utente Registrato</span>
+    <main style="min-height: calc(100vh - 60px); display: flex; align-items: center; justify-content: center; padding: 3rem 1.5rem;">
+        <div class="form-card form-card-wide anim-fade-up" style="text-align: center; max-width: 640px;">
+
+            <!-- Icon -->
+            <div style="font-size: 3.5rem; margin-bottom: 1.25rem; animation: fadeUp 0.5s ease both;">👋</div>
+
+            <!-- Title -->
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">
+                Benvenuto, <span style="color: var(--green);" th:text="${displayName}">Utente</span>!
+            </h1>
+
+            <!-- Role badge -->
+            <div style="margin: 1rem 0 1.5rem;">
+                <span class="badge badge-red" th:if="${isAdmin}">👑 Amministratore</span>
+                <span class="badge badge-blue" th:unless="${isAdmin}">👤 Utente Registrato</span>
             </div>
 
-            <p class="welcome-subtitle">
-                Accesso effettuato con successo. Ecco cosa puoi fare all'interno del sistema.
+            <p style="margin-bottom: 2rem; font-size: 0.95rem;">
+                Accesso effettuato con successo. Scegli cosa fare:
             </p>
 
-            <!-- FUNZIONALITÀ UTENTE REGISTRATO -->
-            <div class="features-section">
-                <h3 class="features-title">Le tue funzionalità</h3>
-                <div class="feature-item">
-                    <div class="feature-icon">🏆</div>
-                    <span class="feature-text">Visualizza tutti i tornei, classifiche e calendari</span>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">⚽</div>
-                    <span class="feature-text">Esplora le squadre e i giocatori</span>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">💬</div>
-                    <span class="feature-text">Commenta le partite e modifica i tuoi commenti</span>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">📊</div>
-                    <span class="feature-text">Consulta i risultati e le statistiche</span>
+            <!-- Quick actions -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                <a href="/tornei"    class="btn btn-primary">🏆 Tornei</a>
+                <a href="/partite"   class="btn btn-outline">📅 Partite</a>
+                <a href="/squadre"   class="btn btn-outline">🛡️ Squadre</a>
+                <a href="/dashboard" class="btn btn-outline">⚙️ Dashboard</a>
+            </div>
+
+            <!-- Admin extra -->
+            <div th:if="${isAdmin}" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1rem;">Azioni Amministratore</p>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                    <a href="/admin/torneo/new"   class="btn btn-secondary btn-sm">+ Torneo</a>
+                    <a href="/admin/squadra/new"  class="btn btn-secondary btn-sm">+ Squadra</a>
+                    <a href="/admin/giocatore/new" class="btn btn-secondary btn-sm">+ Giocatore</a>
+                    <a href="/admin/performance"  class="btn btn-secondary btn-sm">📊 Analisi JPA</a>
                 </div>
             </div>
 
-            <!-- FUNZIONALITÀ ADMIN EXTRA -->
-            <div th:if="${isAdmin}" class="features-section">
-                <h3 class="features-title">⚙️ Funzionalità Amministratore</h3>
-                <div class="feature-item">
-                    <div class="feature-icon">➕</div>
-                    <span class="feature-text">Crea e modifica tornei, squadre e giocatori</span>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">📝</div>
-                    <span class="feature-text">Registra partite e inserisci i risultati</span>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">🗑️</div>
-                    <span class="feature-text">Elimina squadre e partite dal sistema</span>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon">📈</div>
-                    <span class="feature-text">Analisi prestazioni JPA (LAZY, JOIN FETCH, EntityGraph)</span>
-                </div>
-            </div>
-
-            <!-- BOTTONI AZIONE -->
-            <div class="actions-grid">
-                <a href="/tornei" class="action-btn action-explore">🏆 Esplora Tornei</a>
-                <a href="/squadre" class="action-btn action-secondary">⚽ Vedi Squadre</a>
-                <a href="/partite" class="action-btn action-secondary">📅 Calendario</a>
-                <a href="/dashboard" class="action-btn action-secondary">👤 Area Personale</a>
-            </div>
-
-            <!-- BOTTONI ADMIN -->
-            <div th:if="${isAdmin}" class="actions-grid" style="margin-top: 1rem;">
-                <a href="/admin/torneo/new" class="action-btn action-admin">➕ Nuovo Torneo</a>
-                <a href="/admin/squadra/new" class="action-btn action-admin">➕ Nuova Squadra</a>
-                <a href="/admin/giocatore/new" class="action-btn action-admin">➕ Nuovo Giocatore</a>
-                <a href="/admin/performance" class="action-btn action-admin">📈 Analisi Prestazioni</a>
-            </div>
         </div>
     </main>
 </body>

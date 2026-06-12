@@ -4,208 +4,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="${squadra.nome} + ' - Calcio Amatoriale'">Dettaglio Squadra</title>
+    <title th:text="${squadra.nome} + ' – Calcio Amatoriale'">Dettaglio Squadra</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .container { padding: 2rem; }
-        .breadcrumb {
-            font-size: 0.85rem;
-            color: var(--gray-medium);
-            margin-bottom: 1.5rem;
-        }
-        .breadcrumb a { color: var(--accent-blue); }
-        .squadra-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 2rem;
-            margin-bottom: 2.5rem;
-            flex-wrap: wrap;
-        }
-        .squadra-avatar {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, var(--pitch-green-light), var(--accent-blue));
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            flex-shrink: 0;
-        }
-        .squadra-info-main { flex: 1; }
-        .squadra-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--white-main);
-            margin: 0 0 0.5rem 0;
-        }
-        .meta-pills {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin-top: 0.75rem;
-        }
-        .meta-pill {
-            background: rgba(255,255,255,0.07);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 0.3rem 0.9rem;
-            font-size: 0.85rem;
-            color: var(--gray-light);
-        }
-        .actions-bar {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-        .section-panel {
-            background: var(--glass-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        .section-title {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--gray-medium);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 1.2rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .players-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .players-table th {
-            text-align: left;
-            padding: 0.7rem 1rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--gray-medium);
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            background: none;
-        }
-        .players-table td {
-            padding: 0.9rem 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-            color: var(--gray-light);
-        }
-        .players-table tr:last-child td { border-bottom: none; }
-        .players-table tr:hover td { background: rgba(50, 215, 75, 0.04); }
-        .player-fullname { font-weight: 500; color: var(--white-main); }
-        .role-badge {
-            background: rgba(50, 215, 75, 0.1);
-            color: var(--pitch-green-light);
-            border: 1px solid rgba(50, 215, 75, 0.2);
-            padding: 0.2rem 0.6rem;
-            border-radius: 8px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-        .tornei-list { list-style: none; padding: 0; margin: 0; }
-        .torneo-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.8rem 0;
-            border-bottom: 1px solid rgba(255,255,255,0.04);
-        }
-        .torneo-item:last-child { border-bottom: none; }
-        .torneo-nome { font-weight: 500; color: var(--white-main); }
-        .torneo-anno { font-size: 0.85rem; color: var(--gray-medium); }
-        .empty-msg {
-            color: var(--gray-medium);
-            font-style: italic;
-            text-align: center;
-            padding: 2rem 0;
-        }
-    </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/tornei">Tornei</a></li>
-            <li><a href="/squadre" class="active">Squadre</a></li>
-            <li><a href="/giocatori">Giocatori</a></li>
-            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <main class="container">
-        <!-- Hero Squadra -->
-        <header style="margin-bottom: 4rem; text-align: center;">
-            <div style="width: 80px; height: 80px; background: var(--bg-card); border: 1px solid var(--glass-border); border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 2rem;">🛡️</div>
-            <h1 class="text-gradient" style="font-size: 4rem; margin-bottom: 0.5rem;" th:text="${squadra.nome}">Nome Squadra</h1>
-            <p style="color: var(--accent-green); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em;" th:text="${squadra.citta}">Città</p>
-            <p style="color: var(--gray-medium); margin-top: 0.5rem;" th:text="'Fondata nel ' + ${squadra.annoDiFondazione}">1900</p>
-            
-            <div sec:authorize="hasAuthority('ADMIN')" style="margin-top: 2rem; display: flex; justify-content: center; gap: 1rem;">
-                <a th:href="@{'/admin/squadra/' + ${squadra.id} + '/edit'}" class="btn btn-outline">✏️ Modifica</a>
-                <form th:action="@{'/admin/squadra/' + ${squadra.id} + '/delete'}" method="post">
-                    <button type="submit" class="btn btn-danger" onclick="return confirm('Eliminare squadra?')">🗑️ Elimina</button>
-                </form>
-            </div>
-        </header>
+    <main class="container page-content">
 
-        <!-- Rosa Giocatori -->
-        <section class="glass-panel" style="padding: 1.5rem;">
-            <h2 style="font-size: 1.5rem; color: var(--accent-green); margin-bottom: 2rem;">⚽ Rosa Ufficiale</h2>
-            <table class="players-table">
-                <thead>
-                    <tr>
-                        <th>Giocatore</th>
-                        <th>Ruolo</th>
-                        <th>Altezza</th>
-                        <th>Data di Nascita</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="g : ${squadra.giocatori}">
-                        <td style="color: #fff; font-weight: 600;" th:text="${g.nome} + ' ' + ${g.cognome}">Nome Cognome</td>
-                        <td>
-                            <span style="background: rgba(255,255,255,0.05); padding: 0.3rem 0.7rem; border-radius: 6px; font-size: 0.8rem; color: var(--accent-green);" th:text="${g.ruolo}">Ruolo</span>
-                        </td>
-                        <td style="color: var(--gray-medium);" th:text="${g.altezza} + ' cm'">180 cm</td>
-                        <td style="color: var(--gray-medium);" th:text="${#temporals.format(g.dataDiNascita, 'dd/MM/yyyy')}">Data</td>
-                    </tr>
-                </tbody>
-            </table>
-            
-            <div th:if="${#lists.isEmpty(squadra.giocatori)}" style="text-align: center; padding: 3rem;">
-                <p style="color: var(--gray-medium);">Nessun giocatore attualmente registrato in questa squadra.</p>
-            </div>
-        </section>
+        <!-- Breadcrumb -->
+        <div class="breadcrumb anim-fade-up">
+            <a href="/squadre">← Squadre</a>
+            <span class="sep">/</span>
+            <span th:text="${squadra.nome}">Squadra</span>
+        </div>
 
-        <!-- Tornei a Cui Partecipa -->
-        <div class="section-panel">
-            <div class="section-title">
-                🏅 Tornei Partecipati (<span th:text="${squadra.tornei != null ? #lists.size(squadra.tornei) : 0}">0</span>)
-            </div>
-
-            <div th:if="${squadra.tornei != null and !squadra.tornei.empty}">
-                <ul class="tornei-list">
-                    <li th:each="torneo : ${squadra.tornei}" class="torneo-item">
-                        <div>
-                            <div class="torneo-nome" th:text="${torneo.nome}">Nome Torneo</div>
-                            <div class="torneo-anno" th:text="${torneo.anno}">2026</div>
-                        </div>
-                        <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Vai al Torneo →</a>
-                    </li>
-                </ul>
-            </div>
-            <div th:if="${squadra.tornei == null or squadra.tornei.empty}" class="empty-msg">
-                La squadra non partecipa a nessun torneo.
+        <!-- Hero squadra -->
+        <div class="anim-fade-up" style="display: flex; align-items: flex-start; gap: 1.5rem; margin-bottom: 2.5rem; flex-wrap: wrap;">
+            <div style="width: 72px; height: 72px; background: var(--green-dim); border: 1px solid var(--green-border); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0;">🛡️</div>
+            <div>
+                <h1 th:text="${squadra.nome}" style="margin-bottom: 0.4rem;">Nome Squadra</h1>
+                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+                    <span class="info-pill">📍 <span th:text="${squadra.citta}">Città</span></span>
+                    <span class="info-pill">📅 Fondata nel <span th:text="${squadra.annoDiFondazione}">2000</span></span>
+                    <span class="info-pill">👥 <span th:text="${squadra.giocatori != null ? #lists.size(squadra.giocatori) : 0}">0</span> giocatori</span>
+                </div>
             </div>
         </div>
 
-    </div>
+        <!-- Admin actions -->
+        <div sec:authorize="hasAuthority('ADMIN')" style="display: flex; gap: 0.75rem; margin-bottom: 2rem;" class="anim-fade-up anim-delay-1">
+            <a th:href="@{'/admin/squadra/' + ${squadra.id} + '/edit'}" class="btn btn-outline">✏️ Modifica Squadra</a>
+            <a th:href="@{'/admin/giocatore/new'}" class="btn btn-outline">➕ Aggiungi Giocatore</a>
+            <form th:action="@{'/admin/squadra/' + ${squadra.id} + '/delete'}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger"
+                        onclick="return confirm('Eliminare questa squadra e tutti i suoi giocatori?')">🗑️ Elimina Squadra</button>
+            </form>
+        </div>
+
+        <!-- Rosa giocatori -->
+        <section class="glass-panel anim-fade-up anim-delay-1" style="margin-bottom: 1.5rem;">
+            <h2 style="font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                ⚽ Rosa Ufficiale (<span th:text="${squadra.giocatori != null ? #lists.size(squadra.giocatori) : 0}">0</span>)
+            </h2>
+
+            <div th:if="${squadra.giocatori != null and !squadra.giocatori.empty}">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Giocatore</th>
+                            <th>Ruolo</th>
+                            <th>Altezza</th>
+                            <th>Data di Nascita</th>
+                            <th sec:authorize="hasAuthority('ADMIN')">Azioni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="g : ${squadra.giocatori}">
+                            <td style="font-weight: 600; color: var(--text-primary);"
+                                th:text="${g.nome} + ' ' + ${g.cognome}">Nome</td>
+                            <td><span class="badge badge-green" th:text="${g.ruolo}">Ruolo</span></td>
+                            <td th:text="${g.altezza} + ' cm'">180 cm</td>
+                            <td th:text="${#temporals.format(g.dataDiNascita, 'dd/MM/yyyy')}">01/01/2000</td>
+                            <td sec:authorize="hasAuthority('ADMIN')">
+                                <div style="display: flex; gap: 0.4rem;">
+                                    <a th:href="@{'/admin/giocatore/' + ${g.id} + '/edit'}" class="btn btn-outline btn-sm">✏️</a>
+                                    <form th:action="@{'/admin/giocatore/' + ${g.id} + '/delete'}" method="post">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                onclick="return confirm('Eliminare il giocatore?')">🗑️</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div th:if="${squadra.giocatori == null or squadra.giocatori.empty}" class="empty-state" style="padding: 2rem;">
+                <p>Nessun giocatore registrato in questa squadra.</p>
+            </div>
+        </section>
+
+        <!-- Tornei partecipati -->
+        <section class="glass-panel anim-fade-up anim-delay-2">
+            <h2 style="font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 1.25rem;">
+                🏅 Tornei Partecipati (<span th:text="${squadra.tornei != null ? #lists.size(squadra.tornei) : 0}">0</span>)
+            </h2>
+
+            <div th:if="${squadra.tornei != null and !squadra.tornei.empty}">
+                <div th:each="torneo : ${squadra.tornei}"
+                     style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border);">
+                    <div>
+                        <div style="font-weight: 600; color: var(--text-primary);" th:text="${torneo.nome}">Torneo</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);" th:text="${torneo.anno}">2026</div>
+                    </div>
+                    <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-ghost btn-sm">Vai al Torneo →</a>
+                </div>
+            </div>
+            <p th:if="${squadra.tornei == null or squadra.tornei.empty}"
+               style="color: var(--text-muted); font-style: italic; font-size: 0.875rem;">
+                La squadra non partecipa a nessun torneo.
+            </p>
+        </section>
+
+    </main>
 </body>
 </html>

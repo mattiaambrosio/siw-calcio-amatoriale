@@ -1,213 +1,85 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tornei Disponibili - Calcio Amatoriale</title>
+    <title>Tornei – Calcio Amatoriale</title>
+    <meta name="description" content="Elenco di tutti i tornei di calcio amatoriale disponibili.">
     <link rel="stylesheet" th:href="@{/css/style.css}">
-    <style>
-        .container {
-            padding: 2rem;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-        .header h1 {
-            margin-bottom: 0.5rem;
-        }
-        .tournaments-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-        .tournament-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-top: 3px solid var(--accent-blue);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-        }
-        .tournament-card:hover {
-            border-top-color: var(--pitch-green-light);
-            box-shadow: 0 0 20px rgba(46, 204, 113, 0.15);
-            transform: translateY(-4px);
-        }
-        .tournament-name {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--white-main);
-            margin: 0 0 1rem 0;
-        }
-        .tournament-year {
-            display: inline-block;
-            background: var(--accent-blue);
-            color: var(--white-main);
-            padding: 0.3rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 1rem;
-        }
-        .tournament-description {
-            color: var(--gray-dark);
-            margin: 0 0 1.5rem 0;
-            line-height: 1.6;
-            flex-grow: 1;
-        }
-        .teams-section {
-            margin-top: 1.5rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-        }
-        .teams-title {
-            color: var(--pitch-green-light);
-            font-weight: 600;
-            margin: 0 0 0.75rem 0;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .teams-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .team-item {
-            padding: 0.4rem 0;
-            color: var(--gray-dark);
-            font-size: 0.9rem;
-        }
-        .team-item::before {
-            content: "⚽ ";
-            color: var(--pitch-green-light);
-            margin-right: 0.5rem;
-        }
-        .empty-teams {
-            color: var(--gray-medium);
-            font-style: italic;
-            font-size: 0.85rem;
-            text-align: center;
-            padding: 0.5rem 0;
-        }
-        .view-button {
-            margin-top: 1.5rem;
-            width: 100%;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--gray-medium);
-        }
-        .empty-state h2 {
-            color: var(--gray-dark);
-            margin-bottom: 1rem;
-        }
-        @media (max-width: 768px) {
-            .tournaments-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/tornei" class="active">Tornei</a></li>
-            <li><a href="/squadre">Squadre</a></li>
-            <li><a href="/giocatori">Giocatori</a></li>
-            <li sec:authorize="isAuthenticated()"><a href="/dashboard">Area Personale</a></li>
-        </ul>
-    </nav>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
 
-    <main class="container">
-        <header style="margin-bottom: 3rem;">
-            <h1 class="text-gradient" style="font-size: 3rem;">Tornei Disponibili</h1>
-            <p style="color: var(--gray-medium);">Scegli un torneo per vedere classifiche e calendari.</p>
-        </header>
+    <main class="container page-content">
 
-        <!-- Barra di ricerca -->
-        <div style="margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center; justify-content: center;">
-            <input type="text" id="searchTornei" placeholder="🔍 Cerca un torneo..." style="
-                padding: 0.8rem 1.2rem;
-                border-radius: 10px;
-                background: rgba(255,255,255,0.05);
-                border: 1px solid rgba(255,255,255,0.1);
-                color: #fff;
-                font-size: 0.95rem;
-                width: 100%;
-                max-width: 400px;
-                outline: none;
-                transition: border-color 0.2s;
-            " />
-            <button id="clearSearchTornei" style="display:none; padding: 0.8rem 1.2rem; border-radius: 10px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; cursor: pointer; font-weight: 600;">✕ Cancella</button>
+        <!-- Header -->
+        <div class="section-header anim-fade-up" style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <h1>Tornei</h1>
+                <p>Scegli un torneo per vedere squadre, calendari e classifiche.</p>
+            </div>
+            <a href="/admin/torneo/new"
+               sec:authorize="hasAuthority('ADMIN')"
+               class="btn btn-primary">+ Nuovo Torneo</a>
         </div>
 
-        <div class="grid-3">
-            <div th:each="torneo : ${tornei}" class="card glass-panel" style="padding: 2rem;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
-                    <span style="background: var(--accent-green-glow); color: var(--accent-green); padding: 0.3rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: 700;" th:text="${torneo.anno}">2026</span>
+        <!-- Search -->
+        <div class="search-bar anim-fade-up anim-delay-1">
+            <input type="text" id="searchTornei" placeholder="🔍 Cerca un torneo…">
+            <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none;">✕ Cancella</button>
+        </div>
+
+        <!-- Grid tornei -->
+        <div class="grid-3 anim-fade-up anim-delay-2" id="torneiGrid">
+            <div th:each="torneo : ${tornei}" class="card card-green">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+                    <span class="badge badge-green" th:text="${torneo.anno}">2026</span>
                 </div>
-                <h2 style="margin-bottom: 1rem;" th:text="${torneo.nome}">Nome Torneo</h2>
-                <p style="color: var(--gray-medium); font-size: 0.9rem; margin-bottom: 2rem; min-height: 3em;" th:text="${torneo.descrizione}">Descrizione breve del torneo.</p>
-                
-                <div style="display: flex; gap: 1rem;">
-                    <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-primary" style="flex: 1;">Vedi Dettaglio</a>
-                </div>
+                <h2 style="font-size: 1.25rem; margin-bottom: 0.5rem;" th:text="${torneo.nome}">Nome Torneo</h2>
+                <p style="font-size: 0.875rem; margin-bottom: 1.5rem; min-height: 2.6em;" th:text="${torneo.descrizione}">Descrizione</p>
+                <a th:href="@{'/torneo/' + ${torneo.id}}" class="btn btn-primary" style="width: 100%;">Vedi Dettaglio →</a>
             </div>
         </div>
 
-        <div th:if="${#lists.isEmpty(tornei)}" style="text-align: center; padding: 5rem 0;">
-            <p style="color: var(--gray-medium);">Ancora nessun torneo registrato.</p>
-            <a href="/admin/torneo/new" sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary" style="margin-top: 1rem;">+ Crea il Primo Torneo</a>
+        <!-- Empty state -->
+        <div th:if="${#lists.isEmpty(tornei)}" class="empty-state">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+            <h3>Nessun torneo disponibile</h3>
+            <p>Non ci sono ancora tornei registrati nel sistema.</p>
+            <a href="/admin/torneo/new" sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary" style="margin-top: 1.5rem;">+ Crea il Primo Torneo</a>
         </div>
+
+        <!-- No search results -->
+        <div id="noResults" style="display:none;" class="empty-state">
+            <p>Nessun torneo corrisponde alla ricerca.</p>
+        </div>
+
     </main>
 
     <script>
-        // Ricerca in tempo reale per i tornei
-        const searchInput = document.getElementById('searchTornei');
-        const clearBtn = document.getElementById('clearSearchTornei');
-        const cards = document.querySelectorAll('.grid-3 > .card');
+        const input   = document.getElementById('searchTornei');
+        const clearBtn = document.getElementById('clearSearch');
+        const cards   = document.querySelectorAll('#torneiGrid > .card');
+        const noRes   = document.getElementById('noResults');
 
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.toLowerCase();
-            clearBtn.style.display = searchTerm ? 'block' : 'none';
-            
-            let visibleCount = 0;
-            cards.forEach(card => {
-                const nome = card.querySelector('h2')?.textContent.toLowerCase() || '';
-                const desc = card.querySelector('p')?.textContent.toLowerCase() || '';
-                const match = nome.includes(searchTerm) || desc.includes(searchTerm);
-                card.style.display = match ? '' : 'none';
-                if (match) visibleCount++;
+        input.addEventListener('input', () => {
+            const q = input.value.toLowerCase();
+            clearBtn.style.display = q ? 'inline-flex' : 'none';
+            let visible = 0;
+            cards.forEach(c => {
+                const match = c.textContent.toLowerCase().includes(q);
+                c.style.display = match ? '' : 'none';
+                if (match) visible++;
             });
-
-            // Mostra messaggio se nessun torneo trovato
-            if (visibleCount === 0 && searchTerm) {
-                if (!document.getElementById('noResults')) {
-                    const msg = document.createElement('div');
-                    msg.id = 'noResults';
-                    msg.style.cssText = 'text-align: center; padding: 3rem; color: var(--gray-medium); font-style: italic;';
-                    msg.textContent = '❌ Nessun torneo trovato';
-                    document.querySelector('.grid-3').parentElement.appendChild(msg);
-                }
-            } else {
-                const noResults = document.getElementById('noResults');
-                if (noResults) noResults.remove();
-            }
+            noRes.style.display = (visible === 0 && q) ? 'block' : 'none';
         });
 
         clearBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            searchInput.dispatchEvent(new Event('input'));
-            searchInput.focus();
+            input.value = '';
+            input.dispatchEvent(new Event('input'));
+            input.focus();
         });
     </script>
 </body>

@@ -2,19 +2,55 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Aggiorna Risultati</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggiorna Risultati – Admin</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
-    <h1>Seleziona Partita</h1>
-    <div class="card" th:each="p : ${partite}" th:if="${p.stato == 'PROGRAMMATA'}">
-        <h3 th:text="${p.squadraCasa.nome} + ' VS ' + ${p.squadraOspite.nome}">Match</h3>
-        <p th:text="${#temporals.format(p.dataEOra, 'dd/MM/yyyy HH:mm')}"></p>
-        <a th:href="@{'/admin/partita/risultato/' + ${p.id}}" class="btn btn-primary">Inserisci Risultato</a>
-    </div>
-    <div th:if="${partite.empty}">
-        <p>Nessuna partita da aggiornare.</p>
-    </div>
-    <a href="/" class="back-link">Torna alla Home</a>
+    <div class="ambient-glow"></div>
+    <nav th:replace="~{fragments/layout :: nav}"></nav>
+
+    <main class="container page-content" style="max-width: 800px;">
+
+        <div class="section-header anim-fade-up">
+            <div class="breadcrumb">
+                <a href="/dashboard">← Dashboard</a>
+                <span class="sep">/</span>
+                <span>Aggiorna Risultati</span>
+            </div>
+            <h1>📝 Aggiorna Risultati</h1>
+            <p>Seleziona una partita programmata per inserire il risultato finale.</p>
+        </div>
+
+        <div class="anim-fade-up anim-delay-1">
+            <!-- Partite programmata -->
+            <div th:each="p : ${partite}" th:if="${p.stato == 'PROGRAMMATA'}" class="card" style="margin-bottom: 1rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                    <div>
+                        <div style="font-weight: 700; color: var(--text-primary); margin-bottom: 0.3rem;">
+                            <span th:text="${p.squadraCasa.nome}">Casa</span>
+                            <span style="color: var(--text-muted); margin: 0 0.5rem;">vs</span>
+                            <span th:text="${p.squadraOspite.nome}">Ospite</span>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                            <span class="info-pill">📅 <span th:text="${#temporals.format(p.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span></span>
+                            <span class="info-pill">🏟️ <span th:text="${p.luogo}">Luogo</span></span>
+                            <span class="badge badge-orange">Programmata</span>
+                        </div>
+                    </div>
+                    <a th:href="@{'/admin/partita/risultato/' + ${p.id}}" class="btn btn-primary">Inserisci Risultato →</a>
+                </div>
+            </div>
+
+            <!-- Empty state -->
+            <div th:if="${partite.empty}" class="empty-state">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
+                <h3>Tutto aggiornato</h3>
+                <p>Non ci sono partite programmate da aggiornare.</p>
+                <a href="/dashboard" class="btn btn-outline" style="margin-top: 1.5rem;">← Torna alla Dashboard</a>
+            </div>
+        </div>
+
+    </main>
 </body>
 </html>
