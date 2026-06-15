@@ -6,6 +6,125 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard – Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* ===== MODALE MODIFICA PROFILO ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.03) 100%);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 1.25rem;
+            padding: 2rem 2.25rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            transform: translateY(24px) scale(0.97);
+            transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+            opacity: 0;
+        }
+        .modal-overlay.open .modal-box {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+        .modal-header h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.4rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.4rem;
+            transition: color 0.2s, background 0.2s;
+        }
+        .modal-close:hover {
+            color: var(--text);
+            background: rgba(255,255,255,0.08);
+        }
+        .modal-form .form-group {
+            margin-bottom: 1.1rem;
+        }
+        .modal-form label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.4rem;
+            font-weight: 500;
+        }
+        .modal-form input[type="text"] {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 0.6rem;
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-sizing: border-box;
+        }
+        .modal-form input[type="text"]:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.15);
+        }
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+        .modal-actions .btn {
+            flex: 1;
+        }
+        /* Pulsante modifica profilo nell'header */
+        .btn-edit-profile {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.45rem 1rem;
+            border-radius: 0.6rem;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.06);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .btn-edit-profile:hover {
+            background: rgba(74, 222, 128, 0.12);
+            border-color: var(--green);
+            color: var(--green);
+            transform: translateY(-1px);
+        }
+    </style>
 </head>
 <body>
     <div class="ambient-glow"></div>
@@ -16,12 +135,22 @@
         <!-- Header -->
         <div class="section-header anim-fade-up" style="display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem;">
             <div>
-                <h1>Ciao, <span style="color: var(--green);" th:text="${displayName ?: 'Utente'}">Utente</span> 👋</h1>
+                <h1>Ciao, <span id="dashDisplayName" style="color: var(--green);" th:text="${displayName ?: 'Utente'}">Utente</span> 👋</h1>
                 <p>Benvenuto nel tuo pannello di controllo.</p>
             </div>
-            <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;">
                 <span class="badge badge-red" th:if="${#authorization.expression('hasAuthority(''ADMIN'')')}">👑 Amministratore</span>
                 <span class="badge badge-blue" th:unless="${#authorization.expression('hasAuthority(''ADMIN'')')}">👤 Utente</span>
+
+                <!-- Pulsante Modifica Profilo (solo per utenti con account locale) -->
+                <button th:if="${currentUser != null}"
+                        id="btnOpenProfileModal"
+                        class="btn-edit-profile"
+                        onclick="openProfileModal()"
+                        type="button"
+                        title="Modifica nome e cognome">
+                    ✏️ Modifica profilo
+                </button>
             </div>
         </div>
 
@@ -97,5 +226,59 @@
             </div>
         </div>
     </main>
+
+    <!-- ===== MODALE MODIFICA PROFILO ===== -->
+    <div id="profileModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="modalTitle">✏️ Modifica Profilo</h2>
+                <button class="modal-close" onclick="closeProfileModal()" type="button" aria-label="Chiudi">&times;</button>
+            </div>
+            <form class="modal-form" th:action="@{/profilo}" method="post" id="profileForm">
+                <div class="form-group">
+                    <label for="modalNome">Nome</label>
+                    <input type="text" id="modalNome" name="nome"
+                           th:value="${currentUser?.nome}" placeholder="Il tuo nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalCognome">Cognome</label>
+                    <input type="text" id="modalCognome" name="cognome"
+                           th:value="${currentUser?.cognome}" placeholder="Il tuo cognome" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeProfileModal()">Annulla</button>
+                    <button type="submit" class="btn btn-primary">💾 Salva</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('profileModal');
+
+        function openProfileModal() {
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+            // Focus sul primo campo
+            setTimeout(() => document.getElementById('modalNome').focus(), 100);
+        }
+
+        function closeProfileModal() {
+            modal.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        // Chiudi cliccando fuori dal box
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeProfileModal();
+        });
+
+        // Chiudi con Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('open')) {
+                closeProfileModal();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -47,6 +47,7 @@ public class AuthController {
                     User user = credentials.getUser();
                     if (user != null) {
                         model.addAttribute("displayName", user.getNome() + " " + user.getCognome());
+                        model.addAttribute("currentUser", user);
                     } else {
                         model.addAttribute("displayName", email);
                     }
