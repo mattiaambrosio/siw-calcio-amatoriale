@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Credentials;
 import it.uniroma3.siw.calcio_amatoriale.model.RegistrationForm;
@@ -43,15 +44,20 @@ public class AuthController {
                 model.addAttribute("displayName", oauthUser.getAttribute("name"));
             } else {
                 String email = auth.getName();
-                credentialsRepository.findByEmail(email).ifPresent(credentials -> {
-                    User user = credentials.getUser();
+                Credentials cred = credentialsRepository.findByEmail(email).orElse(null);
+                if (cred != null) {
+                    User user = cred.getUser();
                     if (user != null) {
-                        model.addAttribute("displayName", user.getNome() + " " + user.getCognome());
+                        String nome = (user.getNome() != null ? user.getNome() : "");
+                        String cognome = (user.getCognome() != null ? user.getCognome() : "");
+                        model.addAttribute("displayName", (nome + " " + cognome).trim());
                         model.addAttribute("currentUser", user);
                     } else {
                         model.addAttribute("displayName", email);
                     }
-                });
+                } else {
+                    model.addAttribute("displayName", email);
+                }
             }
         }
 
@@ -162,15 +168,16 @@ public class AuthController {
     }
 
     @PostMapping("/profilo")
-    public String salvaProfilo(@ModelAttribute User datiForm) {
+    public String salvaProfilo(@RequestParam("nome") String nome,
+                               @RequestParam("cognome") String cognome) {
         String email = getEmailLoggata();
         if (email == null)
             return "redirect:/login";
 
         Credentials cred = credentialsRepository.findByEmail(email).orElseThrow();
         User user = cred.getUser();
-        user.setNome(datiForm.getNome());
-        user.setCognome(datiForm.getCognome());
+        user.setNome(nome.trim());
+        user.setCognome(cognome.trim());
         credentialsRepository.save(cred); // cascade ALL salva anche lo User
 
         return "redirect:/dashboard";
