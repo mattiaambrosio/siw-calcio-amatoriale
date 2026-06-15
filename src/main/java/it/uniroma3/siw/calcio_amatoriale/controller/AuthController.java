@@ -160,8 +160,16 @@ public class AuthController {
             return "redirect:/login";
 
         Credentials cred = credentialsRepository.findByEmail(email).orElse(null);
-        if (cred == null || cred.getUser() == null)
-            return "redirect:/";
+        if (cred == null)
+            return "redirect:/login";
+
+        // Per gli account Google, potrebbe esistere la Credentials ma senza User
+        // (edge case: se OAuth2SuccessHandler non è riuscito a salvare lo User)
+        if (cred.getUser() == null) {
+            User nuovoUser = new User();
+            cred.setUser(nuovoUser);
+            credentialsRepository.save(cred);
+        }
 
         model.addAttribute("user", cred.getUser());
         return "profilo";
@@ -169,17 +177,26 @@ public class AuthController {
 
     @PostMapping("/profilo")
     public String salvaProfilo(@RequestParam("nome") String nome,
-                               @RequestParam("cognome") String cognome) {
+                               @RequestParam("cognome") String cognome,
+                               Model model) {
         String email = getEmailLoggata();
         if (email == null)
             return "redirect:/login";
 
-        Credentials cred = credentialsRepository.findByEmail(email).orElseThrow();
+        Credentials cred = credentialsRepository.findByEmail(email).orElse(null);
+        if (cred == null)
+            return "redirect:/login";
+
+        // Gestisce il caso (improbabile) in cui user sia null
         User user = cred.getUser();
+        if (user == null) {
+            user = new User();
+            cred.setUser(user);
+        }
         user.setNome(nome.trim());
         user.setCognome(cognome.trim());
         credentialsRepository.save(cred); // cascade ALL salva anche lo User
 
-        return "redirect:/dashboard";
+        return "redirect:/benvenuto";
     }
 }
