@@ -1,5 +1,7 @@
 package it.uniroma3.siw.calcio_amatoriale.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,4 +39,12 @@ public class SquadraService {
     public boolean alreadyExists(Squadra squadra) {
         return squadraRepository.existsByNome(squadra.getNome());
     }
-}
+
+    @Transactional(readOnly = true)
+    public List<Squadra> cerca(String search) {
+        if (search == null || search.isBlank()) {
+            return (List<Squadra>) squadraRepository.findAll();
+        }
+        return squadraRepository.findByNomeContainingIgnoreCase(search);
+    }
+}

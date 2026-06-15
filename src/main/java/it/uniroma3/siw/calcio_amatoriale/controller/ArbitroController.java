@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Arbitro;
 import it.uniroma3.siw.calcio_amatoriale.service.ArbitroService;
@@ -38,8 +39,8 @@ public class ArbitroController {
 
     // Mostra tutti gli arbitri
     @GetMapping("/arbitri")
-    public String showArbitri(Model model) {
-        model.addAttribute("arbitri", arbitroService.findAll());
+    public String showArbitri(@RequestParam(required = false) String search, Model model) {
+        model.addAttribute("arbitri", arbitroService.cerca(search));
         return "arbitri";
     }
-}
+}

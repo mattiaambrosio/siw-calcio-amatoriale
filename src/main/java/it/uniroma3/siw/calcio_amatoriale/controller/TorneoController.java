@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.uniroma3.siw.calcio_amatoriale.model.SquadraPunteggio;
 import it.uniroma3.siw.calcio_amatoriale.model.Partita;
@@ -74,8 +75,8 @@ public class TorneoController {
 
     // GET: lista di tutti i tornei (pubblica)
     @GetMapping("/tornei")
-    public String showTornei(Model model) {
-        model.addAttribute("tornei", torneoService.findAll());
+    public String showTornei(@RequestParam(required = false) String search, Model model) {
+        model.addAttribute("tornei", torneoService.cerca(search));
         return "tornei";
     }
 

@@ -122,4 +122,12 @@ public class TorneoService {
 
         return classificaOrdinata;
     }
+
+    @Transactional(readOnly = true)
+    public List<Torneo> cerca(String search) {
+        if (search == null || search.isBlank()) {
+            return torneoRepository.findAll();
+        }
+        return torneoRepository.findByNomeContainingIgnoreCase(search);
+    }
 }

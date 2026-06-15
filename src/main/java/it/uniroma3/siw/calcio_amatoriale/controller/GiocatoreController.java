@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Giocatore;
 import it.uniroma3.siw.calcio_amatoriale.service.GiocatoreService;
@@ -45,8 +46,8 @@ public class GiocatoreController {
 
     // GET: lista di tutti i giocatori (pubblica)
     @GetMapping("/giocatori")
-    public String showGiocatori(Model model) {
-        model.addAttribute("giocatori", giocatoreService.findAll());
+    public String showGiocatori(@RequestParam(required = false) String search, Model model) {
+        model.addAttribute("giocatori", giocatoreService.cerca(search));
         return "giocatori";
     }
 

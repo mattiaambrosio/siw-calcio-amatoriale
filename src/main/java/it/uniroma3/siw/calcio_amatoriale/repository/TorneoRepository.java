@@ -30,4 +30,7 @@ public interface TorneoRepository extends CrudRepository<Torneo, Long> {
     // Spring genera automaticamente una JOIN FETCH basandosi sull'attributo
     @EntityGraph(attributePaths = {"squadre"})
     List<Torneo> findAll();
+
+    @EntityGraph(attributePaths = {"squadre"})
+    List<Torneo> findByNomeContainingIgnoreCase(String nome);
 }

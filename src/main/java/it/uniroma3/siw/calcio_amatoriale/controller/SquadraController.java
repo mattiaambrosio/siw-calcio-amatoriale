@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Squadra;
 import it.uniroma3.siw.calcio_amatoriale.service.SquadraService;
@@ -39,8 +40,8 @@ public class SquadraController {
 
     // GET: lista di tutte le squadre (pubblica)
     @GetMapping("/squadre")
-    public String showSquadre(Model model) {
-        model.addAttribute("squadre", squadraService.findAll());
+    public String showSquadre(@RequestParam(required = false) String search, Model model) {
+        model.addAttribute("squadre", squadraService.cerca(search));
         return "squadre";
     }
 

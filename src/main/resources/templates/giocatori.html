@@ -26,10 +26,11 @@
         </div>
 
         <!-- Search -->
-        <div class="search-bar anim-fade-up anim-delay-1">
-            <input type="text" id="searchGiocatori" placeholder="🔍 Cerca per nome, squadra o ruolo…">
-            <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none;">✕ Cancella</button>
-        </div>
+        <form method="get" action="/giocatori" class="search-bar anim-fade-up anim-delay-1">
+            <input type="text" name="search" placeholder="🔍 Cerca per nome o cognome…"
+                   th:value="${param.search}">
+            <button type="submit" class="btn btn-primary btn-sm">Cerca</button>
+        </form>
 
         <!-- Tabella -->
         <div class="glass-panel anim-fade-up anim-delay-2" style="padding: 1rem;">
@@ -81,34 +82,6 @@
 
     </main>
 
-    <script>
-        const input    = document.getElementById('searchGiocatori');
-        const clearBtn = document.getElementById('clearSearch');
-        const rows     = document.querySelectorAll('#giocatoriTable tbody tr');
-        let noRow      = null;
 
-        input.addEventListener('input', () => {
-            const q = input.value.toLowerCase();
-            clearBtn.style.display = q ? 'inline-flex' : 'none';
-            let visible = 0;
-            rows.forEach(r => {
-                const match = r.textContent.toLowerCase().includes(q);
-                r.style.display = match ? '' : 'none';
-                if (match) visible++;
-            });
-            if (noRow) noRow.remove();
-            if (visible === 0 && q) {
-                noRow = document.createElement('tr');
-                noRow.innerHTML = '<td colspan="5" style="text-align:center; padding:2rem; color:var(--text-muted);">Nessun giocatore trovato</td>';
-                document.querySelector('#giocatoriTable tbody').appendChild(noRow);
-            }
-        });
-
-        clearBtn.addEventListener('click', () => {
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
-            input.focus();
-        });
-    </script>
 </body>
 </html>

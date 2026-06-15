@@ -1,5 +1,7 @@
 package it.uniroma3.siw.calcio_amatoriale.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,4 +39,12 @@ public class GiocatoreService {
     public boolean alreadyExists(Giocatore giocatore) {
         return giocatoreRepository.existsByNomeAndCognome(giocatore.getNome(), giocatore.getCognome());
     }
-}
+
+    @Transactional(readOnly = true)
+    public List<Giocatore> cerca(String search) {
+        if (search == null || search.isBlank()) {
+            return (List<Giocatore>) giocatoreRepository.findAll();
+        }
+        return giocatoreRepository.findByNomeContainingIgnoreCaseOrCognomeContainingIgnoreCase(search, search);
+    }
+}

@@ -26,10 +26,11 @@
         </div>
 
         <!-- Search -->
-        <div class="search-bar anim-fade-up anim-delay-1">
-            <input type="text" id="searchSquadre" placeholder="🔍 Cerca per nome o città…">
-            <button id="clearSearch" class="btn btn-ghost btn-sm" style="display:none;">✕ Cancella</button>
-        </div>
+        <form method="get" action="/squadre" class="search-bar anim-fade-up anim-delay-1">
+            <input type="text" name="search" placeholder="🔍 Cerca per nome…"
+                   th:value="${param.search}">
+            <button type="submit" class="btn btn-primary btn-sm">Cerca</button>
+        </form>
 
         <!-- Grid squadre -->
         <div class="grid-3 anim-fade-up anim-delay-2" id="squadreGrid">
@@ -54,35 +55,7 @@
             <a href="/admin/squadra/new" sec:authorize="hasAuthority('ADMIN')" class="btn btn-primary" style="margin-top: 1.5rem;">+ Aggiungi Squadra</a>
         </div>
 
-        <div id="noResults" style="display:none;" class="empty-state">
-            <p>Nessuna squadra corrisponde alla ricerca.</p>
-        </div>
-
     </main>
 
-    <script>
-        const input    = document.getElementById('searchSquadre');
-        const clearBtn = document.getElementById('clearSearch');
-        const cards    = document.querySelectorAll('#squadreGrid > .card');
-        const noRes    = document.getElementById('noResults');
-
-        input.addEventListener('input', () => {
-            const q = input.value.toLowerCase();
-            clearBtn.style.display = q ? 'inline-flex' : 'none';
-            let visible = 0;
-            cards.forEach(c => {
-                const match = c.textContent.toLowerCase().includes(q);
-                c.style.display = match ? '' : 'none';
-                if (match) visible++;
-            });
-            noRes.style.display = (visible === 0 && q) ? 'block' : 'none';
-        });
-
-        clearBtn.addEventListener('click', () => {
-            input.value = '';
-            input.dispatchEvent(new Event('input'));
-            input.focus();
-        });
-    </script>
 </body>
 </html>
