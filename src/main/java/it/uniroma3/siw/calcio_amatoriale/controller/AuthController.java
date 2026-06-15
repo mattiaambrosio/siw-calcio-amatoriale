@@ -34,10 +34,10 @@ public class AuthController {
     @GetMapping("/dashboard")
     public String showDashboard(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
+
         if (auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken)) {
             Object principal = auth.getPrincipal();
-            
+
             if (principal instanceof OAuth2User) {
                 OAuth2User oauthUser = (OAuth2User) principal;
                 model.addAttribute("displayName", oauthUser.getAttribute("name"));
@@ -53,14 +53,14 @@ public class AuthController {
                 });
             }
         }
-        
+
         return "dashboard";
     }
 
     @GetMapping("/benvenuto")
     public String showBenvenuto(Model model) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        
+
         if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
             return "redirect:/login";
         }
@@ -72,7 +72,8 @@ public class AuthController {
         if (principal instanceof OAuth2User) {
             OAuth2User oauthUser = (OAuth2User) principal;
             displayName = oauthUser.getAttribute("name");
-            if (displayName == null) displayName = oauthUser.getAttribute("email");
+            if (displayName == null)
+                displayName = oauthUser.getAttribute("email");
         } else {
             String email = auth.getName();
             Credentials cred = credentialsRepository.findByEmail(email).orElse(null);
@@ -107,7 +108,7 @@ public class AuthController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute RegistrationForm registrationForm, Model model) {
         if (registrationForm.getEmail() == null || registrationForm.getEmail().isBlank() ||
-            registrationForm.getPassword() == null || registrationForm.getPassword().isBlank()) {
+                registrationForm.getPassword() == null || registrationForm.getPassword().isBlank()) {
             model.addAttribute("registrationError", "Inserisci email e password validi.");
             return "register";
         }
@@ -131,5 +132,46 @@ public class AuthController {
 
         model.addAttribute("messaggioSuccesso", "Registrazione completata! Ora puoi effettuare il login.");
         return "login";
+    }
+
+    private String getEmailLoggata() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated() || auth instanceof AnonymousAuthenticationToken) {
+            return null;
+        }
+        Object principal = auth.getPrincipal();
+        if (principal instanceof OAuth2User) {
+            return ((OAuth2User) principal).getAttribute("email");
+        }
+        return auth.getName();
+    }
+
+    @GetMapping("/profilo")
+    public String mostraProfilo(Model model) {
+        String email = getEmailLoggata();
+        if (email == null)
+            return "redirect:/login";
+
+        Credentials cred = credentialsRepository.findByEmail(email).orElse(null);
+        if (cred == null || cred.getUser() == null)
+            return "redirect:/";
+
+        model.addAttribute("user", cred.getUser());
+        return "profilo";
+    }
+
+    @PostMapping("/profilo")
+    public String salvaProfilo(@ModelAttribute User datiForm) {
+        String email = getEmailLoggata();
+        if (email == null)
+            return "redirect:/login";
+
+        Credentials cred = credentialsRepository.findByEmail(email).orElseThrow();
+        User user = cred.getUser();
+        user.setNome(datiForm.getNome());
+        user.setCognome(datiForm.getCognome());
+        credentialsRepository.save(cred); // cascade ALL salva anche lo User
+
+        return "redirect:/dashboard";
     }
 }
