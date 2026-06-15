@@ -30,12 +30,14 @@
                     <label for="nome">Nome Torneo</label>
                     <input type="text" id="nome" th:field="*{nome}"
                            required placeholder="es. Torneo Estivo 2026">
+                    <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" style="color:red"></span>
                 </div>
 
                 <div class="form-group">
                     <label for="anno">Anno</label>
                     <input type="number" id="anno" th:field="*{anno}"
                            required placeholder="2026" min="2000" max="2100">
+                    <span th:if="${#fields.hasErrors('anno')}" th:errors="*{anno}" style="color:red"></span>
                 </div>
 
                 <div class="form-group">

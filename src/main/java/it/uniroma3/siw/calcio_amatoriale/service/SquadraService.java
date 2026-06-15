@@ -47,4 +47,5 @@ public class SquadraService {
         }
         return squadraRepository.findByNomeContainingIgnoreCase(search);
     }
-}
+    
+}

@@ -69,6 +69,7 @@
                     <div class="form-group">
                         <label for="luogo">Luogo (Stadio/Campo)</label>
                         <input type="text" id="luogo" th:field="*{luogo}" required placeholder="es. Campo Sportivo Roma">
+                        <span th:if="${#fields.hasErrors('luogo')}" th:errors="*{luogo}" style="color:red"></span>
                     </div>
                 </div>
 

@@ -30,16 +30,19 @@
                     <div class="form-group">
                         <label for="nome">Nome</label>
                         <input type="text" id="nome" th:field="*{nome}" required placeholder="Mario">
+                        <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" style="color:red"></span>
                     </div>
                     <div class="form-group">
                         <label for="cognome">Cognome</label>
                         <input type="text" id="cognome" th:field="*{cognome}" required placeholder="Rossi">
+                        <span th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}" style="color:red"></span>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="dataDiNascita">Data di Nascita</label>
                     <input type="date" id="dataDiNascita" th:field="*{dataDiNascita}" required>
+                    <span th:if="${#fields.hasErrors('dataDiNascita')}" th:errors="*{dataDiNascita}" style="color:red"></span>
                 </div>
 
                 <div class="form-row">
@@ -52,11 +55,13 @@
                             <option value="Centrocampista">Centrocampista</option>
                             <option value="Attaccante">Attaccante</option>
                         </select>
+                        <span th:if="${#fields.hasErrors('ruolo')}" th:errors="*{ruolo}" style="color:red"></span>
                     </div>
                     <div class="form-group">
                         <label for="altezza">Altezza (cm)</label>
                         <input type="number" id="altezza" th:field="*{altezza}"
                                required placeholder="180" min="140" max="220">
+                        <span th:if="${#fields.hasErrors('altezza')}" th:errors="*{altezza}" style="color:red"></span>
                     </div>
                 </div>
 

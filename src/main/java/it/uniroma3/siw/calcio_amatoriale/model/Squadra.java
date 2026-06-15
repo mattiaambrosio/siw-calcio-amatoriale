@@ -1,6 +1,7 @@
 package it.uniroma3.siw.calcio_amatoriale.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,8 +12,15 @@ public class Squadra {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String nome;             
+    @NotBlank(message = "Il nome è obbligatorio")
+    private String nome;
+
+    @NotNull(message = "L'anno di fondazione è obbligatorio")
+    @Min(value = 1850, message = "Anno minimo 1850")
+    @Max(value = 2100, message = "Anno massimo 2100")
     private Integer annoDiFondazione;
+
+    @NotBlank(message = "La città è obbligatoria")
     private String citta; 
     
     @OneToMany(mappedBy = "squadra")

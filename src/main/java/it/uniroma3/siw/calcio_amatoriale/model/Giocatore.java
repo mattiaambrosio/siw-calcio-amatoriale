@@ -1,6 +1,7 @@
 package it.uniroma3.siw.calcio_amatoriale.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -11,11 +12,23 @@ public class Giocatore {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String nome;          // [cite: 35]
-    private String cognome;       // [cite: 36]
-    private LocalDate dataDiNascita; // [cite: 37]
-    private String ruolo;         // [cite: 38]
-    private Integer altezza;      // In centimetri [cite: 39]
+    @NotBlank(message = "Il nome è obbligatorio")
+    private String nome;
+
+    @NotBlank(message = "Il cognome è obbligatorio")
+    private String cognome;
+
+    @NotNull(message = "La data di nascita è obbligatoria")
+    @Past(message = "La data deve essere nel passato")
+    private LocalDate dataDiNascita;
+
+    @NotBlank(message = "Il ruolo è obbligatorio")
+    private String ruolo;
+
+    @NotNull(message = "L'altezza è obbligatoria")
+    @Positive(message = "L'altezza deve essere positiva")
+    @Max(value = 250, message = "Altezza non valida")
+    private Integer altezza;      // In centimetri
 
     @ManyToOne
     private Squadra squadra;      // Ogni giocatore appartiene a una sola squadra 

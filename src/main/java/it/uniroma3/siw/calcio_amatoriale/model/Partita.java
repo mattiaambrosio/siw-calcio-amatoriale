@@ -1,6 +1,7 @@
 package it.uniroma3.siw.calcio_amatoriale.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -12,9 +13,16 @@ public class Partita {
     private Long id;
 
     private LocalDateTime dataEOra; // Usiamo LocalDateTime per avere sia giorno che orario
-    private String luogo;           // 
-    private Integer goalsHome;      // 
-    private Integer goalsAway;      // 
+
+    @NotBlank(message = "Il luogo è obbligatorio")
+    private String luogo;
+
+    @PositiveOrZero(message = "I gol non possono essere negativi")
+    private Integer goalsHome;
+
+    @PositiveOrZero(message = "I gol non possono essere negativi")
+    private Integer goalsAway;
+
     private String stato;           // Es. "SCHEDULED", "PLAYED"
 
     @ManyToOne

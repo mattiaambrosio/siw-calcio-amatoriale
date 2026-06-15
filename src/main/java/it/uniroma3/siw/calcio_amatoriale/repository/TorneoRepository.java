@@ -11,6 +11,7 @@ import it.uniroma3.siw.calcio_amatoriale.model.Torneo;
 public interface TorneoRepository extends CrudRepository<Torneo, Long> {
 
     public boolean existsByNome(String nome);
+    
 
     // ── ANALISI SPERIMENTALE: Strategia LAZY (default) ──────────────────────
     // Usa findAll() standard ereditato da CrudRepository → LAZY fetch.
@@ -33,4 +34,5 @@ public interface TorneoRepository extends CrudRepository<Torneo, Long> {
 
     @EntityGraph(attributePaths = {"squadre"})
     List<Torneo> findByNomeContainingIgnoreCase(String nome);
+
 }

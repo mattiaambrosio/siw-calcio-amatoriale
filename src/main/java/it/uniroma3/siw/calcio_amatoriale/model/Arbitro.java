@@ -1,6 +1,7 @@
 package it.uniroma3.siw.calcio_amatoriale.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -11,8 +12,13 @@ public class Arbitro {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotBlank(message = "Il nome è obbligatorio")
     private String nome;
+
+    @NotBlank(message = "Il cognome è obbligatorio")
     private String cognome;
+
+    @NotBlank(message = "Il codice arbitrale è obbligatorio")
     private String codiceArbitrale; // Identificativo univoco dell'arbitro
 
     @OneToMany(mappedBy = "arbitro")

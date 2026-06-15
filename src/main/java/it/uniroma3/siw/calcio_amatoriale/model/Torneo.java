@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany; // Aggiunto questo
 import jakarta.persistence.CascadeType; // Aggiunto questo
+import jakarta.validation.constraints.*;
 
 import java.util.Objects;
 import java.util.List;
@@ -18,8 +19,14 @@ public class Torneo {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String nome;        
-    private Integer anno;       
+    @NotBlank(message = "Il nome è obbligatorio")
+    private String nome;
+
+    @NotNull(message = "L'anno è obbligatorio")
+    @Min(value = 1900, message = "Anno minimo 1900")
+    @Max(value = 2100, message = "Anno massimo 2100")
+    private Integer anno;
+
     private String descrizione;
 
     @ManyToMany(mappedBy = "tornei")

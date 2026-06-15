@@ -3,11 +3,14 @@ package it.uniroma3.siw.calcio_amatoriale.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.validation.Valid;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Giocatore;
 import it.uniroma3.siw.calcio_amatoriale.service.GiocatoreService;
@@ -32,7 +35,11 @@ public class GiocatoreController {
 
     // POST: salva il giocatore; controlla duplicati
     @PostMapping("/admin/giocatore")
-    public String newGiocatore(@ModelAttribute("giocatore") Giocatore giocatore, Model model) {
+    public String newGiocatore(@Valid @ModelAttribute("giocatore") Giocatore giocatore, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("squadre", squadraService.findAll());
+            return "admin/formNewGiocatore";
+        }
         if (!giocatoreService.alreadyExists(giocatore)) {
             giocatoreService.save(giocatore);
             model.addAttribute("messaggioSuccesso", "Giocatore aggiunto alla squadra con successo!");
@@ -64,7 +71,11 @@ public class GiocatoreController {
     // POST: salva le modifiche al giocatore (Admin)
     @PostMapping("/admin/giocatore/{id}/edit")
     public String editGiocatore(@PathVariable("id") Long id,
-                                 @ModelAttribute("giocatore") Giocatore aggiornato) {
+                                 @Valid @ModelAttribute("giocatore") Giocatore aggiornato, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            model.addAttribute("squadre", squadraService.findAll());
+            return "admin/formEditGiocatore";
+        }
         Giocatore giocatore = giocatoreService.findById(id);
         if (giocatore == null) return "redirect:/giocatori";
         giocatore.setNome(aggiornato.getNome());

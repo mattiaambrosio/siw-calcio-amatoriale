@@ -3,11 +3,14 @@ package it.uniroma3.siw.calcio_amatoriale.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.validation.Valid;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Squadra;
 import it.uniroma3.siw.calcio_amatoriale.service.SquadraService;
@@ -27,7 +30,10 @@ public class SquadraController {
 
     // POST: salva la nuova squadra; controlla duplicati per nome
     @PostMapping("/admin/squadra")
-    public String newSquadra(@ModelAttribute("squadra") Squadra squadra, Model model) {
+    public String newSquadra(@Valid @ModelAttribute("squadra") Squadra squadra, BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            return "admin/formNewSquadra";
+        }
         if (!squadraService.alreadyExists(squadra)) {
             squadraService.save(squadra);
             model.addAttribute("messaggioSuccesso", "Squadra salvata con successo nel database!");
@@ -41,6 +47,7 @@ public class SquadraController {
     // GET: lista di tutte le squadre (pubblica)
     @GetMapping("/squadre")
     public String showSquadre(@RequestParam(required = false) String search, Model model) {
+       
         model.addAttribute("squadre", squadraService.cerca(search));
         return "squadre";
     }
@@ -66,7 +73,12 @@ public class SquadraController {
     // POST: salva le modifiche alla squadra (Admin)
     @PostMapping("/admin/squadra/{id}/edit")
     public String editSquadra(@PathVariable("id") Long id,
-                               @ModelAttribute("squadra") it.uniroma3.siw.calcio_amatoriale.model.Squadra aggiornata) {
+                               @Valid @ModelAttribute("squadra") it.uniroma3.siw.calcio_amatoriale.model.Squadra aggiornata,
+                               BindingResult result, Model model) {
+        if (result.hasErrors()) {
+            aggiornata.setId(id);
+            return "admin/formEditSquadra";
+        }
         it.uniroma3.siw.calcio_amatoriale.model.Squadra squadra = squadraService.findById(id);
         if (squadra == null) return "redirect:/squadre";
         squadra.setNome(aggiornata.getNome());

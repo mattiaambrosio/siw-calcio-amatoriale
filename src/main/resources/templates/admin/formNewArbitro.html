@@ -30,10 +30,12 @@
                     <div class="form-group">
                         <label for="nome">Nome</label>
                         <input type="text" id="nome" th:field="*{nome}" required placeholder="Mario">
+                        <span th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}" style="color:red"></span>
                     </div>
                     <div class="form-group">
                         <label for="cognome">Cognome</label>
                         <input type="text" id="cognome" th:field="*{cognome}" required placeholder="Rossi">
+                        <span th:if="${#fields.hasErrors('cognome')}" th:errors="*{cognome}" style="color:red"></span>
                     </div>
                 </div>
 
@@ -41,6 +43,7 @@
                     <label for="codiceArbitrale">Codice Arbitrale</label>
                     <input type="text" id="codiceArbitrale" th:field="*{codiceArbitrale}"
                            required placeholder="es. ARB-001">
+                    <span th:if="${#fields.hasErrors('codiceArbitrale')}" th:errors="*{codiceArbitrale}" style="color:red"></span>
                 </div>
 
                 <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">

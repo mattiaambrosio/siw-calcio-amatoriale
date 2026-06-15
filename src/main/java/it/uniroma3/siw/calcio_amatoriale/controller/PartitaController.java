@@ -3,11 +3,14 @@ package it.uniroma3.siw.calcio_amatoriale.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import jakarta.validation.Valid;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Partita;
 import it.uniroma3.siw.calcio_amatoriale.service.PartitaService;
@@ -35,8 +38,15 @@ public class PartitaController {
 
     // POST: salva la nuova partita; controlla che le due squadre siano diverse
     @PostMapping("/admin/partita")
-    public String newPartita(@ModelAttribute("partita") Partita partita, Model model) {
-        
+    public String newPartita(@Valid @ModelAttribute("partita") Partita partita, BindingResult result, Model model) {
+
+        if (result.hasErrors()) {
+            model.addAttribute("tornei", torneoService.findAll());
+            model.addAttribute("squadre", squadraService.findAll());
+            model.addAttribute("arbitri", arbitroService.findAll());
+            return "admin/formNewPartita";
+        }
+
         // Controllo: la squadra casa e ospite devono essere diverse
         if (partita.getSquadraCasa().getId().equals(partita.getSquadraOspite().getId())) {
             model.addAttribute("messaggioErrore", "Errore: La squadra in casa e quella in trasferta devono essere diverse!");
