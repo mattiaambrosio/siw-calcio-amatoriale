@@ -24,6 +24,8 @@ public class SecurityConfig {
 
     @Autowired
     private DataSource dataSource;
+    @Autowired
+    private OAuth2SuccessHandler oAuth2SuccessHandler;
 
     // ---------------------------------------------------------------
     // UserDetailsService tramite JDBC (sostituisce configureGlobal)
@@ -109,9 +111,9 @@ public class SecurityConfig {
                     .permitAll())
 
             // OAuth2 Google
-            .oauth2Login(oauth2 -> oauth2
+           .oauth2Login(oauth2 -> oauth2
                     .loginPage("/login")
-                    .defaultSuccessUrl("/benvenuto", true))
+                    .successHandler(oAuth2SuccessHandler))
 
             // Logout
             .logout(logout -> logout

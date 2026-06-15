@@ -18,6 +18,9 @@ import it.uniroma3.siw.calcio_amatoriale.repository.CredentialsRepository;
 import it.uniroma3.siw.calcio_amatoriale.service.CommentoService;
 import it.uniroma3.siw.calcio_amatoriale.service.PartitaService;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+
 /**
  * REST Controller per i commenti — usato da React per operazioni asincrone.
  * Restituisce JSON invece di template Thymeleaf.
@@ -26,9 +29,12 @@ import it.uniroma3.siw.calcio_amatoriale.service.PartitaService;
 @RequestMapping("/api")
 public class CommentoRestController {
 
-    @Autowired private CommentoService commentoService;
-    @Autowired private PartitaService partitaService;
-    @Autowired private CredentialsRepository credentialsRepository;
+    @Autowired
+    private CommentoService commentoService;
+    @Autowired
+    private PartitaService partitaService;
+    @Autowired
+    private CredentialsRepository credentialsRepository;
 
     // ─────────────────────────────────────────────────────────────────
     // GET /api/partita/{id}/commenti — pubblica, visibile a tutti
@@ -47,8 +53,8 @@ public class CommentoRestController {
     // ─────────────────────────────────────────────────────────────────
     @PostMapping("/partita/{id}/commento")
     public ResponseEntity<?> addCommento(@PathVariable("id") Long partitaId,
-                                          @RequestBody Map<String, String> body,
-                                          Principal principal) {
+            @RequestBody Map<String, String> body,
+            Authentication principal) {
         if (principal == null) {
             return ResponseEntity.status(401).body(Map.of("errore", "Non autenticato"));
         }
@@ -59,7 +65,7 @@ public class CommentoRestController {
         }
 
         Partita partita = partitaService.findById(partitaId);
-        Credentials autore = credentialsRepository.findByEmail(principal.getName()).orElse(null);
+        Credentials autore = credentialsRepository.findByEmail(estraiEmail(principal)).orElse(null);
 
         if (partita == null || autore == null) {
             return ResponseEntity.notFound().build();
@@ -80,16 +86,17 @@ public class CommentoRestController {
     // ─────────────────────────────────────────────────────────────────
     @PutMapping("/commento/{id}")
     public ResponseEntity<?> editCommento(@PathVariable("id") Long id,
-                                           @RequestBody Map<String, String> body,
-                                           Principal principal) {
+            @RequestBody Map<String, String> body,
+            Authentication principal) {
         if (principal == null) {
             return ResponseEntity.status(401).body(Map.of("errore", "Non autenticato"));
         }
 
         Commento commento = commentoService.findById(id);
-        if (commento == null) return ResponseEntity.notFound().build();
+        if (commento == null)
+            return ResponseEntity.notFound().build();
 
-        if (!commentoService.isOwner(id, principal.getName())) {
+        if (!commentoService.isOwner(id, estraiEmail(principal))) {
             return ResponseEntity.status(403).body(Map.of("errore", "Non autorizzato"));
         }
 
@@ -107,15 +114,16 @@ public class CommentoRestController {
     // DELETE /api/commento/{id} — solo il proprietario
     // ─────────────────────────────────────────────────────────────────
     @DeleteMapping("/commento/{id}")
-    public ResponseEntity<?> deleteCommento(@PathVariable("id") Long id, Principal principal) {
+    public ResponseEntity<?> deleteCommento(@PathVariable("id") Long id, Authentication principal) {
         if (principal == null) {
             return ResponseEntity.status(401).body(Map.of("errore", "Non autenticato"));
         }
 
         Commento commento = commentoService.findById(id);
-        if (commento == null) return ResponseEntity.notFound().build();
+        if (commento == null)
+            return ResponseEntity.notFound().build();
 
-        boolean eliminato = commentoService.deleteIfOwner(id, principal.getName());
+        boolean eliminato = commentoService.deleteIfOwner(id, estraiEmail(principal));
         if (!eliminato) {
             return ResponseEntity.status(403).body(Map.of("errore", "Non autorizzato"));
         }
@@ -127,13 +135,21 @@ public class CommentoRestController {
     // GET /api/me — chi sono? (usato da React per sapere l'utente loggato)
     // ─────────────────────────────────────────────────────────────────
     @GetMapping("/me")
-    public ResponseEntity<?> getMe(Principal principal) {
+    public ResponseEntity<?> getMe(Authentication principal) {
         if (principal == null) {
             return ResponseEntity.ok(Map.of("autenticato", false));
         }
         return ResponseEntity.ok(Map.of(
                 "autenticato", true,
-                "email", principal.getName()
-        ));
+                "email", estraiEmail(principal)));
+    }
+
+    private String estraiEmail(Authentication auth) {
+        if (auth == null)
+            return null;
+        if (auth.getPrincipal() instanceof OAuth2User oauthUser) {
+            return oauthUser.getAttribute("email");
+        }
+        return auth.getName();
     }
 }
