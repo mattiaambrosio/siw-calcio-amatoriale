@@ -1,25 +1,438 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Il mio profilo – Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        /* ── Profilo Page ─────────────────────────────── */
+        .profilo-layout {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .profilo-hero {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(34,197,94,0.08) 0%, rgba(34,197,94,0.02) 100%);
+            border: 1px solid rgba(34,197,94,0.2);
+            border-radius: 20px;
+        }
+
+        .avatar-circle {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--green) 0%, #16a34a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+            box-shadow: 0 0 0 4px rgba(34,197,94,0.2);
+        }
+
+        .avatar-circle.google {
+            background: linear-gradient(135deg, #4285F4 0%, #1a73e8 100%);
+            box-shadow: 0 0 0 4px rgba(66,133,244,0.2);
+        }
+
+        .profilo-hero-info h2 {
+            font-size: 1.4rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .profilo-hero-info p {
+            font-size: 0.875rem;
+            margin: 0;
+        }
+
+        .profilo-section {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profilo-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .profilo-section-title .section-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: var(--green-dim);
+            border: 1px solid var(--green-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+        }
+
+        .profilo-section-title .section-icon.blue {
+            background: var(--blue-dim);
+            border-color: rgba(59,130,246,0.3);
+        }
+
+        /* Input di sola lettura (email) */
+        input[readonly] {
+            background: var(--bg-base) !important;
+            color: var(--text-muted) !important;
+            cursor: not-allowed;
+            border-style: dashed;
+        }
+
+        /* Google badge */
+        .google-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            background: rgba(66,133,244,0.12);
+            color: #4285F4;
+            border: 1px solid rgba(66,133,244,0.25);
+        }
+
+        .google-info-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem 1.1rem;
+            background: var(--blue-dim);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 12px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .google-info-box .info-icon {
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            margin-top: 0.05rem;
+        }
+
+        /* Flash messages */
+        .flash-success {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.1rem;
+            background: var(--green-dim);
+            border: 1px solid var(--green-border);
+            border-radius: 12px;
+            color: var(--green);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.4s var(--ease) both;
+        }
+
+        .flash-error {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.1rem;
+            background: var(--red-dim);
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 12px;
+            color: var(--red);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.4s var(--ease) both;
+        }
+
+        /* Input group con label inline */
+        .input-with-label {
+            position: relative;
+        }
+
+        .input-hint {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+        }
+
+        /* Password strength indicators */
+        .password-requirements {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+        }
+
+        .req-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .req-item.met { color: var(--green); }
+
+        .req-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--border-strong);
+            transition: background 0.2s;
+            flex-shrink: 0;
+        }
+
+        .req-item.met .req-dot { background: var(--green); }
+
+        /* Actions bar */
+        .actions-bar {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--text-primary); opacity: 1; }
+    </style>
 </head>
 <body>
+    <div class="ambient-glow"></div>
     <nav th:replace="~{fragments/layout :: nav}"></nav>
+
     <main class="container page-content">
-        <h1>Il mio profilo</h1>
-        <form th:action="@{/profilo}" th:object="${user}" method="post" class="glass-panel">
-            <div class="form-group">
-                <label for="nome">Nome</label>
-                <input type="text" id="nome" th:field="*{nome}" required>
+        <div class="profilo-layout">
+
+            <!-- Breadcrumb -->
+            <div class="breadcrumb anim-fade-up">
+                <a th:href="@{/dashboard}">Dashboard</a>
+                <span class="sep">›</span>
+                <span>Il mio profilo</span>
             </div>
-            <div class="form-group">
-                <label for="cognome">Cognome</label>
-                <input type="text" id="cognome" th:field="*{cognome}" required>
+
+            <!-- Flash messages -->
+            <div th:if="${successMessage}" class="flash-success">
+                <span>✅</span>
+                <span th:text="${successMessage}">Operazione completata.</span>
             </div>
-            <button type="submit" class="btn btn-primary">Salva modifiche</button>
-        </form>
+            <div th:if="${passwordSuccess}" class="flash-success">
+                <span>🔐</span>
+                <span th:text="${passwordSuccess}">Password aggiornata.</span>
+            </div>
+            <div th:if="${passwordError}" class="flash-error">
+                <span>⚠️</span>
+                <span th:text="${passwordError}">Errore.</span>
+            </div>
+
+            <!-- Hero card -->
+            <div class="profilo-hero anim-fade-up">
+                <div th:class="${isOAuth2 ? 'avatar-circle google' : 'avatar-circle'}">
+                    <span th:if="${isOAuth2}">G</span>
+                    <span th:unless="${isOAuth2}">⚽</span>
+                </div>
+                <div class="profilo-hero-info">
+                    <h2>
+                        <span th:text="${(user.nome != null ? user.nome : '') + ' ' + (user.cognome != null ? user.cognome : '')}">Nome Cognome</span>
+                    </h2>
+                    <p th:text="${email}">email@esempio.com</p>
+                    <div style="margin-top: 0.5rem;">
+                        <span class="google-badge" th:if="${isOAuth2}">
+                            G Account Google
+                        </span>
+                        <span class="badge badge-blue" th:unless="${isOAuth2}">
+                            👤 Account Locale
+                        </span>
+                        <span class="badge badge-red" sec:authorize="hasAuthority('ADMIN')" style="margin-left: 0.4rem;">
+                            👑 Admin
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== SEZIONE: DATI PERSONALI ===== -->
+            <div class="profilo-section anim-fade-up anim-delay-1">
+                <div class="profilo-section-title">
+                    <div class="section-icon">👤</div>
+                    Dati Personali
+                </div>
+
+                <form th:action="@{/profilo}" method="post">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nome">Nome</label>
+                            <input type="text"
+                                   id="nome"
+                                   name="nome"
+                                   th:value="${user.nome}"
+                                   placeholder="Il tuo nome"
+                                   required
+                                   autocomplete="given-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="cognome">Cognome</label>
+                            <input type="text"
+                                   id="cognome"
+                                   name="cognome"
+                                   th:value="${user.cognome}"
+                                   placeholder="Il tuo cognome"
+                                   required
+                                   autocomplete="family-name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="emailDisplay">Email</label>
+                        <input type="email"
+                               id="emailDisplay"
+                               th:value="${email}"
+                               readonly
+                               autocomplete="off">
+                        <span class="input-hint">
+                            <span th:if="${isOAuth2}">🔒 L'email è gestita dal tuo account Google e non può essere modificata qui.</span>
+                            <span th:unless="${isOAuth2}">🔒 L'email è il tuo identificativo di accesso e non può essere modificata.</span>
+                        </span>
+                    </div>
+
+                    <div class="actions-bar" style="margin-top: 1.75rem;">
+                        <button type="submit" class="btn btn-primary">
+                            💾 Salva modifiche
+                        </button>
+                        <a th:href="@{/dashboard}" class="btn btn-outline">← Dashboard</a>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ===== SEZIONE: CAMBIO PASSWORD (solo account locale) ===== -->
+            <div class="profilo-section anim-fade-up anim-delay-2" th:if="${!isOAuth2}">
+                <div class="profilo-section-title">
+                    <div class="section-icon blue">🔐</div>
+                    Cambia Password
+                </div>
+
+                <form th:action="@{/profilo/password}" method="post" id="passwordForm">
+
+                    <div class="form-group">
+                        <label for="passwordAttuale">Password Attuale</label>
+                        <input type="password"
+                               id="passwordAttuale"
+                               name="passwordAttuale"
+                               placeholder="Inserisci la password attuale"
+                               required
+                               autocomplete="current-password">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nuovaPassword">Nuova Password</label>
+                            <input type="password"
+                                   id="nuovaPassword"
+                                   name="nuovaPassword"
+                                   placeholder="Almeno 6 caratteri"
+                                   required
+                                   oninput="checkPassword()"
+                                   autocomplete="new-password">
+                            <div class="password-requirements" id="pwdReqs">
+                                <div class="req-item" id="req-len">
+                                    <div class="req-dot"></div>
+                                    <span>Min. 6 caratteri</span>
+                                </div>
+                                <div class="req-item" id="req-upper">
+                                    <div class="req-dot"></div>
+                                    <span>Lettera maiuscola</span>
+                                </div>
+                                <div class="req-item" id="req-number">
+                                    <div class="req-dot"></div>
+                                    <span>Numero</span>
+                                </div>
+                                <div class="req-item" id="req-match">
+                                    <div class="req-dot"></div>
+                                    <span>Password coincidenti</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="confermaPassword">Conferma Nuova Password</label>
+                            <input type="password"
+                                   id="confermaPassword"
+                                   name="confermaPassword"
+                                   placeholder="Ripeti la nuova password"
+                                   required
+                                   oninput="checkPassword()"
+                                   autocomplete="new-password">
+                        </div>
+                    </div>
+
+                    <div class="actions-bar" style="margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-outline" id="btnChangePass">
+                            🔑 Aggiorna Password
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- ===== INFO ACCOUNT GOOGLE ===== -->
+            <div class="profilo-section anim-fade-up anim-delay-2" th:if="${isOAuth2}">
+                <div class="profilo-section-title">
+                    <div class="section-icon blue">G</div>
+                    Account Google
+                </div>
+                <div class="google-info-box">
+                    <span class="info-icon">ℹ️</span>
+                    <div>
+                        Hai effettuato l'accesso tramite <strong style="color: var(--text-primary);">Google</strong>.
+                        La gestione della password e dell'email è affidata direttamente al tuo account Google.
+                        Puoi comunque modificare il tuo <strong style="color: var(--text-primary);">nome visualizzato</strong> nella sezione Dati Personali qui sopra.
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /profilo-layout -->
     </main>
+
+    <script>
+        function checkPassword() {
+            const pwd  = document.getElementById('nuovaPassword').value;
+            const conf = document.getElementById('confermaPassword').value;
+
+            setReq('req-len',    pwd.length >= 6);
+            setReq('req-upper',  /[A-Z]/.test(pwd));
+            setReq('req-number', /[0-9]/.test(pwd));
+            setReq('req-match',  pwd.length > 0 && pwd === conf);
+        }
+
+        function setReq(id, met) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.classList.toggle('met', met);
+        }
+    </script>
 </body>
 </html>
