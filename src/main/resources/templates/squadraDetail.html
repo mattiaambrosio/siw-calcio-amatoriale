@@ -28,7 +28,7 @@
                 <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
                     <span class="info-pill">📍 <span th:text="${squadra.citta}">Città</span></span>
                     <span class="info-pill">📅 Fondata nel <span th:text="${squadra.annoDiFondazione}">2000</span></span>
-                    <span class="info-pill">👥 <span th:text="${squadra.giocatori != null ? #lists.size(squadra.giocatori) : 0}">0</span> giocatori</span>
+                   
                 </div>
             </div>
         </div>
@@ -46,7 +46,7 @@
         <!-- Rosa giocatori -->
         <section class="glass-panel anim-fade-up anim-delay-1" style="margin-bottom: 1.5rem;">
             <h2 style="font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 1.25rem;">
-                ⚽ Rosa Ufficiale (<span th:text="${squadra.giocatori != null ? #lists.size(squadra.giocatori) : 0}">0</span>)
+                ⚽ Rosa Ufficiale 
             </h2>
 
             <div th:if="${squadra.giocatori != null and !squadra.giocatori.empty}">
@@ -88,7 +88,7 @@
         <!-- Tornei partecipati -->
         <section class="glass-panel anim-fade-up anim-delay-2">
             <h2 style="font-size: 1rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 1.25rem;">
-                🏅 Tornei Partecipati (<span th:text="${squadra.tornei != null ? #lists.size(squadra.tornei) : 0}">0</span>)
+                🏅 Tornei Partecipati 
             </h2>
 
             <div th:if="${squadra.tornei != null and !squadra.tornei.empty}">
