@@ -21,15 +21,15 @@ public class GiocatoreController {
     @Autowired
     private SquadraService squadraService;
 
-    // Mostra il form e carica la lista delle squadre per il menu a tendina
+    // GET: form nuova giocatore con la lista delle squadre
     @GetMapping("/admin/giocatore/new")
     public String formNewGiocatore(Model model) {
         model.addAttribute("giocatore", new Giocatore());
-        model.addAttribute("squadre", squadraService.findAll()); 
-        return "admin/formNewGiocatore"; 
+        model.addAttribute("squadre", squadraService.findAll());
+        return "admin/formNewGiocatore";
     }
 
-    // Salva il giocatore
+    // POST: salva il giocatore; controlla duplicati
     @PostMapping("/admin/giocatore")
     public String newGiocatore(@ModelAttribute("giocatore") Giocatore giocatore, Model model) {
         if (!giocatoreService.alreadyExists(giocatore)) {
@@ -38,19 +38,19 @@ public class GiocatoreController {
             return "redirect:/dashboard";
         } else {
             model.addAttribute("messaggioErrore", "Attenzione: Questo giocatore esiste già!");
-            model.addAttribute("squadre", squadraService.findAll()); // Ricarica le squadre in caso di errore
+            model.addAttribute("squadre", squadraService.findAll());
             return "admin/formNewGiocatore";
         }
     }
 
-    // Rotta pubblica per vedere tutti i giocatori
+    // GET: lista di tutti i giocatori (pubblica)
     @GetMapping("/giocatori")
     public String showGiocatori(Model model) {
         model.addAttribute("giocatori", giocatoreService.findAll());
         return "giocatori";
     }
 
-    // Form modifica giocatore (Admin)
+    // GET: form modifica giocatore (Admin)
     @GetMapping("/admin/giocatore/{id}/edit")
     public String formEditGiocatore(@PathVariable("id") Long id, Model model) {
         Giocatore giocatore = giocatoreService.findById(id);
@@ -60,7 +60,7 @@ public class GiocatoreController {
         return "admin/formEditGiocatore";
     }
 
-    // Salva modifica giocatore (Admin)
+    // POST: salva le modifiche al giocatore (Admin)
     @PostMapping("/admin/giocatore/{id}/edit")
     public String editGiocatore(@PathVariable("id") Long id,
                                  @ModelAttribute("giocatore") Giocatore aggiornato) {
@@ -76,7 +76,7 @@ public class GiocatoreController {
         return "redirect:/giocatori";
     }
 
-    // Elimina giocatore (Admin)
+    // POST: elimina il giocatore (Admin)
     @PostMapping("/admin/giocatore/{id}/delete")
     public String deleteGiocatore(@PathVariable("id") Long id) {
         giocatoreService.delete(id);

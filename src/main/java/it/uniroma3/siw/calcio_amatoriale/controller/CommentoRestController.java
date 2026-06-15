@@ -21,10 +21,7 @@ import it.uniroma3.siw.calcio_amatoriale.service.PartitaService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-/**
- * REST Controller per i commenti — usato da React per operazioni asincrone.
- * Restituisce JSON invece di template Thymeleaf.
- */
+// REST controller per i commenti — usato dal componente React (risposte in JSON)
 @RestController
 @RequestMapping("/api")
 public class CommentoRestController {
@@ -36,9 +33,7 @@ public class CommentoRestController {
     @Autowired
     private CredentialsRepository credentialsRepository;
 
-    // ─────────────────────────────────────────────────────────────────
-    // GET /api/partita/{id}/commenti — pubblica, visibile a tutti
-    // ─────────────────────────────────────────────────────────────────
+    // GET /api/partita/{id}/commenti — pubblica
     @GetMapping("/partita/{id}/commenti")
     public ResponseEntity<List<CommentoDTO>> getCommenti(@PathVariable("id") Long partitaId) {
         List<CommentoDTO> dtos = commentoService.findByPartita(partitaId)
@@ -48,9 +43,7 @@ public class CommentoRestController {
         return ResponseEntity.ok(dtos);
     }
 
-    // ─────────────────────────────────────────────────────────────────
     // POST /api/partita/{id}/commento — richiede autenticazione
-    // ─────────────────────────────────────────────────────────────────
     @PostMapping("/partita/{id}/commento")
     public ResponseEntity<?> addCommento(@PathVariable("id") Long partitaId,
             @RequestBody Map<String, String> body,
@@ -81,9 +74,7 @@ public class CommentoRestController {
         return ResponseEntity.ok(new CommentoDTO(commento));
     }
 
-    // ─────────────────────────────────────────────────────────────────
     // PUT /api/commento/{id} — solo il proprietario
-    // ─────────────────────────────────────────────────────────────────
     @PutMapping("/commento/{id}")
     public ResponseEntity<?> editCommento(@PathVariable("id") Long id,
             @RequestBody Map<String, String> body,
@@ -110,9 +101,7 @@ public class CommentoRestController {
         return ResponseEntity.ok(new CommentoDTO(commento));
     }
 
-    // ─────────────────────────────────────────────────────────────────
     // DELETE /api/commento/{id} — solo il proprietario
-    // ─────────────────────────────────────────────────────────────────
     @DeleteMapping("/commento/{id}")
     public ResponseEntity<?> deleteCommento(@PathVariable("id") Long id, Authentication principal) {
         if (principal == null) {
@@ -131,9 +120,7 @@ public class CommentoRestController {
         return ResponseEntity.ok(Map.of("messaggio", "Commento eliminato"));
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // GET /api/me — chi sono? (usato da React per sapere l'utente loggato)
-    // ─────────────────────────────────────────────────────────────────
+    // GET /api/me — restituisce i dati dell'utente loggato (usato da React)
     @GetMapping("/me")
     public ResponseEntity<?> getMe(Authentication principal) {
         if (principal == null) {

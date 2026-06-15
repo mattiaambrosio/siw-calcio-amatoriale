@@ -17,14 +17,14 @@ public class SquadraController {
     @Autowired
     private SquadraService squadraService;
 
-    // Rotta per mostrare il form di creazione
+    // GET: form per creare una nuova squadra
     @GetMapping("/admin/squadra/new")
     public String formNewSquadra(Model model) {
         model.addAttribute("squadra", new Squadra());
-        return "admin/formNewSquadra"; // Cerca il file formNewSquadra.html in templates/admin
+        return "admin/formNewSquadra";
     }
 
-    // Rotta per salvare i dati
+    // POST: salva la nuova squadra; controlla duplicati per nome
     @PostMapping("/admin/squadra")
     public String newSquadra(@ModelAttribute("squadra") Squadra squadra, Model model) {
         if (!squadraService.alreadyExists(squadra)) {
@@ -37,14 +37,14 @@ public class SquadraController {
         }
     }
 
-    // Rotta pubblica per vedere tutte le squadre
+    // GET: lista di tutte le squadre (pubblica)
     @GetMapping("/squadre")
     public String showSquadre(Model model) {
         model.addAttribute("squadre", squadraService.findAll());
-        return "squadre"; // Cerca il file squadre.html in templates
+        return "squadre";
     }
 
-    // Rotta pubblica per vedere il dettaglio di una squadra (con giocatori)
+    // GET: dettaglio di una squadra con i giocatori (pubblica)
     @GetMapping("/squadra/{id}")
     public String showSquadraDetail(@PathVariable("id") Long id, Model model) {
         it.uniroma3.siw.calcio_amatoriale.model.Squadra squadra = squadraService.findById(id);
@@ -53,7 +53,7 @@ public class SquadraController {
         return "squadraDetail";
     }
 
-    // Form modifica squadra (Admin)
+    // GET: form modifica squadra (Admin)
     @GetMapping("/admin/squadra/{id}/edit")
     public String formEditSquadra(@PathVariable("id") Long id, Model model) {
         it.uniroma3.siw.calcio_amatoriale.model.Squadra squadra = squadraService.findById(id);
@@ -62,7 +62,7 @@ public class SquadraController {
         return "admin/formEditSquadra";
     }
 
-    // Salva modifica squadra (Admin)
+    // POST: salva le modifiche alla squadra (Admin)
     @PostMapping("/admin/squadra/{id}/edit")
     public String editSquadra(@PathVariable("id") Long id,
                                @ModelAttribute("squadra") it.uniroma3.siw.calcio_amatoriale.model.Squadra aggiornata) {
@@ -75,7 +75,7 @@ public class SquadraController {
         return "redirect:/squadra/" + id;
     }
 
-    // Elimina squadra (Admin)
+    // POST: elimina la squadra (Admin)
     @PostMapping("/admin/squadra/{id}/delete")
     public String deleteSquadra(@PathVariable("id") Long id) {
         squadraService.delete(id);

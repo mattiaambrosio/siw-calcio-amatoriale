@@ -49,7 +49,6 @@
             <div class="glass-panel" style="margin-bottom: 0;">
                 <h3 style="margin-bottom: 1.25rem; color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em;">
                     Squadre Partecipanti
-                    (<span th:text="${torneo.squadre != null ? #lists.size(torneo.squadre) : 0}">0</span>)
                 </h3>
 
                 <div th:if="${torneo.squadre != null and !torneo.squadre.empty}">
@@ -74,7 +73,6 @@
             <div class="glass-panel" style="margin-bottom: 0;">
                 <h3 style="margin-bottom: 1.25rem; color: var(--text-secondary); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em;">
                     Calendario Partite
-                    (<span th:text="${torneo.partite != null ? #lists.size(torneo.partite) : 0}">0</span>)
                 </h3>
 
                 <div th:if="${torneo.partite != null and !torneo.partite.empty}">

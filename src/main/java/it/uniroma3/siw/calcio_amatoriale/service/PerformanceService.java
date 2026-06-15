@@ -13,13 +13,7 @@ import it.uniroma3.siw.calcio_amatoriale.model.StrategiaResult;
 import it.uniroma3.siw.calcio_amatoriale.model.Torneo;
 import it.uniroma3.siw.calcio_amatoriale.repository.TorneoRepository;
 
-/**
- * Service dedicato all'analisi sperimentale delle prestazioni di accesso ai dati.
- * Confronta tre strategie di fetch JPA/Hibernate per il caso d'uso
- * "caricamento di tutti i Tornei con le relative Squadre iscritte".
- *
- * Riferimento: §8.2 del documento di consegna.
- */
+// Service per il confronto delle strategie JPA: LAZY, JOIN FETCH, EntityGraph
 @Service
 public class PerformanceService {
 
@@ -28,26 +22,17 @@ public class PerformanceService {
     @Autowired
     private TorneoRepository torneoRepository;
 
-    /**
-     * STRATEGIA 1 — LAZY (comportamento default JPA per le collection).
-     *
-     * Comportamento:
-     *  - findAll() carica solo le colonne della tabella Torneo (1 query).
-     *  - Ogni accesso a torneo.getSquadre() triggered da Hibernate genera
-     *    una query SELECT separata → PROBLEMA N+1.
-     *  - Con N tornei in DB: genera 1 + N query totali.
-     *
-     * @return StrategiaResult con tempi e conteggi
-     */
+    // STRATEGIA 1 — LAZY (default JPA): genera N+1 query
+    // 1 query per i tornei + 1 query per le squadre di ogni torneo
     @Transactional(readOnly = true)
     public StrategiaResult testLazy() {
         log.info("=== [ANALISI LAZY] Inizio ===");
         long start = System.currentTimeMillis();
 
-        // findAllLazy() usa una query JPQL senza @EntityGraph → fetch LAZY puro
+        // findAllLazy() usa JPQL senza @EntityGraph: fetch LAZY puro
         List<Torneo> tornei = torneoRepository.findAllLazy();
 
-        // ACCESSO ESPLICITO alle squadre → trigger query N+1
+        // L'accesso alle squadre provoca le query N+1
         int totaleSquadre = 0;
         for (Torneo t : tornei) {
             totaleSquadre += t.getSquadre() != null ? t.getSquadre().size() : 0;
@@ -73,16 +58,8 @@ public class PerformanceService {
         return res;
     }
 
-    /**
-     * STRATEGIA 2 — JOIN FETCH (query JPQL personalizzata).
-     *
-     * Comportamento:
-     *  - Esegue UNA SOLA query SQL con JOIN tra Torneo e Squadra.
-     *  - Elimina completamente il problema N+1.
-     *  - DISTINCT elimina i duplicati causati dal JOIN su ManyToMany.
-     *
-     * @return StrategiaResult con tempi e conteggi
-     */
+    // STRATEGIA 2 — JOIN FETCH (query JPQL custom): 1 sola query con JOIN
+    // Elimina il problema N+1; DISTINCT previene i duplicati del ManyToMany
     @Transactional(readOnly = true)
     public StrategiaResult testJoinFetch() {
         log.info("=== [ANALISI JOIN FETCH] Inizio ===");
@@ -117,23 +94,14 @@ public class PerformanceService {
         return res;
     }
 
-    /**
-     * STRATEGIA 3 — EntityGraph (annotazione dichiarativa Spring Data JPA).
-     *
-     * Comportamento:
-     *  - Simile a JOIN FETCH, ma la strategia di caricamento è definita
-     *    tramite annotazione @EntityGraph sul metodo del repository.
-     *  - Genera una sola query SQL con LEFT OUTER JOIN.
-     *  - Più dichiarativa e riutilizzabile rispetto al JPQL manuale.
-     *
-     * @return StrategiaResult con tempi e conteggi
-     */
+    // STRATEGIA 3 — EntityGraph (@EntityGraph annotation): 1 sola query dichiarativa
+    // Approccio più pulito rispetto al JOIN FETCH JPQL manuale
     @Transactional(readOnly = true)
     public StrategiaResult testEntityGraph() {
         log.info("=== [ANALISI ENTITY GRAPH] Inizio ===");
         long start = System.currentTimeMillis();
 
-        // findAll() con @EntityGraph(attributePaths = {"squadre"}) nel repository
+        // findAll() nel repository usa @EntityGraph(attributePaths = {"squadre"})
         List<Torneo> tornei = torneoRepository.findAll();
 
         int totaleSquadre = 0;
@@ -163,10 +131,7 @@ public class PerformanceService {
         return res;
     }
 
-    /**
-     * Esegue tutte e tre le strategie in sequenza e restituisce i risultati.
-     * Usato dal controller per popolare la pagina di analisi.
-     */
+    // Esegue le tre strategie in sequenza e restituisce i risultati comparati
     public List<StrategiaResult> runFullAnalysis() {
         List<StrategiaResult> risultati = new ArrayList<>();
         risultati.add(testLazy());

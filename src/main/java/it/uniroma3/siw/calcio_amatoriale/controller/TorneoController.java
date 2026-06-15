@@ -23,14 +23,14 @@ public class TorneoController {
     @Autowired
     private it.uniroma3.siw.calcio_amatoriale.service.SquadraService squadraService;
 
-    // Questa rotta mostra la pagina HTML con il modulo vuoto
+    // GET: form per creare un nuovo torneo
     @GetMapping("/admin/torneo/new")
     public String formNewTorneo(Model model) {
         model.addAttribute("torneo", new Torneo());
-        return "admin/formNewTorneo"; // Cerca il file formNewTorneo.html nella cartella templates/admin
+        return "admin/formNewTorneo";
     }
 
-    // Questa rotta "cattura" i dati quando clicchi su 'Salva'
+    // POST: salva il nuovo torneo; controlla duplicati per nome
     @PostMapping("/admin/torneo")
     public String newTorneo(@ModelAttribute("torneo") Torneo torneo, Model model) {
         if (!torneoService.alreadyExists(torneo)) {
@@ -43,7 +43,7 @@ public class TorneoController {
         }
     }
 
-    // Mostra il form di modifica torneo (precompilato)
+    // GET: form di modifica torneo precompilato con i dati esistenti
     @GetMapping("/admin/torneo/{id}/edit")
     public String formEditTorneo(@PathVariable("id") Long id, Model model) {
         Torneo torneo = torneoService.findById(id);
@@ -52,7 +52,7 @@ public class TorneoController {
         return "admin/formEditTorneo";
     }
 
-    // Salva la modifica del torneo
+    // POST: salva le modifiche al torneo
     @PostMapping("/admin/torneo/{id}/edit")
     public String editTorneo(@PathVariable("id") Long id,
                               @ModelAttribute("torneo") Torneo torneoAggiornato, Model model) {
@@ -65,21 +65,21 @@ public class TorneoController {
         return "redirect:/torneo/" + id;
     }
 
-    // Elimina il torneo
+    // POST: elimina il torneo
     @PostMapping("/admin/torneo/{id}/delete")
     public String deleteTorneo(@PathVariable("id") Long id) {
         torneoService.delete(id);
         return "redirect:/tornei";
     }
 
-    // Questa rotta mostra a TUTTI (anche ai Guest) la lista dei tornei
+    // GET: lista di tutti i tornei (pubblica)
     @GetMapping("/tornei")
     public String showTornei(Model model) {
         model.addAttribute("tornei", torneoService.findAll());
-        return "tornei"; // Cerca il file tornei.html
+        return "tornei";
     }
 
-    // Questa rotta mostra il dettaglio di un singolo torneo (pubblica)
+    // GET: dettaglio di un singolo torneo (pubblica)
     @GetMapping("/torneo/{id}")
     public String showTorneoDetail(@PathVariable("id") Long id, Model model) {
         Torneo torneo = torneoService.findById(id);
@@ -90,7 +90,7 @@ public class TorneoController {
         return "torneoDetail";
     }
 
-    // Mostra il form per iscrivere una squadra a un torneo
+    // GET: form iscrizione squadra a torneo
     @GetMapping("/admin/iscrizione")
     public String formIscrizione(Model model) {
         model.addAttribute("tornei", torneoService.findAll());
@@ -98,7 +98,7 @@ public class TorneoController {
         return "admin/formIscrizione";
     }
 
-    // Salva l'iscrizione — la logica è nel Service Layer
+    // POST: salva l'iscrizione di una squadra al torneo
     @PostMapping("/admin/iscrizione")
     public String iscriviSquadra(@org.springframework.web.bind.annotation.RequestParam("torneoId") Long torneoId,
             @org.springframework.web.bind.annotation.RequestParam("squadraId") Long squadraId,

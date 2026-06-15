@@ -87,7 +87,7 @@ public class AuthController {
             }
         }
 
-        // Controlla anche dalle authorities di Spring Security
+        // Verifica il ruolo anche dalle authorities di Spring Security
         if (!isAdmin) {
             isAdmin = auth.getAuthorities().stream()
                     .anyMatch(a -> a.getAuthority().equals("ADMIN"));

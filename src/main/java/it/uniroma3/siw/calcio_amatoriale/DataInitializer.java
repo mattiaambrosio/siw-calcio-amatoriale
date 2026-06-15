@@ -19,7 +19,7 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initData(CredentialsRepository credentialsRepository) {
         return args -> {
-            // Se non esiste ancora un utente admin, lo creiamo noi all'avvio
+            // Crea l'utente admin di default se non esiste
             if (credentialsRepository.findByEmail("admin@email.it").isEmpty()) {
                 User user = new User();
                 user.setNome("Mattia");
@@ -27,7 +27,7 @@ public class DataInitializer {
 
                 Credentials admin = new Credentials();
                 admin.setEmail("admin@email.it");
-                admin.setPassword(passwordEncoder.encode("admin123")); // La tua password sarà: admin123
+                admin.setPassword(passwordEncoder.encode("admin123"));
                 admin.setRole("ADMIN");
                 admin.setUser(user);
 

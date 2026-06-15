@@ -1,13 +1,8 @@
-/* =====================================================
-   COMPONENTE REACT: Sezione Commenti Partita
-   Tecnologia: React 18 + Babel Standalone (CDN, no build)
-   ===================================================== */
-
-/* commento */
+// Componente React per la sezione commenti partita (React 18 + Babel standalone, senza build)
 
 const { useState, useEffect, useCallback } = React;
 
-// ─── Utility: legge il cookie CSRF di Spring Security ───
+// Legge il token CSRF dai meta tag inseriti da Spring Security
 function getCsrfToken() {
     const meta = document.querySelector('meta[name="_csrf"]');
     return meta ? meta.getAttribute('content') : '';
@@ -17,7 +12,7 @@ function getCsrfHeader() {
     return meta ? meta.getAttribute('content') : 'X-CSRF-TOKEN';
 }
 
-// ─── Componente singolo commento ─────────────────────────
+// Componente singolo commento
 function CommentoCard({ commento, utenteEmail, onDelete, onEdit }) {
     const [inModifica, setInModifica] = useState(false);
     const [testoModifica, setTestoModifica] = useState(commento.testo);
@@ -103,7 +98,7 @@ function CommentoCard({ commento, utenteEmail, onDelete, onEdit }) {
     );
 }
 
-// ─── Componente principale: CommentiSection ───────────────
+// Componente principale: gestisce stato, fetch API e rendering
 function CommentiSection({ partitaId }) {
     const [commenti, setCommenti] = useState([]);
     const [nuovoTesto, setNuovoTesto] = useState('');
@@ -114,7 +109,7 @@ function CommentiSection({ partitaId }) {
     const [invioInCorso, setInvioInCorso] = useState(false);
     const [filtroRicerca, setFiltroRicerca] = useState('');
 
-    // Carica chi è loggato
+    // Carica i dati dell'utente loggato
     useEffect(() => {
         fetch('/api/me')
             .then(r => r.json())
@@ -125,7 +120,7 @@ function CommentiSection({ partitaId }) {
             .catch(() => {});
     }, []);
 
-    // Carica commenti
+    // Carica i commenti dalla API
     const caricaCommenti = useCallback(() => {
         fetch(`/api/partita/${partitaId}/commenti`)
             .then(r => r.json())
@@ -135,7 +130,7 @@ function CommentiSection({ partitaId }) {
 
     useEffect(() => { caricaCommenti(); }, [caricaCommenti]);
 
-    // Invia nuovo commento
+    // Invia un nuovo commento
     async function inviaCommento(e) {
         e.preventDefault();
         if (!nuovoTesto.trim() || invioInCorso) return;
@@ -162,7 +157,7 @@ function CommentiSection({ partitaId }) {
         setInvioInCorso(false);
     }
 
-    // Modifica commento esistente
+    // Modifica un commento esistente
     async function modificaCommento(id, nuovoTestoMod) {
         try {
             const res = await fetch(`/api/commento/${id}`, {
@@ -182,7 +177,7 @@ function CommentiSection({ partitaId }) {
         }
     }
 
-    // Elimina commento
+    // Elimina un commento
     async function eliminaCommento(id) {
         try {
             const res = await fetch(`/api/commento/${id}`, {
@@ -348,7 +343,7 @@ function CommentiSection({ partitaId }) {
     );
 }
 
-// ─── Helper stile bottoni inline ─────────────────────────
+// Helper: ritorna lo stile inline per i bottoni
 function btnStyle(bg, color, padding = '0.55rem 1.2rem', fontSize = '0.9rem') {
     return {
         background: bg, color, border: 'none', borderRadius: '980px',
@@ -357,7 +352,7 @@ function btnStyle(bg, color, padding = '0.55rem 1.2rem', fontSize = '0.9rem') {
     };
 }
 
-// ─── Mount del componente ─────────────────────────────────
+// Monta il componente sul div con id 'react-commenti-root'
 const rootEl = document.getElementById('react-commenti-root');
 if (rootEl) {
     const partitaId = rootEl.getAttribute('data-partita-id');

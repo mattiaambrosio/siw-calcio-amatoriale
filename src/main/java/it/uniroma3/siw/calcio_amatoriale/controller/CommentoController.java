@@ -22,9 +22,7 @@ public class CommentoController {
     @Autowired private PartitaService partitaService;
     @Autowired private CredentialsRepository credentialsRepository;
 
-    // ─────────────────────────────────────────────────────────────────
-    // Dettaglio partita + lista commenti (accessibile a tutti gli autenticati)
-    // ─────────────────────────────────────────────────────────────────
+    // GET: mostra il dettaglio della partita con la lista dei commenti
     @GetMapping("/partita/{id}")
     public String showPartitaDetail(@PathVariable("id") Long id, Model model, Principal principal) {
         Partita partita = partitaService.findById(id);
@@ -34,16 +32,14 @@ public class CommentoController {
         model.addAttribute("commenti", commentoService.findByPartita(id));
         model.addAttribute("nuovoCommento", new Commento());
 
-        // Passiamo l'email dell'utente loggato al template per controllo ownership
+        // Passa l'email dell'utente loggato per il controllo ownership lato template
         if (principal != null) {
             model.addAttribute("emailLoggato", principal.getName());
         }
         return "partitaDetail";
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // Inserimento nuovo commento (solo utenti autenticati)
-    // ─────────────────────────────────────────────────────────────────
+    // POST: inserisce un nuovo commento (solo utenti autenticati)
     @PostMapping("/partita/{id}/commento")
     public String addCommento(@PathVariable("id") Long id,
                                @RequestParam("testo") String testo,
@@ -67,15 +63,13 @@ public class CommentoController {
         return "redirect:/partita/" + id;
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // Form modifica commento (solo il proprietario)
-    // ─────────────────────────────────────────────────────────────────
+    // GET: form di modifica commento (solo il proprietario)
     @GetMapping("/commento/{id}/edit")
     public String showEditForm(@PathVariable("id") Long id, Model model, Principal principal) {
         Commento commento = commentoService.findById(id);
         if (commento == null) return "redirect:/partite";
 
-        // Solo il proprietario può modificare
+        // Solo il proprietario può modificare il proprio commento
         if (!commentoService.isOwner(id, principal.getName())) {
             return "redirect:/partita/" + commento.getPartita().getId();
         }
@@ -84,9 +78,7 @@ public class CommentoController {
         return "editCommento";
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // Salvataggio modifica commento (solo il proprietario)
-    // ─────────────────────────────────────────────────────────────────
+    // POST: salva le modifiche al commento (solo il proprietario)
     @PostMapping("/commento/{id}/edit")
     public String saveEditCommento(@PathVariable("id") Long id,
                                     @RequestParam("testo") String testo,
@@ -94,7 +86,7 @@ public class CommentoController {
         Commento commento = commentoService.findById(id);
         if (commento == null) return "redirect:/partite";
 
-        // Sicurezza: solo il proprietario può salvare
+        // Solo il proprietario può salvare le modifiche
         if (!commentoService.isOwner(id, principal.getName())) {
             return "redirect:/partita/" + commento.getPartita().getId();
         }
@@ -107,9 +99,7 @@ public class CommentoController {
         return "redirect:/partita/" + commento.getPartita().getId();
     }
 
-    // ─────────────────────────────────────────────────────────────────
-    // Eliminazione commento (solo il proprietario)
-    // ─────────────────────────────────────────────────────────────────
+    // POST: elimina il commento (solo il proprietario)
     @PostMapping("/commento/{id}/delete")
     public String deleteCommento(@PathVariable("id") Long id, Principal principal) {
         Commento commento = commentoService.findById(id);
