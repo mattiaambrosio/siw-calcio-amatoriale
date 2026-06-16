@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dettaglio Partita – Calcio Amatoriale</title>
     <link rel="stylesheet" th:href="@{/css/style.css}">
     <!-- CSRF per React -->
-    <meta name="_csrf"        th:content="${_csrf.token}"/>
-    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
+
 <body>
     <div class="ambient-glow"></div>
     <nav th:replace="~{fragments/layout :: nav}"></nav>
@@ -28,24 +29,25 @@
 
             <!-- Torneo badge -->
             <span class="badge badge-blue" style="margin-bottom: 1.5rem; display: inline-block;"
-                  th:text="${partita.torneo.nome}">Torneo</span>
+                th:text="${partita.torneo.nome}">Torneo</span>
 
             <!-- Squadre e score -->
-            <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <div
+                style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
                 <div style="flex: 1; min-width: 120px; text-align: right;">
                     <div style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--text-primary);"
-                         th:text="${partita.squadraCasa.nome}">Casa</div>
+                        th:text="${partita.squadraCasa.nome}">Casa</div>
                 </div>
 
                 <div class="score-box">
                     <div class="score" th:if="${partita.stato == 'GIOCATA'}"
-                         th:text="${partita.goalsHome} + ' – ' + ${partita.goalsAway}">0 – 0</div>
+                        th:text="${partita.goalsHome} + ' – ' + ${partita.goalsAway}">0 – 0</div>
                     <div class="vs" th:if="${partita.stato != 'GIOCATA'}">VS</div>
                 </div>
 
                 <div style="flex: 1; min-width: 120px; text-align: left;">
                     <div style="font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 700; color: var(--text-primary);"
-                         th:text="${partita.squadraOspite.nome}">Ospite</div>
+                        th:text="${partita.squadraOspite.nome}">Ospite</div>
                 </div>
             </div>
 
@@ -56,18 +58,22 @@
             </div>
 
             <!-- Info bar -->
-            <div style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; padding-top: 1.25rem; border-top: 1px solid var(--border);">
-                <span class="info-pill">📅 <span th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span></span>
+            <div
+                style="display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; padding-top: 1.25rem; border-top: 1px solid var(--border);">
+                <span class="info-pill">📅 <span
+                        th:text="${#temporals.format(partita.dataEOra, 'dd/MM/yyyy HH:mm')}">Data</span></span>
                 <span class="info-pill">🏟️ <span th:text="${partita.luogo}">Stadio</span></span>
-                <span class="info-pill">⚖️ Arbitro: <span th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Nome</span></span>
+                <span class="info-pill">⚖️ Arbitro: <span
+                        th:text="${partita.arbitro.nome} + ' ' + ${partita.arbitro.cognome}">Nome</span></span>
             </div>
 
             <!-- Admin actions -->
-            <div sec:authorize="hasAuthority('ADMIN')" style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
+            <div sec:authorize="hasAuthority('ADMIN')"
+                style="margin-top: 1.5rem; display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;">
                 <a th:href="@{'/admin/partite/punteggio'}" class="btn btn-outline btn-sm">📝 Aggiorna Risultato</a>
                 <form th:action="@{'/admin/partita/' + ${partita.id} + '/delete'}" method="post">
                     <button type="submit" class="btn btn-danger btn-sm"
-                            onclick="return confirm('Eliminare questa partita?')">🗑️ Elimina</button>
+                        onclick="return confirm('Eliminare questa partita?')">🗑️ Elimina</button>
                 </form>
             </div>
         </div>
@@ -78,10 +84,12 @@
     </main>
 
     <!-- React 18 + Babel (senza build) -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"
+        crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
     <script type="text/babel" th:src="@{/js/commenti.js}"></script>
 
 </body>
+
 </html>
