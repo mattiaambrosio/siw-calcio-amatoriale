@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.OneToMany;
 
 @Entity
 public class Credentials {
@@ -20,6 +21,9 @@ public class Credentials {
 
     @OneToOne(cascade = CascadeType.ALL)
     private User user;
+
+    @OneToMany(mappedBy = "autore", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Commento> commenti = new java.util.ArrayList<>();
 
     // Getter e Setter
     public Long getId() { return id; }
@@ -36,4 +40,7 @@ public class Credentials {
 
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
+
+    public java.util.List<Commento> getCommenti() { return commenti; }
+    public void setCommenti(java.util.List<Commento> commenti) { this.commenti = commenti; }
 }

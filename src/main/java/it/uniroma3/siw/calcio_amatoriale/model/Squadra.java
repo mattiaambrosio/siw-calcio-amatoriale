@@ -23,8 +23,14 @@ public class Squadra {
     @NotBlank(message = "La città è obbligatoria")
     private String citta; 
     
-    @OneToMany(mappedBy = "squadra")
+    @OneToMany(mappedBy = "squadra", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Giocatore> giocatori;
+
+    @OneToMany(mappedBy = "squadraCasa", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Partita> partiteInCasa;
+
+    @OneToMany(mappedBy = "squadraOspite", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Partita> partiteInTrasferta;
 
    @ManyToMany
     @JoinTable(
@@ -54,6 +60,12 @@ public class Squadra {
 
     public List<Torneo> getTornei() { return tornei; }
     public void setTornei(List<Torneo> tornei) { this.tornei = tornei; }
+
+    public List<Partita> getPartiteInCasa() { return partiteInCasa; }
+    public void setPartiteInCasa(List<Partita> partiteInCasa) { this.partiteInCasa = partiteInCasa; }
+
+    public List<Partita> getPartiteInTrasferta() { return partiteInTrasferta; }
+    public void setPartiteInTrasferta(List<Partita> partiteInTrasferta) { this.partiteInTrasferta = partiteInTrasferta; }
 
     // Equals e HashCode
     @Override

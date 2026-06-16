@@ -21,7 +21,7 @@ public class Arbitro {
     @NotBlank(message = "Il codice arbitrale è obbligatorio")
     private String codiceArbitrale; // Identificativo univoco dell'arbitro
 
-    @OneToMany(mappedBy = "arbitro")
+    @OneToMany(mappedBy = "arbitro", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Partita> partiteArbitrate; // Un arbitro dirige più partite
 
     public Arbitro() {}

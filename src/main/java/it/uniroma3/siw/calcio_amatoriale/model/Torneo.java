@@ -33,7 +33,7 @@ public class Torneo {
     private List<Squadra> squadre;
 
     // --- NUOVA AGGIUNTA QUI ---
-    @OneToMany(mappedBy = "torneo", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "torneo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Partita> partite;
     // --------------------------
 

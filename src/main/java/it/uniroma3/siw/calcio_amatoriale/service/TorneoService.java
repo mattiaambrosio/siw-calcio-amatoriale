@@ -33,7 +33,15 @@ public class TorneoService {
 
     @Transactional
     public void delete(Long id) {
-        torneoRepository.deleteById(id);
+        Torneo torneo = torneoRepository.findById(id).orElse(null);
+        if (torneo != null) {
+            if (torneo.getSquadre() != null) {
+                for (Squadra squadra : torneo.getSquadre()) {
+                    squadra.getTornei().remove(torneo);
+                }
+            }
+            torneoRepository.delete(torneo);
+        }
     }
 
     @Transactional(readOnly = true)

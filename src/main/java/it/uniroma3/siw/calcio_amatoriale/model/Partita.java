@@ -38,6 +38,9 @@ public class Partita {
     @ManyToOne
     private Arbitro arbitro;
 
+    @OneToMany(mappedBy = "partita", cascade = CascadeType.ALL, orphanRemoval = true)
+    private java.util.List<Commento> commenti = new java.util.ArrayList<>();
+
     public Partita() {}
 
     // Getter e Setter
@@ -70,6 +73,9 @@ public class Partita {
 
     public Arbitro getArbitro() { return arbitro; }
     public void setArbitro(Arbitro arbitro) { this.arbitro = arbitro; }
+
+    public java.util.List<Commento> getCommenti() { return commenti; }
+    public void setCommenti(java.util.List<Commento> commenti) { this.commenti = commenti; }
     
     // Equals e HashCode (basati su Torneo, Squadre e Data)
     @Override

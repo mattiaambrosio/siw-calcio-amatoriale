@@ -20,6 +20,11 @@ public class ArbitroService {
         arbitroRepository.save(arbitro);
     }
 
+    @Transactional
+    public void delete(Long id) {
+        arbitroRepository.deleteById(id);
+    }
+
     @Transactional(readOnly = true)
     public Arbitro findById(Long id) {
         return arbitroRepository.findById(id).orElse(null);

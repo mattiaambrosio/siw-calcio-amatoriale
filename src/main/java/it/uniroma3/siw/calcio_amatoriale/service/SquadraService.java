@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import it.uniroma3.siw.calcio_amatoriale.model.Squadra;
+import it.uniroma3.siw.calcio_amatoriale.model.Torneo;
 import it.uniroma3.siw.calcio_amatoriale.repository.SquadraRepository;
 
 @Service
@@ -22,7 +23,15 @@ public class SquadraService {
 
     @Transactional
     public void delete(Long id) {
-        squadraRepository.deleteById(id);
+        Squadra squadra = squadraRepository.findById(id).orElse(null);
+        if (squadra != null) {
+            if (squadra.getTornei() != null) {
+                for (Torneo torneo : squadra.getTornei()) {
+                    torneo.getSquadre().remove(squadra);
+                }
+            }
+            squadraRepository.delete(squadra);
+        }
     }
 
     @Transactional(readOnly = true)
